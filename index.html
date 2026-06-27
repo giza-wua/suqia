@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>سُقيا — تسجيل الدخول</title>
+  <meta name="theme-color" content="#0a1628" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<div class="login-page">
+  <div class="login-box">
+
+    <div class="login-brand">
+      <div class="login-logo">💧</div>
+      <h1>سُقيا</h1>
+      <p class="slogan">منصة إدارة أصول ري الجيزة</p>
+    </div>
+
+    <div class="login-form">
+      <div class="form-group">
+        <label class="form-label">اسم المستخدم</label>
+        <input class="form-input" id="inp-user" type="text" placeholder="أدخل اسم المستخدم" autocomplete="username" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">كلمة المرور</label>
+        <input class="form-input" id="inp-pass" type="password" placeholder="••••••••" autocomplete="current-password" />
+      </div>
+      <div class="login-error" id="login-error" style="display:none"></div>
+      <button class="login-submit" id="btn-login">🔐 دخول</button>
+    </div>
+
+    <p style="text-align:center;margin-top:18px;font-size:10px;color:rgba(255,255,255,.2);font-weight:600;">
+      الإدارة العامة — وزارة الموارد المائية والري
+    </p>
+  </div>
+</div>
+
+<script type="module">
+  import { loginUser, saveSession, getSession } from "./js/firebase-config.js";
+
+  // لو مسجل دخول خد إياه للداشبورد
+  if (getSession()) {
+    window.location.href = "pages/dashboard.html";
+  }
+
+  const btnLogin  = document.getElementById("btn-login");
+  const inpUser   = document.getElementById("inp-user");
+  const inpPass   = document.getElementById("inp-pass");
+  const errBox    = document.getElementById("login-error");
+
+  function showError(msg) {
+    errBox.textContent = "⚠️ " + msg;
+    errBox.style.display = "block";
+  }
+
+  async function doLogin() {
+    const username = inpUser.value.trim();
+    const password = inpPass.value;
+    if (!username || !password) { showError("يرجى إدخال اسم المستخدم وكلمة المرور"); return; }
+
+    btnLogin.disabled     = true;
+    btnLogin.textContent  = "⏳ جاري الدخول...";
+    errBox.style.display  = "none";
+
+    const result = await loginUser(username, password);
+
+    if (result.ok) {
+      saveSession(result.user);
+      window.location.href = "pages/dashboard.html";
+    } else {
+      showError(result.error);
+      btnLogin.disabled    = false;
+      btnLogin.textContent = "🔐 دخول";
+    }
+  }
+
+  btnLogin.addEventListener("click", doLogin);
+  inpPass.addEventListener("keydown", e => { if (e.key === "Enter") doLogin(); });
+  inpUser.addEventListener("keydown", e => { if (e.key === "Enter") inpPass.focus(); });
+</script>
+</body>
+</html>

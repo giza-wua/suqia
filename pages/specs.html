@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>سُقيا — الأورنيك الهندسي</title>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+<div class="shell">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-brand">
+      <div class="sb-logo">💧</div>
+      <div class="sb-brand-text"><h2>سُقيا</h2><span>منصة إدارة أصول ري الجيزة</span></div>
+    </div>
+    <nav class="sb-nav">
+      <div class="sb-section">الرئيسية</div>
+      <a class="nav-item" href="dashboard.html"><span class="ni">🏠</span> لوحة التحكم</a>
+      <div class="sb-section">البيانات الهندسية</div>
+      <a class="nav-item" href="specs.html">   <span class="ni">📐</span> الأورنيك الهندسي</a>
+      <a class="nav-item" href="bridges.html"> <span class="ni">🌉</span> الكباري</a>
+      <a class="nav-item" href="canals.html">  <span class="ni">🌊</span> الترع المبطنة</a>
+      <a class="nav-item" href="wells.html">   <span class="ni">⛏️</span> الآبار الجوفية</a>
+      <div class="sb-section admin-only" id="admin-section" style="display:none">الإدارة</div>
+      <a class="nav-item admin-only" id="nav-settings" href="settings.html" style="display:none"><span class="ni">⚙️</span> الإعدادات</a>
+    </nav>
+    <div class="sb-footer">
+      <div class="sb-user">
+        <div class="sb-avatar" id="sb-avatar">م</div>
+        <div><div class="sb-uname" id="sb-user-name">...</div><span class="sb-role" id="sb-user-role">...</span></div>
+      </div>
+      <button class="sb-logout" id="btn-logout">🚪 تسجيل الخروج</button>
+    </div>
+  </aside>
+  <div id="sb-overlay"></div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <header class="topbar">
+      <button class="mob-btn" id="mob-btn">☰</button>
+      <div class="tb-title">
+        <div class="tb-bc">سُقيا › البيانات الهندسية</div>
+        <div class="tb-page">📐 الأورنيك الهندسي</div>
+      </div>
+      <div class="tb-actions">
+        <div class="tb-date" id="tb-date"></div>
+        <div class="tb-live"><div class="dot"></div><span>متصل</span></div>
+        <button class="btn btn-primary admin-only" id="btn-add" style="display:none">+ إضافة</button>
+      </div>
+    </header>
+
+    <main class="page">
+      <div class="card" id="tbl-container">
+        <div class="loading"><div class="spinner"></div><span>جاري التحميل...</span></div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- VIEW MODAL -->
+<div class="modal-overlay" id="modal-view">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <h3>📐 <span id="view-title">تفاصيل الأورنيك</span></h3>
+      <button class="modal-close">✕</button>
+    </div>
+    <div class="modal-body" id="view-body"></div>
+    <div class="modal-footer admin-only" id="view-footer" style="display:none">
+      <button class="btn btn-secondary btn-sm" id="btn-delete">🗑️ حذف</button>
+      <button class="btn btn-primary btn-sm" id="btn-edit">✏️ تعديل</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD / EDIT MODAL -->
+<div class="modal-overlay" id="modal-form">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <h3 id="form-title">➕ إضافة أورنيك</h3>
+      <button class="modal-close">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">اسم الأورنيك *</label>
+          <input class="form-input" id="f-name" placeholder="أورنيك رقم 1 — ترعة الحاجة" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">اسم الترعة *</label>
+          <input class="form-input" id="f-canalName" placeholder="ترعة الحاجة" />
+        </div>
+        <div class="form-group" style="grid-column:1/-1">
+          <label class="form-label">الموقع</label>
+          <input class="form-input" id="f-location" placeholder="مركز أبو النمرس — قطعة 12" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">الطول (م)</label>
+          <input class="form-input" id="f-length" type="number" placeholder="500" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">العرض (م)</label>
+          <input class="form-input" id="f-width" type="number" placeholder="3.5" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">العمق (م)</label>
+          <input class="form-input" id="f-depth" type="number" placeholder="1.2" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">الانحدار</label>
+          <input class="form-input" id="f-slope" placeholder="1:5000" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">التصرف (م³/ث)</label>
+          <input class="form-input" id="f-discharge" type="number" placeholder="2.5" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">السرعة (م/ث)</label>
+          <input class="form-input" id="f-velocity" type="number" placeholder="0.8" />
+        </div>
+        <div class="form-group" style="grid-column:1/-1">
+          <label class="form-label">ملاحظات</label>
+          <textarea class="form-input" id="f-notes" rows="2" placeholder="أي ملاحظات إضافية"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary btn-sm" id="btn-cancel">إلغاء</button>
+      <button class="btn btn-primary btn-sm" id="btn-save">💾 حفظ</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { requireAuth, clearSession, getCollection, addRecord, updateRecord, deleteRecord } from "../js/firebase-config.js";
+  import { setupSidebar, setActiveNav, arabicDate, renderSidebarUser, DataTable, openModal, closeModal, setupModalClose, toast, confirmDelete } from "../js/shared.js";
+
+  const user = requireAuth();
+  renderSidebarUser(user);
+  setupSidebar();
+  setActiveNav();
+  document.getElementById("tb-date").textContent = "📅 " + arabicDate();
+  document.getElementById("btn-logout").addEventListener("click", () => { clearSession(); location.href = "../index.html"; });
+
+  const isAdmin = user.role === "admin";
+  if (isAdmin) {
+    document.querySelectorAll(".admin-only").forEach(el => el.style.display = "");
+  }
+
+  const FIELDS = [
+    { key:"name",      label:"اسم الأورنيك" },
+    { key:"canalName", label:"الترعة" },
+    { key:"location",  label:"الموقع" },
+    { key:"length",    label:"الطول (م)" },
+    { key:"width",     label:"العرض (م)" },
+    { key:"depth",     label:"العمق (م)" },
+    { key:"slope",     label:"الانحدار" },
+    { key:"discharge", label:"التصرف (م³/ث)" },
+    { key:"velocity",  label:"السرعة (م/ث)" },
+    { key:"notes",     label:"ملاحظات" },
+  ];
+
+  const tbl = new DataTable({
+    containerId: "tbl-container",
+    columns: [
+      { key:"name",      label:"اسم الأورنيك", searchable:true },
+      { key:"canalName", label:"الترعة",        searchable:true },
+      { key:"location",  label:"الموقع",        searchable:true },
+      { key:"length",    label:"الطول (م)" },
+      { key:"discharge", label:"تصرف م³/ث", render: v => v ? `<span class="badge badge-teal">${v}</span>` : "—" },
+    ],
+    onRowClick: openView,
+    emptyIcon: "📐",
+    emptyText: "لا توجد أورنيكات — اضغط إضافة",
+  });
+
+  async function load() { tbl.setData(await getCollection("specs")); }
+  load();
+
+  // ── View ──
+  let current = null;
+  function openView(row) {
+    current = row;
+    document.getElementById("view-title").textContent = row.name || "تفاصيل";
+    const body = document.getElementById("view-body");
+    body.innerHTML = FIELDS.filter(f => row[f.key]).map(f =>
+      `<div class="detail-row"><span class="detail-key">${f.label}</span><span class="detail-val">${row[f.key]}</span></div>`
+    ).join("");
+    openModal("modal-view");
+  }
+
+  setupModalClose("modal-view");
+  setupModalClose("modal-form");
+
+  document.getElementById("btn-edit").addEventListener("click", () => {
+    closeModal("modal-view");
+    openForm(current);
+  });
+
+  document.getElementById("btn-delete").addEventListener("click", () => {
+    confirmDelete(document.getElementById("btn-delete"), async () => {
+      await deleteRecord("specs", current.id);
+      closeModal("modal-view");
+      toast("تم الحذف بنجاح ✓", "success");
+      load();
+    });
+  });
+
+  // ── Form ──
+  const formFields = ["name","canalName","location","length","width","depth","slope","discharge","velocity","notes"];
+
+  document.getElementById("btn-add").addEventListener("click", () => openForm(null));
+  document.getElementById("btn-cancel").addEventListener("click", () => closeModal("modal-form"));
+
+  function openForm(row) {
+    document.getElementById("form-title").textContent = row ? "✏️ تعديل الأورنيك" : "➕ إضافة أورنيك";
+    formFields.forEach(k => { document.getElementById("f-" + k).value = row?.[k] ?? ""; });
+    openModal("modal-form");
+  }
+
+  document.getElementById("btn-save").addEventListener("click", async () => {
+    const name = document.getElementById("f-name").value.trim();
+    if (!name) { toast("اسم الأورنيك مطلوب", "error"); return; }
+    const data = {};
+    formFields.forEach(k => { const v = document.getElementById("f-" + k).value.trim(); if (v) data[k] = v; });
+    const btn = document.getElementById("btn-save");
+    btn.disabled = true; btn.textContent = "⏳ جاري الحفظ...";
+    try {
+      if (current && document.getElementById("form-title").textContent.includes("تعديل")) {
+        await updateRecord("specs", current.id, data);
+        toast("تم التعديل بنجاح ✓", "success");
+      } else {
+        await addRecord("specs", data);
+        toast("تمت الإضافة بنجاح ✓", "success");
+      }
+      closeModal("modal-form");
+      current = null;
+      load();
+    } finally {
+      btn.disabled = false; btn.textContent = "💾 حفظ";
+    }
+  });
+</script>
+</body>
+</html>

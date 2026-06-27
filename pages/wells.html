@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>سُقيا — الآبار الجوفية</title>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+<div class="shell">
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-brand"><div class="sb-logo">💧</div><div class="sb-brand-text"><h2>سُقيا</h2><span>منصة إدارة أصول ري الجيزة</span></div></div>
+    <nav class="sb-nav">
+      <div class="sb-section">الرئيسية</div>
+      <a class="nav-item" href="dashboard.html"><span class="ni">🏠</span> لوحة التحكم</a>
+      <div class="sb-section">البيانات الهندسية</div>
+      <a class="nav-item" href="specs.html">   <span class="ni">📐</span> الأورنيك الهندسي</a>
+      <a class="nav-item" href="bridges.html"> <span class="ni">🌉</span> الكباري</a>
+      <a class="nav-item" href="canals.html">  <span class="ni">🌊</span> الترع المبطنة</a>
+      <a class="nav-item" href="wells.html">   <span class="ni">⛏️</span> الآبار الجوفية</a>
+      <div class="sb-section admin-only" style="display:none">الإدارة</div>
+      <a class="nav-item admin-only" href="settings.html" style="display:none"><span class="ni">⚙️</span> الإعدادات</a>
+    </nav>
+    <div class="sb-footer">
+      <div class="sb-user"><div class="sb-avatar" id="sb-avatar">م</div><div><div class="sb-uname" id="sb-user-name">...</div><span class="sb-role" id="sb-user-role">...</span></div></div>
+      <button class="sb-logout" id="btn-logout">🚪 تسجيل الخروج</button>
+    </div>
+  </aside>
+  <div id="sb-overlay"></div>
+
+  <div class="main">
+    <header class="topbar">
+      <button class="mob-btn" id="mob-btn">☰</button>
+      <div class="tb-title"><div class="tb-bc">سُقيا › البيانات الهندسية</div><div class="tb-page">⛏️ الآبار الجوفية</div></div>
+      <div class="tb-actions">
+        <div class="tb-date" id="tb-date"></div>
+        <div class="tb-live"><div class="dot"></div><span>متصل</span></div>
+        <button class="btn btn-primary admin-only" id="btn-add" style="display:none">+ إضافة</button>
+      </div>
+    </header>
+    <main class="page">
+      <div class="card" id="tbl-container"><div class="loading"><div class="spinner"></div><span>جاري التحميل...</span></div></div>
+    </main>
+  </div>
+</div>
+
+<!-- VIEW -->
+<div class="modal-overlay" id="modal-view">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header"><h3>⛏️ <span id="view-title"></span></h3><button class="modal-close">✕</button></div>
+    <div class="modal-body" id="view-body"></div>
+    <div class="modal-footer admin-only" style="display:none">
+      <button class="btn btn-secondary btn-sm" id="btn-delete">🗑️ حذف</button>
+      <button class="btn btn-primary btn-sm" id="btn-edit">✏️ تعديل</button>
+    </div>
+  </div>
+</div>
+
+<!-- FORM -->
+<div class="modal-overlay" id="modal-form">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header"><h3 id="form-title">➕ إضافة بئر جوفي</h3><button class="modal-close">✕</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group"><label class="form-label">اسم البئر / الرقم *</label><input class="form-input" id="f-name" placeholder="بئر رقم 1 — حوض الحاجة" /></div>
+        <div class="form-group">
+          <label class="form-label">المركز</label>
+          <select class="form-input" id="f-district">
+            <option value="">-- اختر --</option>
+            <option>أبو النمرس</option><option>الحوامدية</option><option>البدرشين</option>
+            <option>العياط</option><option>منشأة القناطر</option><option>أوسيم</option>
+            <option>إمبابة</option><option>الجيزة</option><option>أخرى</option>
+          </select>
+        </div>
+        <div class="form-group" style="grid-column:1/-1"><label class="form-label">الموقع التفصيلي</label><input class="form-input" id="f-location" placeholder="قطعة 5 — حوض الشعراء" /></div>
+        <div class="form-group">
+          <label class="form-label">الغرض</label>
+          <select class="form-input" id="f-purpose">
+            <option value="">-- اختر --</option>
+            <option>ري زراعي</option><option>شرب</option><option>صناعي</option><option>متعدد الأغراض</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">العمق (م)</label><input class="form-input" id="f-depth" type="number" placeholder="120" /></div>
+        <div class="form-group"><label class="form-label">القطر (بوصة)</label><input class="form-input" id="f-diameter" type="number" placeholder="12" /></div>
+        <div class="form-group"><label class="form-label">منسوب المياه (م)</label><input class="form-input" id="f-waterLevel" type="number" placeholder="35" /></div>
+        <div class="form-group"><label class="form-label">التصرف (م³/ساعة)</label><input class="form-input" id="f-discharge" type="number" placeholder="50" /></div>
+        <div class="form-group">
+          <label class="form-label">نوع الطلمبة</label>
+          <select class="form-input" id="f-pumpType">
+            <option value="">-- اختر --</option>
+            <option>طاردة مركزية</option><option>طاردة مركزية غاطسة</option><option>تربينية</option><option>أخرى</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">قدرة الطلمبة (حصان)</label><input class="form-input" id="f-pumpPower" type="number" placeholder="30" /></div>
+        <div class="form-group"><label class="form-label">سنة الحفر</label><input class="form-input" id="f-drillYear" type="number" placeholder="2010" /></div>
+        <div class="form-group">
+          <label class="form-label">الحالة</label>
+          <select class="form-input" id="f-condition">
+            <option value="">-- اختر --</option>
+            <option>يعمل بكفاءة</option><option>يعمل جزئياً</option>
+            <option>متوقف مؤقت</option><option>خارج الخدمة</option><option>قيد الإنشاء</option>
+          </select>
+        </div>
+        <div class="form-group" style="grid-column:1/-1"><label class="form-label">ملاحظات</label><textarea class="form-input" id="f-notes" rows="2" placeholder="ملاحظات إضافية"></textarea></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary btn-sm" id="btn-cancel">إلغاء</button>
+      <button class="btn btn-primary btn-sm" id="btn-save">💾 حفظ</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { requireAuth, clearSession, getCollection, addRecord, updateRecord, deleteRecord } from "../js/firebase-config.js";
+  import { setupSidebar, setActiveNav, arabicDate, renderSidebarUser, DataTable, openModal, closeModal, setupModalClose, toast, confirmDelete } from "../js/shared.js";
+
+  const user = requireAuth();
+  renderSidebarUser(user); setupSidebar(); setActiveNav();
+  document.getElementById("tb-date").textContent = "📅 " + arabicDate();
+  document.getElementById("btn-logout").addEventListener("click", () => { clearSession(); location.href = "../index.html"; });
+  if (user.role === "admin") document.querySelectorAll(".admin-only").forEach(el => el.style.display = "");
+
+  const COND_BADGE = {"يعمل بكفاءة":"badge-green","يعمل جزئياً":"badge-blue","متوقف مؤقت":"badge-amber","خارج الخدمة":"badge-red","قيد الإنشاء":"badge-purple"};
+  const FIELDS = [
+    {key:"name",label:"اسم البئر"},{key:"district",label:"المركز"},
+    {key:"location",label:"الموقع"},{key:"purpose",label:"الغرض"},
+    {key:"depth",label:"العمق (م)"},{key:"diameter",label:"القطر (بوصة)"},
+    {key:"waterLevel",label:"منسوب المياه (م)"},{key:"discharge",label:"التصرف (م³/ساعة)"},
+    {key:"pumpType",label:"نوع الطلمبة"},{key:"pumpPower",label:"قدرة الطلمبة (حصان)"},
+    {key:"drillYear",label:"سنة الحفر"},{key:"condition",label:"الحالة"},
+    {key:"notes",label:"ملاحظات"},
+  ];
+  const FF = ["name","district","location","purpose","depth","diameter","waterLevel","discharge","pumpType","pumpPower","drillYear","condition","notes"];
+
+  const tbl = new DataTable({
+    containerId:"tbl-container",
+    columns:[
+      {key:"name",label:"اسم البئر",searchable:true},
+      {key:"district",label:"المركز",searchable:true},
+      {key:"depth",label:"العمق (م)"},
+      {key:"discharge",label:"تصرف م³/ساعة",render:v=>v?`<span class="badge badge-teal">${v}</span>`:"—"},
+      {key:"condition",label:"الحالة",render:v=>v?`<span class="badge ${COND_BADGE[v]||'badge-gray'}">${v}</span>`:"—"},
+    ],
+    onRowClick:openView, emptyIcon:"⛏️", emptyText:"لا توجد آبار مسجلة",
+  });
+  async function load() { tbl.setData(await getCollection("wells")); }
+  load();
+
+  let current = null;
+  function openView(row) {
+    current = row;
+    document.getElementById("view-title").textContent = row.name || "";
+    document.getElementById("view-body").innerHTML = FIELDS.filter(f=>row[f.key]).map(f=>{
+      const val = f.key==="condition"?`<span class="badge ${COND_BADGE[row[f.key]]||'badge-gray'}">${row[f.key]}</span>`:row[f.key];
+      return `<div class="detail-row"><span class="detail-key">${f.label}</span><span class="detail-val">${val}</span></div>`;
+    }).join("");
+    openModal("modal-view");
+  }
+  setupModalClose("modal-view"); setupModalClose("modal-form");
+  document.getElementById("btn-edit").addEventListener("click", () => { closeModal("modal-view"); openForm(current); });
+  document.getElementById("btn-delete").addEventListener("click", () => {
+    confirmDelete(document.getElementById("btn-delete"), async () => {
+      await deleteRecord("wells",current.id); closeModal("modal-view"); toast("تم الحذف ✓","success"); load();
+    });
+  });
+  document.getElementById("btn-add").addEventListener("click", () => openForm(null));
+  document.getElementById("btn-cancel").addEventListener("click", () => closeModal("modal-form"));
+  function openForm(row) {
+    document.getElementById("form-title").textContent = row ? "✏️ تعديل البئر" : "➕ إضافة بئر جوفي";
+    FF.forEach(k => { document.getElementById("f-"+k).value = row?.[k]??""; });
+    openModal("modal-form");
+  }
+  document.getElementById("btn-save").addEventListener("click", async () => {
+    if (!document.getElementById("f-name").value.trim()) { toast("اسم البئر مطلوب","error"); return; }
+    const data = {};
+    FF.forEach(k => { const v = document.getElementById("f-"+k).value.trim(); if(v) data[k]=v; });
+    const btn = document.getElementById("btn-save");
+    btn.disabled=true; btn.textContent="⏳ جاري الحفظ...";
+    try {
+      if (current && document.getElementById("form-title").textContent.includes("تعديل")) {
+        await updateRecord("wells",current.id,data); toast("تم التعديل ✓","success");
+      } else { await addRecord("wells",data); toast("تمت الإضافة ✓","success"); }
+      closeModal("modal-form"); current=null; load();
+    } finally { btn.disabled=false; btn.textContent="💾 حفظ"; }
+  });
+</script>
+</body>
+</html>

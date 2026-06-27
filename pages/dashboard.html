@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>سُقيا — لوحة التحكم</title>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+<div class="shell">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-brand">
+      <div class="sb-logo">💧</div>
+      <div class="sb-brand-text">
+        <h2>سُقيا</h2>
+        <span>منصة إدارة أصول ري الجيزة</span>
+      </div>
+    </div>
+    <nav class="sb-nav">
+      <div class="sb-section">الرئيسية</div>
+      <a class="nav-item" href="dashboard.html"><span class="ni">🏠</span> لوحة التحكم</a>
+      <div class="sb-section">البيانات الهندسية</div>
+      <a class="nav-item" href="specs.html">   <span class="ni">📐</span> الأورنيك الهندسي</a>
+      <a class="nav-item" href="bridges.html"> <span class="ni">🌉</span> الكباري</a>
+      <a class="nav-item" href="canals.html">  <span class="ni">🌊</span> الترع المبطنة</a>
+      <a class="nav-item" href="wells.html">   <span class="ni">⛏️</span> الآبار الجوفية</a>
+      <div class="sb-section admin-only" id="admin-section" style="display:none">الإدارة</div>
+      <a class="nav-item admin-only" id="nav-settings" href="settings.html" style="display:none"><span class="ni">⚙️</span> الإعدادات</a>
+    </nav>
+    <div class="sb-footer">
+      <div class="sb-user">
+        <div class="sb-avatar" id="sb-avatar">م</div>
+        <div>
+          <div class="sb-uname" id="sb-user-name">...</div>
+          <span class="sb-role" id="sb-user-role">...</span>
+        </div>
+      </div>
+      <button class="sb-logout" id="btn-logout">🚪 تسجيل الخروج</button>
+    </div>
+  </aside>
+  <div id="sb-overlay"></div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <button class="mob-btn" id="mob-btn">☰</button>
+      <div class="tb-title">
+        <div class="tb-bc">سُقيا › الرئيسية</div>
+        <div class="tb-page">لوحة التحكم</div>
+      </div>
+      <div class="tb-actions">
+        <div class="tb-date" id="tb-date"></div>
+        <div class="tb-live"><div class="dot"></div><span>متصل</span></div>
+      </div>
+    </header>
+
+    <!-- PAGE -->
+    <main class="page">
+
+      <!-- Welcome -->
+      <div class="welcome">
+        <div>
+          <h1 id="welcome-msg">أهلاً 👋</h1>
+          <p id="welcome-date"></p>
+        </div>
+        <div class="welcome-stats">
+          <div class="w-stat"><div class="n" id="ws-total">—</div><div class="l">إجمالي الأصول</div></div>
+          <div class="w-stat"><div class="n">4</div><div class="l">أنواع</div></div>
+          <div class="w-stat"><div class="n" style="color:#86efac">✓</div><div class="l">يعمل</div></div>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stat-grid">
+        <div class="stat-card c-blue" onclick="location.href='specs.html'">
+          <div class="s-icon">📐</div>
+          <div class="s-num" id="cnt-specs">—</div>
+          <div class="s-label">الأورنيك الهندسي</div>
+        </div>
+        <div class="stat-card c-gold" onclick="location.href='bridges.html'">
+          <div class="s-icon">🌉</div>
+          <div class="s-num" id="cnt-bridges">—</div>
+          <div class="s-label">الكباري</div>
+        </div>
+        <div class="stat-card c-teal" onclick="location.href='canals.html'">
+          <div class="s-icon">🌊</div>
+          <div class="s-num" id="cnt-canals">—</div>
+          <div class="s-label">الترع المبطنة</div>
+        </div>
+        <div class="stat-card c-water" onclick="location.href='wells.html'">
+          <div class="s-icon">⛏️</div>
+          <div class="s-num" id="cnt-wells">—</div>
+          <div class="s-label">الآبار الجوفية</div>
+        </div>
+      </div>
+
+      <!-- Quick access (admin only) -->
+      <div class="card admin-only" id="quick-card" style="display:none">
+        <div class="card-header">
+          <span class="card-title">⚡ وصول سريع</span>
+        </div>
+        <div class="card-body">
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:9px">
+            <a href="specs.html"   class="btn btn-secondary" style="justify-content:center">📐 إضافة أورنيك</a>
+            <a href="bridges.html" class="btn btn-secondary" style="justify-content:center">🌉 إضافة كبري</a>
+            <a href="canals.html"  class="btn btn-secondary" style="justify-content:center">🌊 إضافة ترعة مبطنة</a>
+            <a href="wells.html"   class="btn btn-secondary" style="justify-content:center">⛏️ إضافة بئر جوفي</a>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<script type="module">
+  import { requireAuth, clearSession, getCollection } from "../js/firebase-config.js";
+  import { setupSidebar, setActiveNav, arabicDate, greeting, initials, renderSidebarUser } from "../js/shared.js";
+
+  const user = requireAuth();
+  renderSidebarUser(user);
+  setupSidebar();
+  setActiveNav();
+
+  document.getElementById("tb-date").textContent    = "📅 " + arabicDate();
+  document.getElementById("welcome-msg").textContent = greeting(user.name.split(" ")[0]);
+  document.getElementById("welcome-date").textContent = arabicDate();
+
+  // Admin-only elements
+  if (user.role === "admin") {
+    document.querySelectorAll(".admin-only").forEach(el => el.style.display = "");
+  }
+
+  // Logout
+  document.getElementById("btn-logout").addEventListener("click", () => {
+    clearSession();
+    window.location.href = "../index.html";
+  });
+
+  // Load counts
+  async function loadCounts() {
+    const [specs, bridges, canals, wells] = await Promise.all([
+      getCollection("specs"),
+      getCollection("bridges"),
+      getCollection("linedCanals"),
+      getCollection("wells"),
+    ]);
+    document.getElementById("cnt-specs").textContent   = specs.length;
+    document.getElementById("cnt-bridges").textContent = bridges.length;
+    document.getElementById("cnt-canals").textContent  = canals.length;
+    document.getElementById("cnt-wells").textContent   = wells.length;
+    document.getElementById("ws-total").textContent    = specs.length + bridges.length + canals.length + wells.length;
+  }
+  loadCounts();
+</script>
+</body>
+</html>
