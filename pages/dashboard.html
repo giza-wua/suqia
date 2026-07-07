@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script>(function(){try{var t=localStorage.getItem('suqia_theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <meta name="theme-color" content="#071226"/>
   <title>سُقيا — لوحة التحكم</title>
-  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="icon" type="image/svg+xml" href="../assets/icons/favicon.svg"/>
+  <link rel="stylesheet" href="../css/style.css?v=1.1.3"/>
 </head>
 <body>
 <div class="shell">
@@ -12,41 +14,54 @@
   <!-- SIDEBAR -->
   <aside class="sidebar" id="sidebar">
     <div class="sb-brand">
-      <div class="sb-logo">💧</div>
-      <div class="sb-brand-text">
-        <h2>سُقيا</h2>
-        <span>منصة إدارة أصول ري الجيزة</span>
+      <div class="sb-logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#0c1a33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3.4 4 6 7.6 6 11a6 6 0 0 1-12 0c0-3.4 2.6-7 6-11Z"/><path d="M9.2 14.2c.4 1.6 1.6 2.6 3.2 2.8"/></svg>
       </div>
+      <div class="sb-brand-text"><h2>سُقيا</h2><span>إدارة أصول ري الجيزة &nbsp;<em class="sb-version">v1.1.3</em></span></div>
     </div>
     <nav class="sb-nav">
       <div class="sb-section">الرئيسية</div>
-      <a class="nav-item" href="dashboard.html"><span class="ni">🏠</span> لوحة التحكم</a>
+      <a class="nav-item" href="dashboard.html">
+        <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v9.5a1 1 0 0 0 1 1h3.5v-6h5v6H18a1 1 0 0 0 1-1V10"/></svg>
+        لوحة التحكم
+      </a>
       <div class="sb-section">البيانات الهندسية</div>
-      <a class="nav-item" href="specs.html">   <span class="ni">📐</span> الأورنيك الهندسي</a>
-      <a class="nav-item" href="bridges.html"> <span class="ni">🌉</span> الكباري</a>
-      <a class="nav-item" href="canals.html">  <span class="ni">🌊</span> الترع المبطنة</a>
-      <a class="nav-item" href="wells.html">   <span class="ni">⛏️</span> الآبار الجوفية</a>
-      <div class="sb-section admin-only" id="admin-section" style="display:none">الإدارة</div>
-      <a class="nav-item admin-only" id="nav-settings" href="settings.html" style="display:none"><span class="ni">⚙️</span> الإعدادات</a>
+      <a class="nav-item" href="canals.html">
+        <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9.5c2-2.7 4-2.7 6 0s4 2.7 6 0 4-2.7 6 0"/><path d="M2 15.5c2-2.7 4-2.7 6 0s4 2.7 6 0 4-2.7 6 0"/></svg>
+        ترع الإدارة
+      </a>
+      <a class="nav-item" href="bridges.html">
+        <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 18.5h20"/><path d="M4.5 18.5v-4a7.5 7.5 0 0 1 15 0v4"/><path d="M8 18.5v-3.5"/><path d="M16 18.5v-3.5"/></svg>
+        الكباري
+      </a>
+      <a class="nav-item" href="wells.html">
+        <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v3M12 18.5v3"/></svg>
+        الآبار الجوفية
+      </a>
+      <div class="sb-section">الإدارة</div>
+      <a class="nav-item" href="settings.html">
+        <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M3 12h3M18 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>
+        الإعدادات
+      </a>
     </nav>
     <div class="sb-footer">
       <div class="sb-user">
         <div class="sb-avatar" id="sb-avatar">م</div>
-        <div>
-          <div class="sb-uname" id="sb-user-name">...</div>
-          <span class="sb-role" id="sb-user-role">...</span>
-        </div>
+        <div><div class="sb-uname" id="sb-user-name">…</div><span class="sb-role" id="sb-user-role"></span></div>
       </div>
-      <button class="sb-logout" id="btn-logout">🚪 تسجيل الخروج</button>
+      <button class="sb-logout" id="btn-logout">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        تسجيل الخروج
+      </button>
     </div>
   </aside>
   <div id="sb-overlay"></div>
 
-  <!-- MAIN -->
   <div class="main">
-    <!-- TOPBAR -->
     <header class="topbar">
-      <button class="mob-btn" id="mob-btn">☰</button>
+      <button class="mob-btn" id="mob-btn">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3.5 6.5h17M3.5 12h17M3.5 17.5h17"/></svg>
+      </button>
       <div class="tb-title">
         <div class="tb-bc">سُقيا › الرئيسية</div>
         <div class="tb-page">لوحة التحكم</div>
@@ -54,107 +69,155 @@
       <div class="tb-actions">
         <div class="tb-date" id="tb-date"></div>
         <div class="tb-live"><div class="dot"></div><span>متصل</span></div>
+        <button class="theme-toggle" id="theme-toggle" title="تبديل الوضع"></button>
       </div>
     </header>
 
-    <!-- PAGE -->
     <main class="page">
-
       <!-- Welcome -->
       <div class="welcome">
-        <div>
+        <div style="position:relative;z-index:1">
           <h1 id="welcome-msg">أهلاً 👋</h1>
-          <p id="welcome-date"></p>
+          <p id="welcome-date" style="font-size:12px;color:rgba(255,255,255,.45);margin-top:4px"></p>
         </div>
         <div class="welcome-stats">
           <div class="w-stat"><div class="n" id="ws-total">—</div><div class="l">إجمالي الأصول</div></div>
-          <div class="w-stat"><div class="n">4</div><div class="l">أنواع</div></div>
-          <div class="w-stat"><div class="n" style="color:#86efac">✓</div><div class="l">يعمل</div></div>
+          <div class="w-stat"><div class="n">4</div><div class="l">فئات</div></div>
+          <div class="w-stat"><div class="n" style="color:#86efac">✓</div><div class="l">نشط</div></div>
         </div>
       </div>
 
-      <!-- Stats -->
+      <!-- Stat Cards — 4 modern SVG icons -->
       <div class="stat-grid">
-        <div class="stat-card c-blue" onclick="location.href='specs.html'">
-          <div class="s-icon">📐</div>
-          <div class="s-num" id="cnt-specs">—</div>
-          <div class="s-label">الأورنيك الهندسي</div>
+
+        <!-- ترع الإدارة -->
+        <div class="stat-card c-blue" onclick="location.href='canals.html'">
+          <div class="s-icon-wrap c-blue">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+              <path d="M15 3h6v6"/><path d="M10 14 21 3"/>
+              <path d="M7 12h4M7 16h2"/>
+            </svg>
+          </div>
+          <div class="s-num" id="cnt-canals-admin">—</div>
+          <div class="s-label">ترع الإدارة</div>
         </div>
+
+        <!-- الكباري -->
         <div class="stat-card c-gold" onclick="location.href='bridges.html'">
-          <div class="s-icon">🌉</div>
+          <div class="s-icon-wrap c-gold">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 19h20"/><path d="M4 19v-5a8 8 0 0 1 16 0v5"/>
+              <path d="M9 19v-4"/><path d="M15 19v-4"/>
+              <path d="M2 13h3M19 13h3"/>
+            </svg>
+          </div>
           <div class="s-num" id="cnt-bridges">—</div>
           <div class="s-label">الكباري</div>
         </div>
+
+        <!-- الترع المبطنة -->
         <div class="stat-card c-teal" onclick="location.href='canals.html'">
-          <div class="s-icon">🌊</div>
+          <div class="s-icon-wrap c-teal">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 7c1.5-2 3-2 4.5 0S10.5 9 12 7s3-2 4.5 0S19.5 9 21 7"/>
+              <path d="M3 12c1.5-2 3-2 4.5 0S10.5 14 12 12s3-2 4.5 0S19.5 14 21 12"/>
+              <path d="M3 17c1.5-2 3-2 4.5 0S10.5 19 12 17s3-2 4.5 0S19.5 19 21 17"/>
+            </svg>
+          </div>
           <div class="s-num" id="cnt-canals">—</div>
           <div class="s-label">الترع المبطنة</div>
         </div>
+
+        <!-- الآبار الجوفية -->
         <div class="stat-card c-water" onclick="location.href='wells.html'">
-          <div class="s-icon">⛏️</div>
+          <div class="s-icon-wrap c-water">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2 C12 2 18 9 18 14 A6 6 0 0 1 6 14 C6 9 12 2 12 2Z"/>
+              <path d="M9.5 14.5 Q11 17 13.5 15.5"/>
+              <path d="M12 20v2M9 21h6"/>
+            </svg>
+          </div>
           <div class="s-num" id="cnt-wells">—</div>
           <div class="s-label">الآبار الجوفية</div>
         </div>
       </div>
 
-      <!-- Quick access (admin only) -->
-      <div class="card admin-only" id="quick-card" style="display:none">
-        <div class="card-header">
-          <span class="card-title">⚡ وصول سريع</span>
-        </div>
-        <div class="card-body">
-          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:9px">
-            <a href="specs.html"   class="btn btn-secondary" style="justify-content:center">📐 إضافة أورنيك</a>
-            <a href="bridges.html" class="btn btn-secondary" style="justify-content:center">🌉 إضافة كبري</a>
-            <a href="canals.html"  class="btn btn-secondary" style="justify-content:center">🌊 إضافة ترعة مبطنة</a>
-            <a href="wells.html"   class="btn btn-secondary" style="justify-content:center">⛏️ إضافة بئر جوفي</a>
-          </div>
+      <!-- Quick links: admin only -->
+      <div class="card" id="quick-card" style="display:none;margin-top:4px">
+        <div class="card-header"><span class="card-title">⚡ وصول سريع</span></div>
+        <div class="card-body" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:9px">
+          <a href="specs.html"    class="btn btn-secondary" style="justify-content:center">📐 أورنيك</a>
+          <a href="bridges.html"  class="btn btn-secondary" style="justify-content:center">🌉 كباري</a>
+          <a href="canals.html"   class="btn btn-secondary" style="justify-content:center">🌊 ترع</a>
+          <a href="wells.html"    class="btn btn-secondary" style="justify-content:center">💧 آبار</a>
+          <a href="settings.html" class="btn btn-secondary" style="justify-content:center">⚙️ إعدادات</a>
         </div>
       </div>
-
     </main>
   </div>
 </div>
 
 <script type="module">
-  import { requireAuth, clearSession, getCollection } from "../js/firebase-config.js";
-  import { setupSidebar, setActiveNav, arabicDate, greeting, initials, renderSidebarUser } from "../js/shared.js";
+import { requireAuth, clearSession, getCollection } from "../js/firebase-config.js?v=1.1.3";
+import { wireThemeToggle, arabicDate, greeting } from "../js/shared.js?v=1.1.3";
 
-  const user = requireAuth();
-  renderSidebarUser(user);
-  setupSidebar();
-  setActiveNav();
+const user = requireAuth();
+  // ── Sidebar ──
+  (function(){
+    const nm=document.getElementById('sb-user-name');
+    const av=document.getElementById('sb-avatar');
+    const rl=document.getElementById('sb-user-role');
+    const init=user.name.trim().split(' ').slice(0,2).map(w=>w[0]).join('');
+    if(av) av.textContent = init;
+    if(nm) nm.textContent = user.name;
+    if(rl) rl.textContent = user.role==='admin'?'مشرف':'مستخدم';
+    // تفعيل الرابط النشط
+    const pg = location.pathname.split('/').pop();
+    document.querySelectorAll('.nav-item').forEach(a=>{
+      if(a.getAttribute('href')===pg) a.classList.add('active');
+    });
+    // موبايل
+    const sb=document.getElementById('sidebar');
+    const ov=document.getElementById('sb-overlay');
+    const mb=document.getElementById('mob-btn');
+    if(mb) mb.addEventListener('click',()=>{ sb.classList.toggle('open'); ov.classList.toggle('show'); });
+    if(ov) ov.addEventListener('click',()=>{ sb.classList.remove('open'); ov.classList.remove('show'); });
+    // تسجيل الخروج
+    document.getElementById('btn-logout').addEventListener('click',()=>{ clearSession(); location.href='../index.html'; });
+  })();
 
-  document.getElementById("tb-date").textContent    = "📅 " + arabicDate();
-  document.getElementById("welcome-msg").textContent = greeting(user.name.split(" ")[0]);
-  document.getElementById("welcome-date").textContent = arabicDate();
+// ── Theme + date ──
+wireThemeToggle();
+document.getElementById('tb-date').textContent = arabicDate();
+document.getElementById('welcome-msg').textContent = greeting(user.name.split(' ')[0]);
+document.getElementById('welcome-date').textContent = arabicDate();
 
-  // Admin-only elements
-  if (user.role === "admin") {
-    document.querySelectorAll(".admin-only").forEach(el => el.style.display = "");
+// ── Counts — كل collection على حدة بدل Promise.all ──
+async function loadOneCount(col, elId) {
+  try {
+    const data = await getCollection(col);
+    const el = document.getElementById(elId);
+    if(el) el.textContent = data.length;
+    return data.length;
+  } catch(e) {
+    const el = document.getElementById(elId);
+    if(el) el.textContent = '—';
+    console.warn('count error:', col, e.message);
+    return 0;
   }
-
-  // Logout
-  document.getElementById("btn-logout").addEventListener("click", () => {
-    clearSession();
-    window.location.href = "../index.html";
-  });
-
-  // Load counts
-  async function loadCounts() {
-    const [specs, bridges, canals, wells] = await Promise.all([
-      getCollection("specs"),
-      getCollection("bridges"),
-      getCollection("linedCanals"),
-      getCollection("wells"),
-    ]);
-    document.getElementById("cnt-specs").textContent   = specs.length;
-    document.getElementById("cnt-bridges").textContent = bridges.length;
-    document.getElementById("cnt-canals").textContent  = canals.length;
-    document.getElementById("cnt-wells").textContent   = wells.length;
-    document.getElementById("ws-total").textContent    = specs.length + bridges.length + canals.length + wells.length;
-  }
-  loadCounts();
+}
+(async () => {
+  const counts = await Promise.all([
+    loadOneCount('specs',       'cnt-canals-admin'),
+    loadOneCount('bridges',     'cnt-bridges'),
+    loadOneCount('linedCanals', 'cnt-canals'),
+    loadOneCount('wells',       'cnt-wells'),
+  ]);
+  const total = counts.reduce((a,b)=>a+b,0);
+  const ws = document.getElementById('ws-total');
+  if(ws) ws.textContent = total;
+})();
 </script>
 </body>
 </html>

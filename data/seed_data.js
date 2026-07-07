@@ -2,7 +2,7 @@
 // مستخرجة من giza_irrigation_v6.html
 // الأربع مجموعات الأساسية فقط (بدون موظفين)
 
-const DATA = {
+const SUQIA_SEED_DATA = {
   "BRIDGES": [
     {
       "num": "1",
@@ -15211,4 +15211,6 @@ const DATA = {
   ]
 };
 
-export default DATA;
+// يشتغل في المتصفح (seed.html) وفي Node.js (seed.js) بنفس الملف
+if (typeof window !== 'undefined') window.SUQIA_SEED_DATA = SUQIA_SEED_DATA;
+if (typeof module !== 'undefined' && module.exports) module.exports = SUQIA_SEED_DATA;
