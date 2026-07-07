@@ -7,7 +7,7 @@
   background:
     radial-gradient(420px 280px at 100% 0%, rgba(11,180,172,.18), transparent 60%),
     linear-gradient(178deg,var(--nile) 0%,var(--nile-mid) 58%,#0f2a52 100%);
-  position:fixed;top:0;right:0;bottom:0;z-index:200;
+  position:fixed;top:0;right:0;bottom:0;z-index:240;
   display:flex;flex-direction:column;box-shadow:6px 0 34px rgba(0,0,0,.22);
   transition:transform .32s var(--ease);
 }
@@ -69,6 +69,33 @@
 .page{padding:20px 24px 60px;flex:1;max-width:1280px;width:100%}
 
 /* ══ OVERLAY (mobile sidebar) ══ */
-#sb-overlay{display:none;position:fixed;inset:0;background:rgba(7,18,38,.6);backdrop-filter:blur(4px);z-index:199}
+#sb-overlay{display:none;position:fixed;inset:0;background:rgba(7,18,38,.6);backdrop-filter:blur(4px);z-index:230}
 #sb-overlay.show{display:block;animation:fadeIn .2s var(--ease)}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+/* ══ BOTTOM NAV (mobile only) ══ */
+.bottom-nav{display:none}
+@media(max-width:768px){
+  .bottom-nav{
+    display:flex;position:fixed;bottom:0;right:0;left:0;z-index:220;
+    background:rgba(255,255,255,.94);backdrop-filter:blur(18px) saturate(1.4);
+    border-top:1px solid var(--border);
+    padding:5px 4px calc(5px + env(safe-area-inset-bottom,0px));
+    box-shadow:0 -8px 26px -10px rgba(15,25,45,.2);
+  }
+  :root[data-theme="dark"] .bottom-nav{background:rgba(13,21,38,.94)}
+  .bn-item{
+    flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+    padding:6px 2px;border-radius:12px;color:var(--text-3);font-size:10px;font-weight:800;
+    min-height:52px;position:relative;-webkit-tap-highlight-color:transparent;
+    transition:color .16s var(--ease),transform .16s var(--ease);
+  }
+  .bn-item svg{width:21px;height:21px;stroke-width:2;flex-shrink:0}
+  .bn-item:active{transform:scale(.9)}
+  .bn-item.active{color:var(--teal-dk)}
+  :root[data-theme="dark"] .bn-item.active{color:var(--teal)}
+  .bn-item.active::before{
+    content:'';position:absolute;top:2px;width:4px;height:4px;border-radius:99px;
+    background:var(--teal);
+  }
+}

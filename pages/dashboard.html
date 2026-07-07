@@ -56,6 +56,30 @@
     </div>
   </aside>
   <div id="sb-overlay"></div>
+  <!-- BOTTOM NAV (mobile) -->
+  <nav class="bottom-nav">
+    <a class="bn-item" href="dashboard.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v9.5a1 1 0 0 0 1 1h3.5v-6h5v6H18a1 1 0 0 0 1-1V10"/></svg>
+      الرئيسية
+    </a>
+    <a class="bn-item" href="canals.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9.5c2-2.7 4-2.7 6 0s4 2.7 6 0 4-2.7 6 0"/><path d="M2 15.5c2-2.7 4-2.7 6 0s4 2.7 6 0 4-2.7 6 0"/></svg>
+      ترع
+    </a>
+    <a class="bn-item" href="bridges.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 18.5h20"/><path d="M4.5 18.5v-4a7.5 7.5 0 0 1 15 0v4"/><path d="M8 18.5v-3.5"/><path d="M16 18.5v-3.5"/></svg>
+      كباري
+    </a>
+    <a class="bn-item" href="wells.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v3M12 18.5v3"/></svg>
+      آبار
+    </a>
+    <a class="bn-item" href="settings.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M3 12h3M18 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>
+      إعدادات
+    </a>
+  </nav>
+
 
   <div class="main">
     <header class="topbar">
@@ -174,7 +198,7 @@ const user = requireAuth();
     if(rl) rl.textContent = user.role==='admin'?'مشرف':'مستخدم';
     // تفعيل الرابط النشط
     const pg = location.pathname.split('/').pop();
-    document.querySelectorAll('.nav-item').forEach(a=>{
+    document.querySelectorAll('.nav-item, .bn-item').forEach(a=>{
       if(a.getAttribute('href')===pg) a.classList.add('active');
     });
     // موبايل

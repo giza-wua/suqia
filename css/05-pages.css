@@ -158,7 +158,7 @@
   .main{margin-right:0!important}
   .mob-btn{display:flex}
   .tb-date{display:none}
-  .page{padding:14px 14px 70px}
+  .page{padding:14px 14px calc(78px + env(safe-area-inset-bottom,0px))}
   .stat-grid{grid-template-columns:1fr 1fr}
   .welcome{flex-direction:column;align-items:flex-start;gap:14px}
   .welcome-stats{width:100%;justify-content:space-around}
@@ -177,6 +177,16 @@
   .sections-desktop{display:none!important}
   .sections-mobile{display:block}
   .spec-detail-grid{grid-template-columns:1fr 1fr;gap:8px}
+
+  /* ── إفساح مكان لشريط التنقل السفلي ── */
+  #toast-container{bottom:calc(72px + env(safe-area-inset-bottom,0px))}
+  #cache-status{bottom:calc(66px + env(safe-area-inset-bottom,0px))}
+
+  /* ── مساحات لمس أكبر على الموبايل ── */
+  .mob-btn,.theme-toggle,.btn-icon{width:40px;height:40px}
+  .btn{min-height:40px}
+  .btn-sm{min-height:34px}
+  .pg-btn{min-width:34px;min-height:34px}
 }
 @media(max-width:480px){
   .stat-grid{grid-template-columns:1fr 1fr}
