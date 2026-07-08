@@ -20,6 +20,9 @@ import {
   getDoc,
   getDocs,
   getFirestore,
+  limit,
+  orderBy,
+  query,
   serverTimestamp,
   setDoc, writeBatch,
   updateDoc,
@@ -95,6 +98,28 @@ async function loginUser(username, password) {
   } catch (e) {
     return { ok: false, error: "خطأ في الاتصال بالخادم" };
   }
+}
+
+// ══ سجل النشاط (Activity Log) ══════════════
+async function logActivity(action, meta = {}) {
+  try {
+    const session = getSession();
+    await addDoc(collection(db, "activityLog"), {
+      username: session?.id || session?.username || "—",
+      name: session?.name || "—",
+      action,
+      meta,
+      ts: serverTimestamp(),
+    });
+  } catch (e) {
+    // لا نوقف تدفق التطبيق لو فشل تسجيل النشاط
+    console.warn("logActivity failed:", e.message);
+  }
+}
+async function getActivityLog(count = 100) {
+  const q = query(collection(db, "activityLog"), orderBy("ts", "desc"), limit(count));
+  const snap = await getDocs(q);
+  return snap.docs.map(d => ({ id: d.id, ...d.data() }));
 }
 
 // ══ Users CRUD ════════════════════════════
@@ -237,7 +262,7 @@ async function exportCollectionData(col) {
 
 async function exportAllData() {
   const COLS = ['specs', 'bridges', 'linedCanals', 'wells'];
-  const result = { version: '1.1.4', exportedAt: new Date().toISOString(), collections: {} };
+  const result = { version: '1.1.5', exportedAt: new Date().toISOString(), collections: {} };
   for (const col of COLS) {
     const snap = await getDocs(collection(db, col));
     result.collections[col] = snap.docs.map(d => ({ _id: d.id, ...d.data() }));
@@ -318,6 +343,6 @@ async function deleteAllCollectionData(col) {
 
 export {
   addRecord, clearCache, clearSession, createUser, db, deleteRecord, deleteUser,
-  checkFirebaseHealth, deleteAllCollectionData, exportAllData, exportCollectionData, forceSyncAll, getCollection, getCollectionCount, getLastSync, getLastSyncAll, getSession, getUsers, hashPassword, importCollectionData, loginUser, requireAdmin, requireAuth, saveSession, setLastSync, updateRecord, updateUser, verifyPassword
+  checkFirebaseHealth, deleteAllCollectionData, exportAllData, exportCollectionData, forceSyncAll, getActivityLog, getCollection, getCollectionCount, getLastSync, getLastSyncAll, getSession, getUsers, hashPassword, importCollectionData, logActivity, loginUser, requireAdmin, requireAuth, saveSession, setLastSync, updateRecord, updateUser, verifyPassword
 };
 

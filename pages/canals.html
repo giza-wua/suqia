@@ -5,7 +5,7 @@
   <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>سُقيا — ترع الإدارة</title>
   <link rel="icon" type="image/svg+xml" href="../assets/icons/favicon.svg"/>
-  <link rel="stylesheet" href="../css/style.css?v=1.1.4"/>
+  <link rel="stylesheet" href="../css/style.css?v=1.1.5"/>
   <style>
     .rot-badge{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:6px;font-size:11px;font-weight:900;margin-left:3px}
     .rot-a{background:rgba(11,180,172,.15);color:var(--teal-dk)}
@@ -27,7 +27,7 @@
       <div class="sb-logo">
         <svg viewBox="0 0 24 24" fill="none" stroke="#0c1a33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3.4 4 6 7.6 6 11a6 6 0 0 1-12 0c0-3.4 2.6-7 6-11Z"/><path d="M9.2 14.2c.4 1.6 1.6 2.6 3.2 2.8"/></svg>
       </div>
-      <div class="sb-brand-text"><h2>سُقيا</h2><span>إدارة أصول ري الجيزة &nbsp;<em class="sb-version">v1.1.4</em></span></div>
+      <div class="sb-brand-text"><h2>سُقيا</h2><span>إدارة أصول ري الجيزة &nbsp;<em class="sb-version">v1.1.5</em></span></div>
     </div>
     <nav class="sb-nav">
       <div class="sb-section">الرئيسية</div>
@@ -84,7 +84,7 @@
         <div class="tb-date" id="tb-date"></div>
         <div class="tb-live"><div class="dot"></div><span>متصل</span></div>
         <button class="theme-toggle" id="theme-toggle" title="تبديل الوضع"></button>
-        <button class="btn btn-primary btn-sm" id="btn-add">
+        <button class="btn btn-primary btn-sm admin-only" id="btn-add" style="display:none">
           <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> إضافة
         </button>
       </div>
@@ -128,6 +128,10 @@
                 <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                 تصدير Excel
               </button>
+              <button class="btn btn-secondary btn-sm" id="btn-export-pdf">
+                <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                تصدير PDF
+              </button>
               <button class="btn btn-secondary btn-sm" id="btn-clear-filters">
                 <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                 مسح الفلاتر
@@ -157,11 +161,11 @@
     </div>
     <div class="modal-body" id="view-body" style="padding:0"></div>
     <div class="modal-footer" id="view-footer">
-      <button class="btn btn-secondary btn-sm" id="btn-delete">
+      <button class="btn btn-secondary btn-sm admin-only" id="btn-delete" style="display:none">
         <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
         حذف
       </button>
-      <button class="btn btn-primary btn-sm" id="btn-edit">
+      <button class="btn btn-primary btn-sm admin-only" id="btn-edit" style="display:none">
         <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
         تعديل
       </button>
@@ -218,9 +222,11 @@
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script type="module">
-import { requireAuth, clearSession, getCollection, addRecord, updateRecord, deleteRecord } from "../js/firebase-config.js?v=1.1.4";
-import { wireThemeToggle, arabicDate, DataList, openModal, closeModal, toast, confirmDelete, wireLocationButton, mapsLinkHtml, exportToExcel } from "../js/shared.js?v=1.1.4";
+import { requireAuth, clearSession, getCollection, addRecord, updateRecord, deleteRecord, logActivity } from "../js/firebase-config.js?v=1.1.5";
+import { wireThemeToggle, arabicDate, DataList, openModal, closeModal, toast, confirmDelete, wireLocationButton, mapsLinkHtml, exportToExcel, exportToPDF, initGlobalSearch } from "../js/shared.js?v=1.1.5";
 
 const user = requireAuth();
 
@@ -236,12 +242,27 @@ const user = requireAuth();
   const sb=document.getElementById('sidebar'),ov=document.getElementById('sb-overlay'),mb=document.getElementById('mob-btn');
   if(mb) mb.addEventListener('click',()=>{ sb.classList.toggle('open'); ov.classList.toggle('show'); });
   if(ov) ov.addEventListener('click',()=>{ sb.classList.remove('open'); ov.classList.remove('show'); });
-  document.getElementById('btn-logout').addEventListener('click',()=>{ clearSession(); location.href='../index.html'; });
+  document.getElementById('btn-logout').addEventListener('click',()=>{ logActivity('تسجيل خروج'); clearSession(); location.href='../index.html'; });
 })();
 
 wireThemeToggle();
 document.getElementById('tb-date').textContent = arabicDate();
-document.querySelectorAll('.admin-only').forEach(el=>el.style.display='');
+if (user.role !== 'viewer') {
+  document.querySelectorAll('.admin-only').forEach(el=>el.style.display='');
+}
+
+initGlobalSearch(async () => {
+  const [specs, lined, bridges, wells] = await Promise.all([
+    getCollection('specs'), getCollection('linedCanals'), getCollection('bridges'), getCollection('wells')
+  ]);
+  return [
+    ...specs.map(r => ({ name: r.name || r.eng || '—', type: 'ترعة', page: 'canals.html', q: r.name || r.eng })),
+    ...lined.map(r => ({ name: r.name || '—', type: 'ترعة مبطنة', page: 'canals.html', q: r.name })),
+    ...bridges.map(r => ({ name: r.name || '—', type: 'كوبري', page: 'bridges.html', q: r.name })),
+    ...wells.map(r => ({ name: r.name || '—', type: 'بئر', page: 'wells.html', q: r.name })),
+  ];
+});
+const _qParam = new URLSearchParams(location.search).get('q');
 
 // ══ Helpers ══
 function normEng(e){ if(!e)return'';e=e.trim(); if(/امبابه|إمبابة|امبابة/i.test(e))return'إمبابة'; if(/الرياح|ري الرياح/i.test(e))return'الرياح'; return e.trim(); }
@@ -308,6 +329,7 @@ const tbl = new DataList({
     allSpecs=specs.map(s=>({...s,_eng:normEng(s.eng),_rotations:getRotations(s),_lining:liningMap.get(coreName(s.name||''))||null,_core:coreName(s.name||'')}));
     tbl.setData(allSpecs);
     applyFilters();
+    if (_qParam) { tbl.searchQuery = _qParam; tbl._filter(); tbl.render(); }
   }catch(e){
     document.getElementById('tbl-container').innerHTML=`<div style="padding:40px;text-align:center">
       <p style="font-weight:800;color:var(--danger);margin-bottom:8px">${e.message||'خطأ في التحميل'}</p>
@@ -363,6 +385,14 @@ document.getElementById('btn-export').addEventListener('click',async()=>{
   await exportToExcel({title:'تقرير ترع الإدارة — محافظة الجيزة',subtitle:activeEngs.size?[...activeEngs].join(' / '):'كل الإدارات',
     columns:[{key:'name',label:'اسم الترعة',width:28},{key:'eng',label:'الإدارة الهندسية',width:14},{key:'feeder',label:'المغذية',width:20},{key:'length',label:'الطول (كم)',width:12},{key:'zomam',label:'الزمام (فدان)',width:14},{key:'discharge',label:'القنن المائي',width:14},{key:'rotations',label:'المناوبة',width:10},{key:'lined',label:'مبطنة؟',width:8},{key:'linedLength',label:'الطول المبطن (كم)',width:16},{key:'liningType',label:'نوع التبطين',width:16},{key:'notes',label:'ملاحظات',width:30}],
     rows,filename:`ترع_الإدارة_${new Date().toISOString().slice(0,10)}.xlsx`});
+  toast('تم التصدير بنجاح','success');
+});
+document.getElementById('btn-export-pdf').addEventListener('click',async()=>{
+  if(!tbl.filtered.length){toast('لا توجد بيانات للتصدير','error');return;}
+  const rows=tbl.filtered.map(r=>({name:r.name||'',eng:r._eng||'',feeder:r.canalName||r.feeder||'',length:r.length||'',rotations:r._rotations.join(' / ')||'',lined:r._lining?'مبطنة':'غير مبطنة'}));
+  await exportToPDF({title:'تقرير ترع الإدارة — محافظة الجيزة',subtitle:activeEngs.size?[...activeEngs].join(' / '):'كل الإدارات',
+    columns:[{key:'name',label:'اسم الترعة'},{key:'eng',label:'الإدارة'},{key:'feeder',label:'المغذية'},{key:'length',label:'الطول (كم)'},{key:'rotations',label:'المناوبة'},{key:'lined',label:'التبطين'}],
+    rows,filename:`ترع_الإدارة_${new Date().toISOString().slice(0,10)}.pdf`});
   toast('تم التصدير بنجاح','success');
 });
 

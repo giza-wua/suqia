@@ -99,3 +99,20 @@
 .s-icon-wrap.c-gold  { background: rgba(217,165,54,.14);  color: var(--gold-dk); }
 .s-icon-wrap.c-teal  { background: rgba(11,180,172,.13);  color: var(--teal-dk); }
 .s-icon-wrap.c-water { background: rgba(124,111,240,.13); color: var(--violet); }
+
+/* ══ GLOBAL SEARCH (بحث موحّد) ══ */
+.gs-overlay{display:none;position:fixed;inset:0;z-index:260;background:rgba(7,18,38,.6);backdrop-filter:blur(4px);padding:12vh 16px 0}
+.gs-overlay.show{display:block;animation:fadeIn .18s var(--ease)}
+.gs-box{max-width:560px;margin:0 auto;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-xl);box-shadow:var(--shadow-3);overflow:hidden}
+.gs-input-wrap{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--border);color:var(--text-3)}
+.gs-input-wrap svg{width:19px;height:19px;flex-shrink:0}
+.gs-input-wrap input{flex:1;border:none;background:transparent;outline:none;font-family:'Cairo',sans-serif;font-size:14.5px;font-weight:700;color:var(--text)}
+.gs-results{max-height:52vh;overflow-y:auto;padding:6px}
+.gs-hint{padding:22px 10px;text-align:center;font-size:12.5px;color:var(--text-3);font-weight:700}
+.gs-item{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 12px;border-radius:12px;color:var(--text);text-decoration:none;font-size:13.5px;font-weight:700;transition:.12s}
+.gs-item:hover{background:var(--surface-2)}
+.gs-badge{font-size:10px;font-weight:800;padding:3px 10px;border-radius:99px;background:var(--surface-2);color:var(--text-3);flex-shrink:0}
+@media(max-width:768px){
+  .gs-overlay{padding:8vh 10px 0}
+  .gs-box{max-width:100%}
+}

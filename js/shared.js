@@ -187,6 +187,73 @@ export async function exportToExcel({ title, subtitle, columns, rows, filename, 
   document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
 }
 
+/* ── Export to PDF ──
+   نبني جدول HTML مخفي ونحوّله لصورة (html2canvas) قبل تقسيمه على صفحات jsPDF،
+   لأن مكتبات PDF لا "ترسم" الحروف العربية بشكل صحيح كنص متجه (لا رَبْط حروف ولا اتجاه RTL) —
+   تحويله لصورة يحافظ على الشكل الصحيح تماماً لأنه نفس ما يرسمه المتصفح فعلياً. */
+export async function exportToPDF({ title, subtitle, columns, rows, filename, recordCount }) {
+  if (typeof window.jspdf === "undefined" || typeof window.html2canvas === "undefined") {
+    toast("مكتبة تصدير PDF لم تُحمَّل", "error"); return;
+  }
+  if (!rows.length) { toast("لا توجد بيانات للتصدير", "error"); return; }
+
+  const wrap = document.createElement("div");
+  wrap.style.cssText = "position:fixed;top:0;right:-99999px;width:1100px;background:#fff;padding:28px;direction:rtl;font-family:'Cairo',Arial,sans-serif;color:#0c1a33;z-index:-1";
+  wrap.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid #0BB4AC;padding-bottom:14px;margin-bottom:16px">
+      <div>
+        <div style="font-size:22px;font-weight:900;color:#071226">💧 سُقيا</div>
+        <div style="font-size:12px;color:#64748b;margin-top:2px">منصة إدارة أصول ري الجيزة</div>
+      </div>
+      <div style="text-align:left">
+        <div style="font-size:11px;color:#64748b">تاريخ التصدير</div>
+        <div style="font-size:13px;font-weight:800">${new Date().toLocaleDateString("ar-EG", { year: "numeric", month: "long", day: "numeric" })}</div>
+      </div>
+    </div>
+    <div style="font-size:17px;font-weight:900;color:#0BB4AC;margin-bottom:2px">${title || "تقرير بيانات"}</div>
+    ${subtitle ? `<div style="font-size:12px;color:#475569;margin-bottom:10px">${subtitle}</div>` : ""}
+    <div style="font-size:11px;color:#64748b;margin-bottom:12px">📊 عدد السجلات: ${recordCount ?? rows.length}</div>
+    <table style="width:100%;border-collapse:collapse;font-size:11.5px">
+      <thead>
+        <tr style="background:#071226;color:#fff">
+          ${columns.map(c => `<th style="padding:8px 6px;text-align:center;font-weight:800;border:1px solid #0BB4AC">${c.label}</th>`).join("")}
+        </tr>
+      </thead>
+      <tbody>
+        ${rows.map((row, i) => `
+          <tr style="background:${i % 2 ? "#f8fafc" : "#fff"}">
+            ${columns.map(c => `<td style="padding:6px;text-align:center;border:1px solid #e2e8f0">${row[c.key] ?? ""}</td>`).join("")}
+          </tr>`).join("")}
+      </tbody>
+    </table>`;
+  document.body.appendChild(wrap);
+
+  try {
+    const canvas = await window.html2canvas(wrap, { scale: 2, backgroundColor: "#ffffff" });
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({ orientation: "p", unit: "mm", format: "a4" });
+    const pageW = pdf.internal.pageSize.getWidth();
+    const pageH = pdf.internal.pageSize.getHeight();
+    const imgW = pageW;
+    const imgH = (canvas.height * imgW) / canvas.width;
+    const imgData = canvas.toDataURL("image/jpeg", 0.92);
+    let heightLeft = imgH, position = 0;
+    pdf.addImage(imgData, "JPEG", 0, position, imgW, imgH);
+    heightLeft -= pageH;
+    while (heightLeft > 0) {
+      position = heightLeft - imgH;
+      pdf.addPage();
+      pdf.addImage(imgData, "JPEG", 0, position, imgW, imgH);
+      heightLeft -= pageH;
+    }
+    pdf.save(filename || "تصدير.pdf");
+  } catch (e) {
+    toast("تعذّر إنشاء PDF: " + (e.message || ""), "error");
+  } finally {
+    document.body.removeChild(wrap);
+  }
+}
+
 /* ── Cache status indicator ── */
 export function showCacheStatus(isCached) {
   let el = document.getElementById("cache-status");
@@ -314,3 +381,81 @@ export class DataList {
 
 // backward-compat alias
 export { DataList as DataTable };
+
+/* ── Global Search (بحث موحّد) ── */
+export function initGlobalSearch(fetchAllFn) {
+  const topbar = document.querySelector(".tb-actions");
+  if (!topbar || document.getElementById("gs-btn")) return;
+
+  const btn = document.createElement("button");
+  btn.className = "theme-toggle";
+  btn.id = "gs-btn";
+  btn.type = "button";
+  btn.title = "بحث شامل";
+  btn.innerHTML = '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>';
+  topbar.insertBefore(btn, topbar.firstChild);
+
+  const overlay = document.createElement("div");
+  overlay.className = "gs-overlay";
+  overlay.innerHTML = `
+    <div class="gs-box">
+      <div class="gs-input-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input id="gs-input" placeholder="ابحث عن ترعة، كوبري، بئر…" autocomplete="off"/>
+      </div>
+      <div class="gs-results" id="gs-results"><div class="gs-hint">اكتب حرفين على الأقل للبحث</div></div>
+    </div>`;
+  document.body.appendChild(overlay);
+
+  const input   = overlay.querySelector("#gs-input");
+  const results = overlay.querySelector("#gs-results");
+  let allItems  = null;
+  let loading   = false;
+
+  async function ensureData() {
+    if (allItems || loading) return;
+    loading = true;
+    results.innerHTML = '<div class="gs-hint">جارِ التحميل…</div>';
+    try { allItems = await fetchAllFn(); }
+    catch { allItems = []; results.innerHTML = '<div class="gs-hint">تعذّر تحميل البيانات</div>'; }
+    loading = false;
+    render(input.value);
+  }
+
+  function render(q) {
+    if (!allItems) return;
+    const query = q.trim().toLowerCase();
+    if (query.length < 2) { results.innerHTML = '<div class="gs-hint">اكتب حرفين على الأقل للبحث</div>'; return; }
+    const matches = allItems.filter(it => (it.name || "").toLowerCase().includes(query)).slice(0, 30);
+    if (!matches.length) { results.innerHTML = '<div class="gs-hint">لا توجد نتائج</div>'; return; }
+    results.innerHTML = matches.map(m => `
+      <a class="gs-item" href="${m.page}?q=${encodeURIComponent(m.q || m.name)}">
+        <span>${m.name}</span>
+        <span class="gs-badge">${m.type}</span>
+      </a>`).join("");
+  }
+
+  function open() {
+    overlay.classList.add("show");
+    input.value = "";
+    results.innerHTML = '<div class="gs-hint">اكتب حرفين على الأقل للبحث</div>';
+    setTimeout(() => input.focus(), 50);
+    ensureData();
+  }
+  function close() { overlay.classList.remove("show"); }
+
+  btn.addEventListener("click", open);
+  overlay.addEventListener("click", e => { if (e.target === overlay) close(); });
+  document.addEventListener("keydown", e => {
+    const tag = document.activeElement?.tagName;
+    if (e.key === "/" && tag !== "INPUT" && tag !== "TEXTAREA" && !overlay.classList.contains("show")) {
+      e.preventDefault(); open();
+    }
+    if (e.key === "Escape") close();
+  });
+  let debounce;
+  input.addEventListener("input", () => {
+    clearTimeout(debounce);
+    debounce = setTimeout(() => render(input.value), 150);
+  });
+}

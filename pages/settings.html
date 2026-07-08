@@ -5,7 +5,7 @@
   <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>سُقيا — الإعدادات</title>
   <link rel="icon" type="image/svg+xml" href="../assets/icons/favicon.svg"/>
-  <link rel="stylesheet" href="../css/style.css?v=1.1.4"/>
+  <link rel="stylesheet" href="../css/style.css?v=1.1.5"/>
   <style>
     .settings-tabs{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:20px;overflow-x:auto}
     .stab{padding:11px 18px;font-size:13px;font-weight:800;color:var(--text-3);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap;transition:.18s;font-family:inherit;background:none;border-top:none;border-left:none;border-right:none}
@@ -45,7 +45,7 @@
   <aside class="sidebar" id="sidebar">
     <div class="sb-brand">
       <div class="sb-logo"><svg viewBox="0 0 24 24" fill="none" stroke="#0c1a33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3.4 4 6 7.6 6 11a6 6 0 0 1-12 0c0-3.4 2.6-7 6-11Z"/><path d="M9.2 14.2c.4 1.6 1.6 2.6 3.2 2.8"/></svg></div>
-      <div class="sb-brand-text"><h2>سُقيا</h2><span>إدارة أصول ري الجيزة &nbsp;<em class="sb-version">v1.1.4</em></span></div>
+      <div class="sb-brand-text"><h2>سُقيا</h2><span>إدارة أصول ري الجيزة &nbsp;<em class="sb-version">v1.1.5</em></span></div>
     </div>
     <nav class="sb-nav">
       <div class="sb-section">الرئيسية</div>
@@ -110,17 +110,18 @@
             <div style="font-size:11.5px;color:rgba(255,255,255,.6);margin-top:2px">للأمانة العامة لروابط مستخدمي المياه بالجيزة</div>
             <div style="font-size:10px;color:rgba(255,255,255,.35);margin-top:4px">الإدارة العامة لري الجيزة — وزارة الموارد المائية والري</div>
           </div>
-          <span class="badge" style="background:rgba(11,180,172,.25);color:var(--gold-lt);font-size:11px">v1.1.4</span>
+          <span class="badge" style="background:rgba(11,180,172,.25);color:var(--gold-lt);font-size:11px">v1.1.5</span>
         </div>
       </div>
 
       <!-- Tabs -->
       <div class="settings-tabs">
         <button class="stab active" data-tab="account">👤 الحساب</button>
-        <button class="stab" data-tab="users">👥 المستخدمون</button>
-        <button class="stab" data-tab="database">🗄️ قاعدة البيانات</button>
+        <button class="stab admin-only-tab" data-tab="users">👥 المستخدمون</button>
+        <button class="stab admin-only-tab" data-tab="activity">📋 سجل النشاط</button>
+        <button class="stab admin-only-tab" data-tab="database">🗄️ قاعدة البيانات</button>
         <button class="stab" data-tab="health">💊 صحة النظام</button>
-        <button class="stab" data-tab="seed">📦 الاستيراد الأصلي</button>
+        <button class="stab admin-only-tab" data-tab="seed">📦 الاستيراد الأصلي</button>
       </div>
 
       <!-- ═══ Tab: الحساب ═══ -->
@@ -134,7 +135,7 @@
                 <span class="badge badge-amber" style="margin-top:5px">مشرف النظام</span></div>
             </div>
             <div class="info-row"><span class="info-key">اسم المستخدم</span><span class="info-val" id="acc-username">—</span></div>
-            <div class="info-row"><span class="info-key">إصدار التطبيق</span><span class="info-val">v1.1.4</span></div>
+            <div class="info-row"><span class="info-key">إصدار التطبيق</span><span class="info-val">v1.1.5</span></div>
             <div class="info-row"><span class="info-key">المطوِّر</span><span class="info-val">المكتب الإعلامي التابع للأمانة العامة</span></div>
             <div class="info-row"><span class="info-key">الجهة</span><span class="info-val">الأمانة العامة لروابط مستخدمي المياه بالجيزة</span></div>
           </div>
@@ -159,6 +160,17 @@
             <button class="btn btn-primary btn-sm" id="btn-add-user">+ مستخدم جديد</button>
           </div>
           <div class="card-body" id="users-list"><div class="loading"><div class="spinner"></div><span>تحميل…</span></div></div>
+        </div>
+      </div>
+
+      <!-- ═══ Tab: سجل النشاط ═══ -->
+      <div class="stab-panel" id="tab-activity">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">📋 سجل النشاط <span class="badge badge-gray" id="activity-count">…</span></span>
+            <button class="btn btn-secondary btn-sm" id="btn-refresh-activity">↻ تحديث</button>
+          </div>
+          <div class="card-body" id="activity-list"><div class="loading"><div class="spinner"></div><span>تحميل…</span></div></div>
         </div>
       </div>
 
@@ -299,6 +311,14 @@
       <div class="form-group"><label class="form-label">اسم المستخدم (إنجليزي) *</label><input class="form-input" id="f-username" placeholder="ahmed_admin" autocapitalize="none"/></div>
       <div class="form-group"><label class="form-label">الاسم الكامل *</label><input class="form-input" id="f-name" placeholder="أحمد محمد"/></div>
       <div class="form-group"><label class="form-label">كلمة المرور *</label><input class="form-input" id="f-password" type="password" placeholder="6 أحرف على الأقل"/></div>
+      <div class="form-group">
+        <label class="form-label">الصلاحية *</label>
+        <select class="form-input" id="f-role">
+          <option value="viewer">👁️ مشاهد — عرض فقط</option>
+          <option value="editor" selected>✏️ محرر — إضافة وتعديل البيانات</option>
+          <option value="admin">👑 مسؤول — كل الصلاحيات + إدارة المستخدمين</option>
+        </select>
+      </div>
       <div class="form-error" id="add-error" style="display:none"></div>
     </div>
     <div class="modal-footer">
@@ -317,6 +337,14 @@
       <div class="form-group"><label class="form-label">اسم المستخدم</label><input class="form-input" id="ef-username" disabled/></div>
       <div class="form-group"><label class="form-label">الاسم الكامل</label><input class="form-input" id="ef-name"/></div>
       <div class="form-group"><label class="form-label">كلمة مرور جديدة (فارغة = بدون تغيير)</label><input class="form-input" id="ef-password" type="password" placeholder="اتركها فارغة للإبقاء"/></div>
+      <div class="form-group">
+        <label class="form-label">الصلاحية</label>
+        <select class="form-input" id="ef-role">
+          <option value="viewer">👁️ مشاهد — عرض فقط</option>
+          <option value="editor">✏️ محرر — إضافة وتعديل البيانات</option>
+          <option value="admin">👑 مسؤول — كل الصلاحيات + إدارة المستخدمين</option>
+        </select>
+      </div>
       <div class="form-error" id="edit-error" style="display:none"></div>
     </div>
     <div class="modal-footer" style="justify-content:space-between">
@@ -331,8 +359,8 @@
 
 <script src="../data/seed_data.js"></script>
 <script type="module">
-import { requireAuth, clearSession, getUsers, createUser, updateUser, deleteUser, hashPassword, addRecord, deleteRecord, getCollection, verifyPassword, exportAllData, exportCollectionData, importCollectionData, checkFirebaseHealth, forceSyncAll, getLastSyncAll, getLastSync, clearCache, deleteAllCollectionData, getCollectionCount } from "../js/firebase-config.js?v=1.1.4";
-import { wireThemeToggle, arabicDate, openModal, closeModal, toast, initials, confirmDelete } from "../js/shared.js?v=1.1.4";
+import { requireAuth, clearSession, getUsers, createUser, updateUser, deleteUser, hashPassword, addRecord, deleteRecord, getCollection, verifyPassword, exportAllData, exportCollectionData, importCollectionData, checkFirebaseHealth, forceSyncAll, getLastSyncAll, getLastSync, clearCache, deleteAllCollectionData, getCollectionCount, logActivity, getActivityLog } from "../js/firebase-config.js?v=1.1.5";
+import { wireThemeToggle, arabicDate, openModal, closeModal, toast, initials, confirmDelete, initGlobalSearch } from "../js/shared.js?v=1.1.5";
 
 const user = requireAuth();
 
@@ -346,11 +374,30 @@ const user = requireAuth();
   const sb=document.getElementById('sidebar'),ov=document.getElementById('sb-overlay'),mb=document.getElementById('mob-btn');
   if(mb)mb.addEventListener('click',()=>{sb.classList.toggle('open');ov.classList.toggle('show');});
   if(ov)ov.addEventListener('click',()=>{sb.classList.remove('open');ov.classList.remove('show');});
-  document.getElementById('btn-logout').addEventListener('click',()=>{clearSession();location.href='../index.html';});
+  document.getElementById('btn-logout').addEventListener('click',()=>{logActivity('تسجيل خروج');clearSession();location.href='../index.html';});
 })();
 
 wireThemeToggle();
 document.getElementById('tb-date').textContent = arabicDate();
+
+// ── إخفاء التبويبات الحساسة عن غير المسؤولين ──
+// ملاحظة: نتحقق فقط من الأدوار الجديدة المقيَّدة (viewer/editor) صراحة،
+// حتى لا نحجب حسابات قديمة كانت بدون role محدد أو بقيمة 'user' القديمة.
+if (user.role === 'viewer' || user.role === 'editor') {
+  document.querySelectorAll('.admin-only-tab').forEach(el => el.style.display = 'none');
+}
+
+initGlobalSearch(async () => {
+  const [specs, lined, bridges, wells] = await Promise.all([
+    getCollection('specs'), getCollection('linedCanals'), getCollection('bridges'), getCollection('wells')
+  ]);
+  return [
+    ...specs.map(r => ({ name: r.name || r.eng || '—', type: 'ترعة', page: 'canals.html', q: r.name || r.eng })),
+    ...lined.map(r => ({ name: r.name || '—', type: 'ترعة مبطنة', page: 'canals.html', q: r.name })),
+    ...bridges.map(r => ({ name: r.name || '—', type: 'كوبري', page: 'bridges.html', q: r.name })),
+    ...wells.map(r => ({ name: r.name || '—', type: 'بئر', page: 'wells.html', q: r.name })),
+  ];
+});
 
 // ── Account info ──
 document.getElementById('my-avatar').textContent = initials(user.name);
@@ -367,9 +414,12 @@ document.querySelectorAll('.stab').forEach(btn => {
     document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
     if(btn.dataset.tab === 'users') loadUsers();
     if(btn.dataset.tab === 'health') loadSyncInfo();
+    if(btn.dataset.tab === 'activity') loadActivity();
   });
 });
 
+const ROLE_LABEL = { admin: '👑 مسؤول', editor: '✏️ محرر', viewer: '👁️ مشاهد' };
+const ROLE_BADGE = { admin: 'badge-green', editor: 'badge-blue', viewer: 'badge-gray' };
 // ══ USERS ══════════════════════════════
 async function loadUsers() {
   const list = await getUsers();
@@ -380,18 +430,49 @@ async function loadUsers() {
     <div class="user-row">
       <div class="u-avatar ${u.id===user.id?'owner':''}">${initials(u.name)}</div>
       <div class="u-info"><div class="u-name">${u.name}</div><div class="u-username">@${u.id}</div></div>
-      <span class="badge badge-blue" style="font-size:10px">مستخدم</span>
+      <span class="badge ${ROLE_BADGE[u.role]||'badge-gray'}" style="font-size:10px">${ROLE_LABEL[u.role]||'محرر'}</span>
       <div class="u-actions">
-        <button class="btn btn-secondary btn-sm btn-icon" data-uid="${u.id}" data-name="${u.name}" title="تعديل">✏️</button>
+        <button class="btn btn-secondary btn-sm btn-icon" data-uid="${u.id}" data-name="${u.name}" data-role="${u.role||'editor'}" title="تعديل">✏️</button>
       </div>
     </div>`).join('');
   container.querySelectorAll('[data-uid]').forEach(btn=>{
-    btn.addEventListener('click',()=>openEditModal({id:btn.dataset.uid,name:btn.dataset.name}));
+    btn.addEventListener('click',()=>openEditModal({id:btn.dataset.uid,name:btn.dataset.name,role:btn.dataset.role}));
   });
 }
 
+// ══ ACTIVITY LOG ══════════════════════════
+const ACTIVITY_ICON = { 'تسجيل دخول':'🟢', 'تسجيل خروج':'🔴' };
+function timeAgo(ts) {
+  if (!ts) return '—';
+  const date = ts.toDate ? ts.toDate() : new Date(ts);
+  const diffSec = Math.max(0, Math.round((Date.now() - date.getTime()) / 1000));
+  if (diffSec < 60) return 'الآن';
+  if (diffSec < 3600) return `منذ ${Math.floor(diffSec/60)} دقيقة`;
+  if (diffSec < 86400) return `منذ ${Math.floor(diffSec/3600)} ساعة`;
+  return date.toLocaleDateString('ar-EG', { year:'numeric', month:'long', day:'numeric' });
+}
+async function loadActivity() {
+  const container = document.getElementById('activity-list');
+  container.innerHTML = '<div class="loading"><div class="spinner"></div><span>تحميل…</span></div>';
+  try {
+    const list = await getActivityLog(100);
+    document.getElementById('activity-count').textContent = list.length + ' حدث';
+    if (!list.length) { container.innerHTML = '<div class="empty"><div class="icon">📋</div><p>لا يوجد نشاط مسجَّل بعد</p></div>'; return; }
+    container.innerHTML = list.map(a => `
+      <div class="user-row">
+        <div class="u-avatar">${ACTIVITY_ICON[a.action] || '📌'}</div>
+        <div class="u-info"><div class="u-name">${a.name || '—'} <span style="font-weight:600;color:var(--text-3)">— ${a.action}</span></div><div class="u-username">@${a.username || '—'}</div></div>
+        <span class="badge badge-gray" style="font-size:10px">${timeAgo(a.ts)}</span>
+      </div>`).join('');
+  } catch (e) {
+    container.innerHTML = `<div class="empty"><div class="icon">⚠️</div><p>تعذّر تحميل سجل النشاط</p></div>`;
+  }
+}
+document.getElementById('btn-refresh-activity').addEventListener('click', loadActivity);
+
 document.getElementById('btn-add-user').addEventListener('click',()=>{
   ['f-username','f-name','f-password'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('f-role').value='editor';
   document.getElementById('add-error').style.display='none';
   openModal('modal-add');
 });
@@ -402,13 +483,14 @@ document.getElementById('btn-save-add').addEventListener('click',async()=>{
   const username=document.getElementById('f-username').value.trim().toLowerCase();
   const name=document.getElementById('f-name').value.trim();
   const password=document.getElementById('f-password').value;
+  const role=document.getElementById('f-role').value;
   const errEl=document.getElementById('add-error');
   if(!username||!name||!password){errEl.textContent='⚠️ يرجى تعبئة جميع الحقول';errEl.style.display='block';return;}
   if(password.length<6){errEl.textContent='⚠️ كلمة المرور 6 أحرف على الأقل';errEl.style.display='block';return;}
   if(!/^[a-z0-9_]+$/.test(username)){errEl.textContent='⚠️ اسم المستخدم: حروف إنجليزية + أرقام + _ فقط';errEl.style.display='block';return;}
   const btn=document.getElementById('btn-save-add');
   btn.disabled=true;btn.textContent='⏳…';
-  try{await createUser(username,password,name,'user');closeModal('modal-add');toast('تم إنشاء المستخدم ✓','success');loadUsers();}
+  try{await createUser(username,password,name,role);closeModal('modal-add');toast('تم إنشاء المستخدم ✓','success');loadUsers();}
   catch(e){errEl.textContent='⚠️ '+e.message;errEl.style.display='block';}
   finally{btn.disabled=false;btn.textContent='✅ إنشاء';}
 });
@@ -420,6 +502,7 @@ function openEditModal(u){
   document.getElementById('ef-username').value=u.id;
   document.getElementById('ef-name').value=u.name;
   document.getElementById('ef-password').value='';
+  document.getElementById('ef-role').value=u.role||'editor';
   document.getElementById('edit-error').style.display='none';
   const delBtn=document.getElementById('btn-delete-user');
   delBtn.dataset.confirming='0';delBtn.textContent='🗑️ حذف';delBtn.className='btn btn-secondary btn-sm';
@@ -431,11 +514,13 @@ document.getElementById('btn-cancel-edit').addEventListener('click',()=>closeMod
 document.getElementById('btn-save-edit').addEventListener('click',async()=>{
   const name=document.getElementById('ef-name').value.trim();
   const password=document.getElementById('ef-password').value;
+  const role=document.getElementById('ef-role').value;
   const errEl=document.getElementById('edit-error');
   if(!name){errEl.textContent='⚠️ الاسم مطلوب';errEl.style.display='block';return;}
+  if(editTarget.id===user.id && role!==user.role){errEl.textContent='⚠️ لا يمكنك تغيير صلاحيتك الخاصة';errEl.style.display='block';return;}
   const btn=document.getElementById('btn-save-edit');btn.disabled=true;btn.textContent='⏳…';
   try{
-    const updates={name};
+    const updates={name,role};
     if(password.length>=6)updates.passwordHash=await hashPassword(password);
     await updateUser(editTarget.id,updates);
     closeModal('modal-edit');toast('تم التعديل ✓','success');loadUsers();
@@ -495,7 +580,7 @@ document.querySelectorAll('[data-col]').forEach(btn=>{
     const statusEl=document.getElementById('export-status');
     try{
       const data=await exportCollectionData(col);
-      const backup={version:'1.1.4',collection:col,count:data.length,exportedAt:new Date().toISOString(),data};
+      const backup={version:'1.1.5',collection:col,count:data.length,exportedAt:new Date().toISOString(),data};
       const blob=new Blob([JSON.stringify(backup,null,2)],{type:'application/json'});
       const a=document.createElement('a');a.href=URL.createObjectURL(blob);
       a.download=`suqia_${col}_${new Date().toISOString().slice(0,10)}.json`;

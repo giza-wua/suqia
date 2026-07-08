@@ -1,5 +1,23 @@
-# سُقيا 💧
-### منصة إدارة أصول ري الجيزة
+<div dir="rtl">
+
+# 💧 سُقيا — منصة إدارة أصول ري الجيزة
+
+**الإصدار:** v1.1.5 | **الجهة:** الإدارة العامة لري الجيزة — وزارة الموارد المائية والري
+
+> هذا هو ملف الـ README الرئيسي في جذر المشروع. للتوثيق الأشمل (سجل التغييرات الكامل، دليل الإعداد والنشر) راجع مجلد [`docs/`](docs/).
+
+---
+
+## نظرة عامة
+
+**سُقيا** منصة ويب متكاملة لإدارة وتوثيق الأصول الهندسية لري محافظة الجيزة، مبنية بالكامل بـ Vanilla JS (بدون frameworks) وقاعدة بيانات Firebase Firestore، وتدعم الموبايل والكمبيوتر بنفس الجودة.
+
+| الوحدة | الوصف | Firestore Collection |
+|--------|-------|----------------------|
+| 🌊 ترع الإدارة | الأورنيك الهندسي للترع (مقاطع + مناوبات + تبطين) | `specs` + `linedCanals` |
+| 🌉 الكباري | كباري الترع والمصارف | `bridges` |
+| 💧 الآبار الجوفية | آبار المياه الجوفية وبيانات الطلمبات | `wells` |
+| ⚙️ الإعدادات | إدارة المستخدمين، قاعدة البيانات، صحة النظام، الاستيراد | `users` |
 
 ---
 
@@ -7,120 +25,113 @@
 
 ```
 suqia/
-├── index.html              ← صفحة الدخول
+├── README.md            ← أنت هنا
+├── CHANGELOG.md          ← سجل التغييرات (نسخة جذر المشروع)
+├── assets/
+│   ├── fonts/            ← خطوط Cairo محلية (woff2)
+│   └── icons/            ← favicon.svg
 ├── css/
-│   └── style.css           ← كل التصميم
+│   ├── 01-tokens.css     ← متغيرات التصميم وألوان الهوية
+│   ├── 02-base.css       ← Reset وعناصر أساسية
+│   ├── 03-layout.css     ← Sidebar + Topbar + Shell + Bottom Nav (موبايل)
+│   ├── 04-components.css ← كروت + أزرار + DataList + Badges
+│   ├── 05-pages.css      ← Modal + Forms + Dashboard + Media Queries للموبايل
+│   └── style.css         ← @import فقط
+├── data/
+│   └── seed_data.js      ← بيانات الاستيراد الأصلية
+├── docs/                 ← التوثيق التفصيلي
+│   ├── README.md
+│   ├── CHANGELOG.md
+│   └── SETUP.md          ← دليل الإعداد والنشر خطوة بخطوة
 ├── js/
-│   ├── firebase-config.js  ← الاتصال بـ Firebase + Auth + CRUD
-│   └── shared.js           ← مكونات مشتركة (جدول، modal، toast)
-└── pages/
-    ├── dashboard.html      ← لوحة التحكم
-    ├── specs.html          ← الأورنيك الهندسي
-    ├── bridges.html        ← الكباري
-    ├── canals.html         ← الترع المبطنة
-    ├── wells.html          ← الآبار الجوفية
-    └── settings.html       ← إدارة المستخدمين (admin فقط)
+│   ├── firebase-config.js ← Firebase + Auth + Cache
+│   ├── shared.js           ← UI helpers + DataList class
+│   └── sidebar.js          ← (قديم — الـ sidebar الآن inline)
+├── pages/
+│   ├── dashboard.html    ← لوحة التحكم الرئيسية
+│   ├── canals.html       ← ترع الإدارة (موحّد)
+│   ├── bridges.html      ← الكباري
+│   ├── wells.html        ← الآبار الجوفية
+│   ├── settings.html     ← إدارة المستخدمين + الاستيراد
+│   └── specs.html        ← redirect → canals.html
+└── index.html            ← صفحة تسجيل الدخول
 ```
 
 ---
 
-## خطوات الإعداد
+## التشغيل السريع
 
-### 1 — Firebase
+### المتطلبات
+- مشروع Firebase مع Firestore مُفعَّل
+- خادم ويب ثابت (VS Code Live Server / Python / Nginx)
 
-1. افتح [console.firebase.google.com](https://console.firebase.google.com)
-2. **Add project** → اكتب اسم → Continue × 2 → Create
-3. **Authentication** → Get started → Email/Password → **لا تفعّل** (مش محتاجها)
-4. **Firestore Database** → Create database → **Start in test mode** → Enable
-5. ⚙️ Project Settings → Your apps → `</>` Web → Register
-6. انسخ الـ config في `js/firebase-config.js`
+### الخطوات
 
-### 2 — إضافة أول مدير (مرة واحدة فقط)
+1. **ضبط Firebase** — في `js/firebase-config.js` ضع بيانات مشروعك.
+2. **ضبط Firestore Rules** — راجع [`docs/SETUP.md`](docs/SETUP.md#3-firestore-security-rules).
+3. **تشغيل الخادم محلياً:**
+   ```bash
+   python -m http.server 7070
+   # أو
+   npx serve .
+   ```
+4. **أول تسجيل دخول:** `maged` / `maged@2025`
+5. **استيراد البيانات:** الإعدادات ← ابدأ الاستيراد
 
-في **Firestore Console**:
-- اضغط **Start collection** → ID: `users`
-- Document ID: `admin` (أو أي اسم مستخدم تريده)
-- أضف الحقول:
-
-```
-name         → (string) → ماجد محمد
-role         → (string) → admin
-passwordHash → (string) → [انظر تعليمات الهاش أدناه]
-```
-
-#### إزاي تعمل الهاش للباسورد؟
-
-افتح المتصفح → Developer Tools (F12) → Console، واكتب:
-
-```javascript
-async function hash(p) {
-  const data = new TextEncoder().encode(p + "suqia_salt_giza_2025");
-  const buf = await crypto.subtle.digest("SHA-256", data);
-  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,"0")).join("");
-}
-hash("باسورد_هنا").then(console.log)
-```
-
-انسخ الناتج وحطه في حقل `passwordHash` في Firestore.
-
-### 3 — Firestore Rules (مهم للأمان)
-
-في Firestore → Rules، ضع:
-
-```
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    match /{document=**} {
-      allow read, write: if true;
-    }
-  }
-}
-```
-
-> ملاحظة: ده للتطوير. للإنتاج تقدر تضيق الصلاحيات لاحقاً.
-
-### 4 — التشغيل المحلي
-
-```bash
-cd suqia
-python3 -m http.server 8000
-```
-
-افتح: `http://localhost:8000`
-
-### 5 — رفع على GitHub Pages
-
-```bash
-git init
-git add .
-git commit -m "سُقيا v1.0"
-git remote add origin https://github.com/USERNAME/suqia.git
-git push -u origin main
-```
-
-في GitHub: Settings → Pages → Source: main → / (root) → Save
-
-الموقع هيكون على:
-`https://USERNAME.github.io/suqia/`
+للتفاصيل الكاملة (إدارة المستخدمين، بنية Firestore، استكشاف الأخطاء) راجع [`docs/SETUP.md`](docs/SETUP.md).
 
 ---
 
-## المستخدمون
+## دعم الموبايل
 
-| الدور | الصلاحيات |
-|-------|-----------|
-| `admin` | عرض + إضافة + تعديل + حذف + إدارة المستخدمين |
-| `viewer` | عرض فقط |
+منذ v1.1.4 التطبيق مبني mobile-first بالكامل:
+- شريط تنقل سفلي ثابت (Bottom Navigation) في كل الصفحات
+- مساحات لمس مريحة لكل الأزرار (≥40px)
+- كل الصفحات مفحوصة فعلياً على عرض 375px بدون أي تمدد أفقي أو محتوى مقصوص
 
 ---
 
-## البيانات في Firestore
+## نظام المصادقة
 
-| Collection | المحتوى |
-|------------|---------|
-| `users` | المستخدمون (username = document ID) |
-| `specs` | الأورنيك الهندسي |
-| `bridges` | الكباري |
-| `linedCanals` | الترع المبطنة |
-| `wells` | الآبار الجوفية |
+- مصادقة مخصصة عبر Firestore (بدون Firebase Auth)
+- كلمات المرور مُشفَّرة بـ SHA-256 مع salt ثابت
+- جلسات محفوظة في `sessionStorage`
+- المستخدم الأول: `maged` — يُضاف تلقائياً عند أول دخول
+
+> ⚠️ **ملاحظة أمنية:** بما أن المصادقة مخصصة (مش Firebase Auth)، قواعد Firestore الحالية (`allow read, write: if true`) لا يمكنها التحقق من هوية المستخدم على مستوى القاعدة نفسها. الحماية الحقيقية بالكامل تتطلب إما دمج Firebase Auth أو طبقة Cloud Functions وسيطة — وهذا قرار معماري أكبر ننصح بمناقشته منفصلاً.
+
+---
+
+## التقنيات المستخدمة
+
+| التقنية | الاستخدام |
+|---------|-----------|
+| Firebase Firestore | قاعدة البيانات الرئيسية |
+| Vanilla JS (ES Modules) | منطق التطبيق بدون frameworks |
+| خط Cairo (محلي) | واجهة عربية RTL |
+| ExcelJS | تصدير Excel |
+| CSS Variables | نظام تصميم متكيّف (فاتح/داكن) + متجاوب للموبايل |
+
+---
+
+## خطة التطوير القادمة (Roadmap)
+
+| الحالة | الميزة |
+|--------|--------|
+| ✅ تم | شريط تنقل سفلي كامل للموبايل |
+| ✅ تم | إصلاح تمدد صفحة الإعدادات على الشاشات الصغيرة |
+| ✅ تم | بحث موحّد (Global Search) في كل الصفحات |
+| ✅ تم | تصدير PDF بجانب Excel |
+| ✅ تم | سجل نشاط/تسجيل دخول |
+| ✅ تم | صلاحيات أدق بين المستخدمين (مسؤول/محرر/مشاهد) |
+| ⏳ قيد النقاش | خريطة تفاعلية موحّدة لكل الأصول |
+| ⏳ قيد النقاش | دعم Offline كامل عبر IndexedDB |
+| ⏳ يحتاج قرار معماري | Firebase Auth حقيقي بدل المصادقة المخصصة |
+
+---
+
+## الترخيص
+
+© 2025 الإدارة العامة لري الجيزة. جميع الحقوق محفوظة.
+
+</div>
