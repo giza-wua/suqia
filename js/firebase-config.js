@@ -131,7 +131,9 @@ async function loginUser(username, password) {
     if (authErr.code !== "auth/user-not-found" && authErr.code !== "auth/invalid-credential") {
       if (authErr.code === "auth/wrong-password") return { ok: false, error: "كلمة المرور غير صحيحة" };
       if (authErr.code === "auth/too-many-requests") return { ok: false, error: "محاولات كتير غلط — حاول تاني بعد شوية" };
-      return { ok: false, error: "خطأ في الاتصال بالخادم" };
+      if (authErr.code === "auth/operation-not-allowed") return { ok: false, error: "⚠️ لازم تفعّل Email/Password من Firebase Console ← Authentication ← Sign-in method أولاً (راجع SETUP.md)" };
+      if (authErr.code === "auth/network-request-failed") return { ok: false, error: "تعذّر الاتصال بالإنترنت — تحقق من الشبكة" };
+      return { ok: false, error: `خطأ في الاتصال بالخادم (${authErr.code || authErr.message})` };
     }
     // 2) لسه مفيش حساب Firebase Auth بالإيميل ده — يمكن مستخدم قديم لسه ما اتنقلش
     const legacySnap = await getDoc(doc(db, "users", uid));
@@ -393,7 +395,7 @@ async function exportCollectionData(col) {
 
 async function exportAllData() {
   const COLS = ['specs', 'bridges', 'linedCanals', 'wells'];
-  const result = { version: '1.1.8', exportedAt: new Date().toISOString(), collections: {} };
+  const result = { version: '1.1.9', exportedAt: new Date().toISOString(), collections: {} };
   for (const col of COLS) {
     const snap = await getDocs(collection(db, col));
     result.collections[col] = snap.docs.map(d => ({ _id: d.id, ...d.data() }));
