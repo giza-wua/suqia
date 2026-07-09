@@ -5,7 +5,7 @@
   <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>سُقيا — ترع الإدارة</title>
   <link rel="icon" type="image/svg+xml" href="../assets/icons/favicon.svg"/>
-  <link rel="stylesheet" href="../css/style.css?v=1.1.5"/>
+  <link rel="stylesheet" href="../css/style.css?v=1.1.6"/>
   <style>
     .rot-badge{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:6px;font-size:11px;font-weight:900;margin-left:3px}
     .rot-a{background:rgba(11,180,172,.15);color:var(--teal-dk)}
@@ -27,7 +27,7 @@
       <div class="sb-logo">
         <svg viewBox="0 0 24 24" fill="none" stroke="#0c1a33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3.4 4 6 7.6 6 11a6 6 0 0 1-12 0c0-3.4 2.6-7 6-11Z"/><path d="M9.2 14.2c.4 1.6 1.6 2.6 3.2 2.8"/></svg>
       </div>
-      <div class="sb-brand-text"><h2>سُقيا</h2><span>إدارة أصول ري الجيزة &nbsp;<em class="sb-version">v1.1.5</em></span></div>
+      <div class="sb-brand-text"><h2>سُقيا</h2><span>إدارة أصول ري الجيزة &nbsp;<em class="sb-version">v1.1.6</em></span></div>
     </div>
     <nav class="sb-nav">
       <div class="sb-section">الرئيسية</div>
@@ -36,6 +36,7 @@
       <a class="nav-item" href="canals.html"><svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9.5c2-2.7 4-2.7 6 0s4 2.7 6 0 4-2.7 6 0"/><path d="M2 15.5c2-2.7 4-2.7 6 0s4 2.7 6 0 4-2.7 6 0"/></svg>ترع الإدارة</a>
       <a class="nav-item" href="bridges.html"><svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 18.5h20"/><path d="M4.5 18.5v-4a7.5 7.5 0 0 1 15 0v4"/><path d="M8 18.5v-3.5"/><path d="M16 18.5v-3.5"/></svg>الكباري</a>
       <a class="nav-item" href="wells.html"><svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v3M12 18.5v3"/></svg>الآبار الجوفية</a>
+      <a class="nav-item" href="map.html"><svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 20l-6-3V4l6 3 6-3 6 3v13l-6-3-6 3z"/><path d="M9 7v13M15 4v13"/></svg>الخريطة</a>
       <div class="sb-section">الإدارة</div>
       <a class="nav-item" href="settings.html"><svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M3 12h3M18 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>الإعدادات</a>
     </nav>
@@ -66,6 +67,10 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v3M12 18.5v3"/></svg>
       آبار
     </a>
+    <a class="bn-item" href="map.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 20l-6-3V4l6 3 6-3 6 3v13l-6-3-6 3z"/><path d="M9 7v13M15 4v13"/></svg>
+      خريطة
+    </a>
     <a class="bn-item" href="settings.html">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M3 12h3M18 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>
       إعدادات
@@ -82,7 +87,7 @@
       </div>
       <div class="tb-actions">
         <div class="tb-date" id="tb-date"></div>
-        <div class="tb-live"><div class="dot"></div><span>متصل</span></div>
+        <div class="tb-live" id="tb-live"><div class="dot"></div><span>متصل</span></div>
         <button class="theme-toggle" id="theme-toggle" title="تبديل الوضع"></button>
         <button class="btn btn-primary btn-sm admin-only" id="btn-add" style="display:none">
           <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> إضافة
@@ -225,8 +230,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script type="module">
-import { requireAuth, clearSession, getCollection, addRecord, updateRecord, deleteRecord, logActivity } from "../js/firebase-config.js?v=1.1.5";
-import { wireThemeToggle, arabicDate, DataList, openModal, closeModal, toast, confirmDelete, wireLocationButton, mapsLinkHtml, exportToExcel, exportToPDF, initGlobalSearch } from "../js/shared.js?v=1.1.5";
+import { requireAuth, clearSession, getCollection, addRecord, updateRecord, deleteRecord, logActivity } from "../js/firebase-config.js?v=1.1.6";
+import { wireThemeToggle, arabicDate, DataList, openModal, closeModal, toast, confirmDelete, wireLocationButton, mapsLinkHtml, exportToExcel, exportToPDF, initGlobalSearch, wireConnectionStatus } from "../js/shared.js?v=1.1.6";
 
 const user = requireAuth();
 
@@ -246,6 +251,7 @@ const user = requireAuth();
 })();
 
 wireThemeToggle();
+wireConnectionStatus();
 document.getElementById('tb-date').textContent = arabicDate();
 if (user.role !== 'viewer') {
   document.querySelectorAll('.admin-only').forEach(el=>el.style.display='');

@@ -382,6 +382,27 @@ export class DataList {
 // backward-compat alias
 export { DataList as DataTable };
 
+/* ── حالة الاتصال (أونلاين/أوفلاين) ── */
+export function wireConnectionStatus(elId = "tb-live") {
+  const el = document.getElementById(elId);
+  if (!el) return;
+  const dot = el.querySelector(".dot");
+  const label = el.querySelector("span");
+  function update() {
+    const online = navigator.onLine;
+    if (label) label.textContent = online ? "متصل" : "غير متصل";
+    el.style.color = online ? "" : "var(--danger)";
+    el.style.background = online ? "" : "rgba(226,59,59,.1)";
+    if (dot) dot.style.background = online ? "" : "var(--danger)";
+    if (!online) {
+      toast("لا يوجد اتصال بالإنترنت — يتم عرض آخر بيانات محفوظة محلياً", "error");
+    }
+  }
+  window.addEventListener("online", update);
+  window.addEventListener("offline", update);
+  update();
+}
+
 /* ── Global Search (بحث موحّد) ── */
 export function initGlobalSearch(fetchAllFn) {
   const topbar = document.querySelector(".tb-actions");

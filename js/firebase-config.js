@@ -200,22 +200,80 @@ function clearCache(col) {
 }
 
 // ══ Collections CRUD (مع Cache) ══════════
+// ══════════════════════════════════════════
+//  IndexedDB — نسخة احتياطية دائمة (تدعم العمل بدون إنترنت)
+//  - sessionStorage فوق: سريع لكن بيتمسح لما التاب يتقفل
+//  - IndexedDB تحت: أبطأ شوية لكن باقي حتى بعد إعادة فتح المتصفح،
+//    وده اللي بيخلي التطبيق يقدر يعرض آخر بيانات معروفة لما مفيش إنترنت
+// ══════════════════════════════════════════
+const IDB_NAME = "suqia-offline";
+const IDB_VERSION = 1;
+const IDB_STORE = "collections";
+
+function openIDB() {
+  return new Promise((resolve, reject) => {
+    if (!("indexedDB" in window)) { reject(new Error("IndexedDB غير مدعوم")); return; }
+    const req = indexedDB.open(IDB_NAME, IDB_VERSION);
+    req.onupgradeneeded = () => {
+      const idb = req.result;
+      if (!idb.objectStoreNames.contains(IDB_STORE)) idb.createObjectStore(IDB_STORE, { keyPath: "col" });
+    };
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+async function idbSetCollection(col, data) {
+  try {
+    const idb = await openIDB();
+    await new Promise((resolve, reject) => {
+      const tx = idb.transaction(IDB_STORE, "readwrite");
+      tx.objectStore(IDB_STORE).put({ col, data, ts: Date.now() });
+      tx.oncomplete = resolve;
+      tx.onerror = () => reject(tx.error);
+    });
+  } catch { /* IndexedDB مش متاح — تجاهل بصمت، مش حرج */ }
+}
+async function idbGetCollection(col) {
+  try {
+    const idb = await openIDB();
+    return await new Promise((resolve, reject) => {
+      const tx = idb.transaction(IDB_STORE, "readonly");
+      const req = tx.objectStore(IDB_STORE).get(col);
+      req.onsuccess = () => resolve(req.result || null);
+      req.onerror = () => reject(req.error);
+    });
+  } catch { return null; }
+}
+function isOnline() { return typeof navigator !== "undefined" ? navigator.onLine : true; }
+async function getOfflineTimestamp(col) {
+  const rec = await idbGetCollection(col);
+  return rec ? rec.ts : null;
+}
+
 async function getCollection(col) {
   // 1. Cache أولاً
   const cached = getCache(col);
   if (cached) return cached;
 
   // 2. Firebase مع timeout 10 ثواني
-  const snap = await Promise.race([
-    getDocs(collection(db, col)),
-    new Promise((_, reject) =>
-      setTimeout(() => reject(new Error("Firebase timeout — تحقق من صلاحيات Firestore أو الاتصال")), 6000)
-    ),
-  ]);
-  const data = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
-  data.sort((a, b) => String(a.name || "").localeCompare(String(b.name || ""), "ar"));
-  setCache(col, data);
-  return data;
+  try {
+    const snap = await Promise.race([
+      getDocs(collection(db, col)),
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error("Firebase timeout — تحقق من صلاحيات Firestore أو الاتصال")), 6000)
+      ),
+    ]);
+    const data = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    data.sort((a, b) => String(a.name || "").localeCompare(String(b.name || ""), "ar"));
+    setCache(col, data);
+    idbSetCollection(col, data); // نسخة احتياطية دائمة — من غير ما ننتظرها
+    return data;
+  } catch (e) {
+    // 3. مفيش اتصال أو فشل الطلب؟ جرّب آخر نسخة محفوظة محلياً
+    const offline = await idbGetCollection(col);
+    if (offline) return offline.data;
+    throw e;
+  }
 }
 
 async function addRecord(col, data) {
@@ -262,7 +320,7 @@ async function exportCollectionData(col) {
 
 async function exportAllData() {
   const COLS = ['specs', 'bridges', 'linedCanals', 'wells'];
-  const result = { version: '1.1.5', exportedAt: new Date().toISOString(), collections: {} };
+  const result = { version: '1.1.6', exportedAt: new Date().toISOString(), collections: {} };
   for (const col of COLS) {
     const snap = await getDocs(collection(db, col));
     result.collections[col] = snap.docs.map(d => ({ _id: d.id, ...d.data() }));
@@ -343,6 +401,6 @@ async function deleteAllCollectionData(col) {
 
 export {
   addRecord, clearCache, clearSession, createUser, db, deleteRecord, deleteUser,
-  checkFirebaseHealth, deleteAllCollectionData, exportAllData, exportCollectionData, forceSyncAll, getActivityLog, getCollection, getCollectionCount, getLastSync, getLastSyncAll, getSession, getUsers, hashPassword, importCollectionData, logActivity, loginUser, requireAdmin, requireAuth, saveSession, setLastSync, updateRecord, updateUser, verifyPassword
+  checkFirebaseHealth, deleteAllCollectionData, exportAllData, exportCollectionData, forceSyncAll, getActivityLog, getCollection, getCollectionCount, getLastSync, getLastSyncAll, getOfflineTimestamp, getSession, getUsers, hashPassword, importCollectionData, isOnline, logActivity, loginUser, requireAdmin, requireAuth, saveSession, setLastSync, updateRecord, updateUser, verifyPassword
 };
 

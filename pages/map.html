@@ -4,9 +4,22 @@
   <script>(function(){try{var t=localStorage.getItem('suqia_theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
   <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <meta name="theme-color" content="#071226"/>
-  <title>سُقيا — لوحة التحكم</title>
+  <title>سُقيا — الخريطة</title>
   <link rel="icon" type="image/svg+xml" href="../assets/icons/favicon.svg"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
   <link rel="stylesheet" href="../css/style.css?v=1.1.6"/>
+  <style>
+    .map-wrap{position:relative;height:calc(100vh - 160px);min-height:420px;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);box-shadow:var(--shadow-1)}
+    #map{height:100%;width:100%;background:var(--surface-2)}
+    .map-legend{position:absolute;bottom:14px;right:14px;z-index:400;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:10px 14px;box-shadow:var(--shadow-2);font-size:12px;font-weight:800;display:flex;flex-direction:column;gap:6px}
+    .map-legend .li{display:flex;align-items:center;gap:8px;color:var(--text-2)}
+    .map-legend .dot{width:11px;height:11px;border-radius:50%;flex-shrink:0}
+    .map-empty-hint{position:absolute;top:14px;right:14px;left:14px;z-index:400;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:10px 14px;font-size:12px;font-weight:700;color:var(--text-3);box-shadow:var(--shadow-2);text-align:center;display:none}
+    .leaflet-popup-content{font-family:'Cairo',sans-serif;direction:rtl;text-align:right;font-size:13px}
+    .leaflet-popup-content b{font-size:14px;color:var(--text)}
+    .leaflet-popup-content a{color:var(--teal-dk);font-weight:800;text-decoration:none}
+    @media(max-width:768px){ .map-wrap{height:calc(100vh - 200px)} }
+  </style>
 </head>
 <body>
 <div class="shell">
@@ -38,7 +51,7 @@
         <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v3M12 18.5v3"/></svg>
         الآبار الجوفية
       </a>
-      <a class="nav-item" href="map.html">
+      <a class="nav-item active" href="map.html">
         <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 20l-6-3V4l6 3 6-3 6 3v13l-6-3-6 3z"/><path d="M9 7v13M15 4v13"/></svg>
         الخريطة
       </a>
@@ -78,7 +91,7 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v3M12 18.5v3"/></svg>
       آبار
     </a>
-    <a class="bn-item" href="map.html">
+    <a class="bn-item active" href="map.html">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 20l-6-3V4l6 3 6-3 6 3v13l-6-3-6 3z"/><path d="M9 7v13M15 4v13"/></svg>
       خريطة
     </a>
@@ -88,15 +101,14 @@
     </a>
   </nav>
 
-
   <div class="main">
     <header class="topbar">
       <button class="mob-btn" id="mob-btn">
         <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3.5 6.5h17M3.5 12h17M3.5 17.5h17"/></svg>
       </button>
       <div class="tb-title">
-        <div class="tb-bc">سُقيا › الرئيسية</div>
-        <div class="tb-page">لوحة التحكم</div>
+        <div class="tb-bc">سُقيا › الخريطة</div>
+        <div class="tb-page">الخريطة التفاعلية</div>
       </div>
       <div class="tb-actions">
         <div class="tb-date" id="tb-date"></div>
@@ -106,163 +118,119 @@
     </header>
 
     <main class="page">
-      <!-- Welcome -->
-      <div class="welcome">
-        <div style="position:relative;z-index:1">
-          <h1 id="welcome-msg">أهلاً 👋</h1>
-          <p id="welcome-date" style="font-size:12px;color:rgba(255,255,255,.45);margin-top:4px"></p>
-        </div>
-        <div class="welcome-stats">
-          <div class="w-stat"><div class="n" id="ws-total">—</div><div class="l">إجمالي الأصول</div></div>
-          <div class="w-stat"><div class="n">4</div><div class="l">فئات</div></div>
-          <div class="w-stat"><div class="n" style="color:#86efac">✓</div><div class="l">نشط</div></div>
+      <div class="page-header" style="margin-bottom:14px">
+        <div>
+          <h2 style="font-size:17px;font-weight:900">🗺️ خريطة الأصول الموحّدة</h2>
+          <p style="font-size:12px;color:var(--text-2);margin-top:4px" id="map-summary">جارِ التحميل…</p>
         </div>
       </div>
-
-      <!-- Stat Cards — 4 modern SVG icons -->
-      <div class="stat-grid">
-
-        <!-- ترع الإدارة -->
-        <div class="stat-card c-blue" onclick="location.href='canals.html'">
-          <div class="s-icon-wrap c-blue">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-              <path d="M15 3h6v6"/><path d="M10 14 21 3"/>
-              <path d="M7 12h4M7 16h2"/>
-            </svg>
-          </div>
-          <div class="s-num" id="cnt-canals-admin">—</div>
-          <div class="s-label">ترع الإدارة</div>
-        </div>
-
-        <!-- الكباري -->
-        <div class="stat-card c-gold" onclick="location.href='bridges.html'">
-          <div class="s-icon-wrap c-gold">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M2 19h20"/><path d="M4 19v-5a8 8 0 0 1 16 0v5"/>
-              <path d="M9 19v-4"/><path d="M15 19v-4"/>
-              <path d="M2 13h3M19 13h3"/>
-            </svg>
-          </div>
-          <div class="s-num" id="cnt-bridges">—</div>
-          <div class="s-label">الكباري</div>
-        </div>
-
-        <!-- الترع المبطنة -->
-        <div class="stat-card c-teal" onclick="location.href='canals.html'">
-          <div class="s-icon-wrap c-teal">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M3 7c1.5-2 3-2 4.5 0S10.5 9 12 7s3-2 4.5 0S19.5 9 21 7"/>
-              <path d="M3 12c1.5-2 3-2 4.5 0S10.5 14 12 12s3-2 4.5 0S19.5 14 21 12"/>
-              <path d="M3 17c1.5-2 3-2 4.5 0S10.5 19 12 17s3-2 4.5 0S19.5 19 21 17"/>
-            </svg>
-          </div>
-          <div class="s-num" id="cnt-canals">—</div>
-          <div class="s-label">الترع المبطنة</div>
-        </div>
-
-        <!-- الآبار الجوفية -->
-        <div class="stat-card c-water" onclick="location.href='wells.html'">
-          <div class="s-icon-wrap c-water">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 2 C12 2 18 9 18 14 A6 6 0 0 1 6 14 C6 9 12 2 12 2Z"/>
-              <path d="M9.5 14.5 Q11 17 13.5 15.5"/>
-              <path d="M12 20v2M9 21h6"/>
-            </svg>
-          </div>
-          <div class="s-num" id="cnt-wells">—</div>
-          <div class="s-label">الآبار الجوفية</div>
-        </div>
-      </div>
-
-      <!-- Quick links: admin only -->
-      <div class="card" id="quick-card" style="display:none;margin-top:4px">
-        <div class="card-header"><span class="card-title">⚡ وصول سريع</span></div>
-        <div class="card-body" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:9px">
-          <a href="specs.html"    class="btn btn-secondary" style="justify-content:center">📐 أورنيك</a>
-          <a href="bridges.html"  class="btn btn-secondary" style="justify-content:center">🌉 كباري</a>
-          <a href="canals.html"   class="btn btn-secondary" style="justify-content:center">🌊 ترع</a>
-          <a href="wells.html"    class="btn btn-secondary" style="justify-content:center">💧 آبار</a>
-          <a href="settings.html" class="btn btn-secondary" style="justify-content:center">⚙️ إعدادات</a>
+      <div class="map-wrap">
+        <div id="map"></div>
+        <div class="map-empty-hint" id="map-empty-hint">لا توجد سجلات بها إحداثيات جغرافية محفوظة بعد. يمكن تحديد الموقع عند إضافة/تعديل أي سجل عبر زر 📍 تحديد موقعي.</div>
+        <div class="map-legend">
+          <div class="li"><span class="dot" style="background:#1c8fd9"></span> ترع الإدارة</div>
+          <div class="li"><span class="dot" style="background:#e08a1f"></span> كباري</div>
+          <div class="li"><span class="dot" style="background:#16a87a"></span> آبار جوفية</div>
         </div>
       </div>
     </main>
   </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script type="module">
 import { requireAuth, clearSession, getCollection, logActivity } from "../js/firebase-config.js?v=1.1.6";
-import { wireThemeToggle, arabicDate, greeting, initGlobalSearch, wireConnectionStatus } from "../js/shared.js?v=1.1.6";
+import { wireThemeToggle, arabicDate, initGlobalSearch, wireConnectionStatus } from "../js/shared.js?v=1.1.6";
 
 const user = requireAuth();
-  // ── Sidebar ──
-  (function(){
-    const nm=document.getElementById('sb-user-name');
-    const av=document.getElementById('sb-avatar');
-    const rl=document.getElementById('sb-user-role');
-    const init=user.name.trim().split(' ').slice(0,2).map(w=>w[0]).join('');
-    if(av) av.textContent = init;
-    if(nm) nm.textContent = user.name;
-    if(rl) rl.textContent = user.role==='admin'?'مشرف':'مستخدم';
-    // تفعيل الرابط النشط
-    const pg = location.pathname.split('/').pop();
-    document.querySelectorAll('.nav-item, .bn-item').forEach(a=>{
-      if(a.getAttribute('href')===pg) a.classList.add('active');
-    });
-    // موبايل
-    const sb=document.getElementById('sidebar');
-    const ov=document.getElementById('sb-overlay');
-    const mb=document.getElementById('mob-btn');
-    if(mb) mb.addEventListener('click',()=>{ sb.classList.toggle('open'); ov.classList.toggle('show'); });
-    if(ov) ov.addEventListener('click',()=>{ sb.classList.remove('open'); ov.classList.remove('show'); });
-    // تسجيل الخروج
-    document.getElementById('btn-logout').addEventListener('click',()=>{ logActivity('تسجيل خروج'); clearSession(); location.href='../index.html'; });
-  })();
+// ── Sidebar ──
+(function(){
+  const nm=document.getElementById('sb-user-name');
+  const av=document.getElementById('sb-avatar');
+  const rl=document.getElementById('sb-user-role');
+  const init=user.name.trim().split(' ').slice(0,2).map(w=>w[0]).join('');
+  if(av) av.textContent = init;
+  if(nm) nm.textContent = user.name;
+  if(rl) rl.textContent = user.role==='admin'?'مشرف':'مستخدم';
+  const pg = location.pathname.split('/').pop();
+  document.querySelectorAll('.nav-item, .bn-item').forEach(a=>{
+    if(a.getAttribute('href')===pg) a.classList.add('active');
+  });
+  const sb=document.getElementById('sidebar');
+  const ov=document.getElementById('sb-overlay');
+  const mb=document.getElementById('mob-btn');
+  if(mb) mb.addEventListener('click',()=>{ sb.classList.toggle('open'); ov.classList.toggle('show'); });
+  if(ov) ov.addEventListener('click',()=>{ sb.classList.remove('open'); ov.classList.remove('show'); });
+  document.getElementById('btn-logout').addEventListener('click',()=>{ logActivity('تسجيل خروج'); clearSession(); location.href='../index.html'; });
+})();
 
-// ── Theme + date ──
 wireThemeToggle();
 wireConnectionStatus();
 document.getElementById('tb-date').textContent = arabicDate();
-document.getElementById('welcome-msg').textContent = greeting(user.name.split(' ')[0]);
-document.getElementById('welcome-date').textContent = arabicDate();
 
-// ── بحث موحّد ──
 initGlobalSearch(async () => {
-  const [specs, canals, bridges, wells] = await Promise.all([
+  const [specs, lined, bridges, wells] = await Promise.all([
     getCollection('specs'), getCollection('linedCanals'), getCollection('bridges'), getCollection('wells')
   ]);
   return [
     ...specs.map(r => ({ name: r.name || r.eng || '—', type: 'ترعة', page: 'canals.html', q: r.name || r.eng })),
-    ...canals.map(r => ({ name: r.name || '—', type: 'ترعة مبطنة', page: 'canals.html', q: r.name })),
+    ...lined.map(r => ({ name: r.name || '—', type: 'ترعة مبطنة', page: 'canals.html', q: r.name })),
     ...bridges.map(r => ({ name: r.name || '—', type: 'كوبري', page: 'bridges.html', q: r.name })),
     ...wells.map(r => ({ name: r.name || '—', type: 'بئر', page: 'wells.html', q: r.name })),
   ];
 });
 
-// ── Counts — كل collection على حدة بدل Promise.all ──
-async function loadOneCount(col, elId) {
-  try {
-    const data = await getCollection(col);
-    const el = document.getElementById(elId);
-    if(el) el.textContent = data.length;
-    return data.length;
-  } catch(e) {
-    const el = document.getElementById(elId);
-    if(el) el.textContent = '—';
-    console.warn('count error:', col, e.message);
-    return 0;
-  }
+// ── الخريطة ──
+const map = L.map('map', { zoomControl: true }).setView([30.02, 31.11], 10); // مركز محافظة الجيزة تقريباً
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '&copy; OpenStreetMap contributors',
+  maxZoom: 19,
+}).addTo(map);
+
+function markerIcon(color) {
+  return L.divIcon({
+    className: '',
+    html: `<div style="width:16px;height:16px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:${color};border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.35)"></div>`,
+    iconSize: [16, 16],
+    iconAnchor: [8, 16],
+    popupAnchor: [0, -16],
+  });
 }
+const ICONS = {
+  canal:  markerIcon('#1c8fd9'),
+  bridge: markerIcon('#e08a1f'),
+  well:   markerIcon('#16a87a'),
+};
+
 (async () => {
-  const counts = await Promise.all([
-    loadOneCount('specs',       'cnt-canals-admin'),
-    loadOneCount('bridges',     'cnt-bridges'),
-    loadOneCount('linedCanals', 'cnt-canals'),
-    loadOneCount('wells',       'cnt-wells'),
+  const [specs, bridges, wells] = await Promise.all([
+    getCollection('specs'), getCollection('bridges'), getCollection('wells')
   ]);
-  const total = counts.reduce((a,b)=>a+b,0);
-  const ws = document.getElementById('ws-total');
-  if(ws) ws.textContent = total;
+  const groups = [
+    { data: specs,   type: 'canal',  page: 'canals.html',  label: 'ترعة' },
+    { data: bridges, type: 'bridge', page: 'bridges.html', label: 'كوبري' },
+    { data: wells,   type: 'well',   page: 'wells.html',   label: 'بئر' },
+  ];
+  const bounds = [];
+  let placed = 0, total = 0;
+  groups.forEach(g => {
+    total += g.data.length;
+    g.data.forEach(r => {
+      const lat = parseFloat(r.lat), lng = parseFloat(r.lng);
+      if (!lat || !lng || Number.isNaN(lat) || Number.isNaN(lng)) return;
+      placed++;
+      const marker = L.marker([lat, lng], { icon: ICONS[g.type] }).addTo(map);
+      const name = r.name || r.eng || '—';
+      marker.bindPopup(`<b>${name}</b><br>${g.label}<br><a href="${g.page}?q=${encodeURIComponent(name)}">فتح التفاصيل ↗</a>`);
+      bounds.push([lat, lng]);
+    });
+  });
+  document.getElementById('map-summary').textContent = `${placed} من أصل ${total} سجل عليهم إحداثيات محفوظة`;
+  if (bounds.length) {
+    map.fitBounds(bounds, { padding: [40, 40], maxZoom: 14 });
+  } else {
+    document.getElementById('map-empty-hint').style.display = 'block';
+  }
 })();
 </script>
 </body>
