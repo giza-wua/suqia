@@ -27,9 +27,30 @@ import {
   setDoc, writeBatch,
   updateDoc,
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import {
+  createUserWithEmailAndPassword,
+  EmailAuthProvider,
+  getAuth,
+  onAuthStateChanged,
+  reauthenticateWithCredential,
+  signInWithEmailAndPassword,
+  signOut,
+  updatePassword,
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const app = initializeApp(FIREBASE_CONFIG);
 const db = getFirestore(app);
+const auth = getAuth(app);
+// تطبيق ثانوي منفصل: بيسمح للمسؤول ينشئ حساب مستخدم جديد بكلمة مرور حقيقية
+// من غير ما جلسة دخول المسؤول الحالية تتأثر أو تتقفل
+const secondaryApp = initializeApp(FIREBASE_CONFIG, "SuqiaSecondary");
+const secondaryAuth = getAuth(secondaryApp);
+
+// نطاق وهمي غير قابل للتوصيل — Firebase Auth محتاج شكل إيميل، والمستخدم مش هيشوفه أو يكتبه أبداً
+const AUTH_EMAIL_DOMAIN = "suqia.local";
+function usernameToEmail(username) {
+  return `${username.toLowerCase().trim()}@${AUTH_EMAIL_DOMAIN}`;
+}
 
 // ══ Session ══════════════════════════════
 const SESSION_KEY = "suqia_user";
@@ -45,6 +66,7 @@ function getSession() {
 }
 function clearSession() {
   sessionStorage.removeItem(SESSION_KEY);
+  signOut(auth).catch(() => {}); // اقفل الجلسة الحقيقية في Firebase Auth كمان
 }
 
 function requireAuth() {
@@ -66,6 +88,8 @@ function requireAdmin() {
 }
 
 // ══ Password hashing (SHA-256 + salt) ════
+// ⚠️ دي بقت تُستخدم فقط للتحقق من حسابات قديمة لسه ما تنقلتش لـ Firebase Auth الحقيقي
+// (شوف loginUser تحت — أول ما أي مستخدم قديم يسجّل دخول بنجاح، بيترحّل تلقائياً)
 async function hashPassword(password) {
   const data = new TextEncoder().encode(password + "suqia_salt_giza_2025");
   const buf = await crypto.subtle.digest("SHA-256", data);
@@ -85,18 +109,44 @@ async function verifyPassword(first, second) {
   } catch { return false; }
 }
 
-// ══ Auth ══════════════════════════════════
+// ══ Auth (Firebase Authentication حقيقي) ══
+// المستخدم بيكتب اسم مستخدم وكلمة مرور عادي زي ما هو دايماً —
+// من تحت بنحوّل اسم المستخدم لإيميل وهمي (مش حقيقي ومش هيتبعت له أي حاجة)
+// ونستخدم Firebase Auth الرسمي، عشان قواعد Firestore تقدر تتحقق من الهوية فعلياً
+// بدل ما الحماية تبقى شكلية بس على مستوى الواجهة.
 async function loginUser(username, password) {
+  const uid = username.toLowerCase().trim();
+  const email = usernameToEmail(uid);
   try {
-    const snap = await getDoc(doc(db, "users", username.toLowerCase().trim()));
-    if (!snap.exists()) return { ok: false, error: "اسم المستخدم غير موجود" };
-    const data = snap.data();
-    if (!(await verifyPassword(password, data.passwordHash)))
+    // 1) المسار العادي: حساب Firebase Auth حقيقي موجود بالفعل
+    await signInWithEmailAndPassword(auth, email, password);
+    const profileSnap = await getDoc(doc(db, "users", uid));
+    if (!profileSnap.exists()) {
+      await signOut(auth);
+      return { ok: false, error: "الحساب غير مكتمل — تواصل مع المسؤول" };
+    }
+    const profile = profileSnap.data();
+    return { ok: true, user: { id: uid, username: uid, name: profile.name, role: profile.role } };
+  } catch (authErr) {
+    if (authErr.code !== "auth/user-not-found" && authErr.code !== "auth/invalid-credential") {
+      if (authErr.code === "auth/wrong-password") return { ok: false, error: "كلمة المرور غير صحيحة" };
+      if (authErr.code === "auth/too-many-requests") return { ok: false, error: "محاولات كتير غلط — حاول تاني بعد شوية" };
+      return { ok: false, error: "خطأ في الاتصال بالخادم" };
+    }
+    // 2) لسه مفيش حساب Firebase Auth بالإيميل ده — يمكن مستخدم قديم لسه ما اتنقلش
+    const legacySnap = await getDoc(doc(db, "users", uid));
+    if (!legacySnap.exists()) return { ok: false, error: "اسم المستخدم غير موجود" };
+    const legacy = legacySnap.data();
+    if (!legacy.passwordHash || !(await verifyPassword(password, legacy.passwordHash))) {
       return { ok: false, error: "كلمة المرور غير صحيحة" };
-    const uid = username.toLowerCase().trim();
-    return { ok: true, user: { id: uid, username: uid, name: data.name, role: data.role } };
-  } catch (e) {
-    return { ok: false, error: "خطأ في الاتصال بالخادم" };
+    }
+    // كلمة المرور صح على النظام القديم — رحّل الحساب لـ Firebase Auth الحقيقي دلوقتي، بصمت
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+      return { ok: true, user: { id: uid, username: uid, name: legacy.name, role: legacy.role } };
+    } catch {
+      return { ok: false, error: "تعذّر ترقية الحساب — حاول مرة أخرى" };
+    }
   }
 }
 
@@ -128,20 +178,43 @@ async function getUsers() {
   return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
 }
 async function createUser(username, password, name, role) {
-  const hash = await hashPassword(password);
-  const ref = doc(db, "users", username.toLowerCase().trim());
-  await setDoc(ref, {
-    name,
-    role,
-    passwordHash: hash,
-    createdAt: serverTimestamp(),
-  });
+  const uid = username.toLowerCase().trim();
+  const email = usernameToEmail(uid);
+  const existing = await getDoc(doc(db, "users", uid));
+  if (existing.exists()) throw new Error("اسم المستخدم موجود بالفعل");
+  // بننشئ حساب Firebase Auth حقيقي على التطبيق الثانوي عشان جلسة المسؤول
+  // الحالية متتأثرش أو تتقفل من غير قصد
+  await createUserWithEmailAndPassword(secondaryAuth, email, password);
+  await signOut(secondaryAuth);
+  await setDoc(doc(db, "users", uid), { name, role, createdAt: serverTimestamp() });
+  clearCache("users");
 }
-async function updateUser(username, data) {
-  await updateDoc(doc(db, "users", username), data);
+
+// تعديل بيانات مستخدم (اسم/صلاحية). تغيير كلمة المرور منفصل — شوف changeMyPassword تحت،
+// لأن Firebase Auth (بدون خادم Admin) بيسمح بس للمستخدم يغيّر كلمة مروره هو نفسه وهو مسجّل دخول.
+async function updateUser(uid, data) {
+  await updateDoc(doc(db, "users", uid), data);
+  clearCache("users");
 }
-async function deleteUser(username) {
-  await deleteDoc(doc(db, "users", username));
+
+// تغيير كلمة مرور المستخدم الحالي نفسه فقط (بيطلب كلمة المرور الحالية للتأكيد)
+async function changeMyPassword(currentPassword, newPassword) {
+  if (!auth.currentUser) throw new Error("يجب تسجيل الدخول أولاً");
+  const cred = EmailAuthProvider.credential(auth.currentUser.email, currentPassword);
+  await reauthenticateWithCredential(auth.currentUser, cred);
+  await updatePassword(auth.currentUser, newPassword);
+}
+
+// حذف مستخدم: بيشيل ملفه الشخصي (الاسم/الصلاحية) من Firestore، وده كافٍ عملياً لمنعه
+// من الدخول (loginUser بيرفض أي حساب من غير ملف شخصي). حساب Firebase Auth نفسه
+// بيفضل موجود تقنياً (حذفه فعلياً محتاج صلاحيات Admin SDK من سيرفر، مش متاحة في تطبيق
+// بدون خادم زي ده) — لكن من غير ملف شخصي في Firestore، المستخدم ميقدرش يستخدم التطبيق خالص.
+// ⚠️ ملاحظة: بسبب كده، لو حاولت تنشئ مستخدم جديد بنفس اسم المستخدم القديم بعد حذفه،
+// هيفشل (لأن حساب Firebase Auth القديم لسه موجود) — استخدم اسم مستخدم مختلف، أو
+// راجع SETUP.md لخطوة Cloud Function الاختيارية لو محتاج حذف كامل أو إعادة تعيين كلمة مرور.
+async function deleteUser(uid) {
+  await deleteDoc(doc(db, "users", uid));
+  clearCache("users");
 }
 
 // ══════════════════════════════════════════
@@ -320,7 +393,7 @@ async function exportCollectionData(col) {
 
 async function exportAllData() {
   const COLS = ['specs', 'bridges', 'linedCanals', 'wells'];
-  const result = { version: '1.1.7', exportedAt: new Date().toISOString(), collections: {} };
+  const result = { version: '1.1.8', exportedAt: new Date().toISOString(), collections: {} };
   for (const col of COLS) {
     const snap = await getDocs(collection(db, col));
     result.collections[col] = snap.docs.map(d => ({ _id: d.id, ...d.data() }));
@@ -400,7 +473,7 @@ async function deleteAllCollectionData(col) {
 }
 
 export {
-  addRecord, clearCache, clearSession, createUser, db, deleteRecord, deleteUser,
+  addRecord, changeMyPassword, clearCache, clearSession, createUser, db, deleteRecord, deleteUser,
   checkFirebaseHealth, deleteAllCollectionData, exportAllData, exportCollectionData, forceSyncAll, getActivityLog, getCollection, getCollectionCount, getLastSync, getLastSyncAll, getOfflineTimestamp, getSession, getUsers, hashPassword, importCollectionData, isOnline, logActivity, loginUser, requireAdmin, requireAuth, saveSession, setLastSync, updateRecord, updateUser, verifyPassword
 };
 

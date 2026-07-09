@@ -5,7 +5,7 @@
   <meta charset="UTF-8" /><meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <title>سُقيا — الكباري</title>
   <link rel="icon" type="image/svg+xml" href="../assets/icons/favicon.svg"/>
-  <link rel="stylesheet" href="../css/style.css?v=1.1.7" />
+  <link rel="stylesheet" href="../css/style.css?v=1.1.8" />
 </head>
 <body>
 <div class="shell">
@@ -14,7 +14,7 @@
       <div class="sb-logo">
         <svg viewBox="0 0 24 24" fill="none" stroke="#0c1a33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3.4 4 6 7.6 6 11a6 6 0 0 1-12 0c0-3.4 2.6-7 6-11Z"/><path d="M9.2 14.2c.4 1.6 1.6 2.6 3.2 2.8"/></svg>
       </div>
-      <div class="sb-brand-text"><h2>سُقيا</h2><span>إدارة أصول ري الجيزة &nbsp;<em class="sb-version">v1.1.7</em></span></div>
+      <div class="sb-brand-text"><h2>سُقيا</h2><span>إدارة أصول ري الجيزة &nbsp;<em class="sb-version">v1.1.8</em></span></div>
     </div>
     <nav class="sb-nav">
       <div class="sb-section">الرئيسية</div>
@@ -97,9 +97,12 @@
         <div class="tb-date" id="tb-date"></div>
         <div class="tb-live" id="tb-live"><div class="dot"></div><span>متصل</span></div>
         <button class="theme-toggle" id="theme-toggle" title="الوضع الليلي"></button>
-        <button class="btn btn-primary btn-sm admin-only" id="btn-add" style="display:none"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> إضافة</button>
       </div>
     </header>
+
+    <button class="fab-add admin-only" id="btn-add" style="display:none" title="إضافة كوبري جديد">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    </button>
 
     <main class="page">
       <!-- Filter -->
@@ -212,8 +215,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script type="module">
-import { requireAuth, clearSession, getCollection, addRecord, updateRecord, deleteRecord, logActivity } from "../js/firebase-config.js?v=1.1.7";
-import { wireThemeToggle, arabicDate, DataList, openModal, closeModal, setupModalClose, toast, confirmDelete, wireLocationButton, mapsLinkHtml, exportToExcel, exportToPDF, wireConnectionStatus } from "../js/shared.js?v=1.1.7";
+import { requireAuth, clearSession, getCollection, addRecord, updateRecord, deleteRecord, logActivity } from "../js/firebase-config.js?v=1.1.8";
+import { wireThemeToggle, arabicDate, DataList, openModal, closeModal, setupModalClose, toast, confirmDelete, wireLocationButton, mapsLinkHtml, exportToExcel, exportToPDF, wireConnectionStatus } from "../js/shared.js?v=1.1.8";
 
 const user = requireAuth();
 

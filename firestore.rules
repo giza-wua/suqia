@@ -1,0 +1,63 @@
+rules_version = '2';
+
+// ══════════════════════════════════════════════════════════
+//  سُقيا — قواعد أمان Firestore
+//  تعتمد على Firebase Authentication الحقيقي (request.auth)
+//  بدل التحقق الشكلي على مستوى الواجهة فقط.
+//
+//  كل مستخدم بيسجّل دخول باسم مستخدم + كلمة مرور عادية،
+//  والتطبيق بيحوّلها لإيميل وهمي (username@suqia.local) عشان
+//  يستخدم Firebase Auth الرسمي من تحت — المستخدم نفسه مش
+//  بيحس بأي فرق.
+//
+//  طريقة النشر: Firebase Console ← Firestore Database ← Rules
+//  الصق محتوى الملف ده بالكامل واضغط Publish.
+// ══════════════════════════════════════════════════════════
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Helpers ──
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    // نستخرج اسم المستخدم من الإيميل الوهمي: "maged@suqia.local" → "maged"
+    function username() {
+      return request.auth.token.email.split('@')[0];
+    }
+    function myProfile() {
+      return get(/databases/$(database)/documents/users/$(username())).data;
+    }
+    function myRole() {
+      return isSignedIn() ? myProfile().role : null;
+    }
+    function isAdmin() {
+      return isSignedIn() && myRole() == 'admin';
+    }
+    // محرر أو مسؤول: يقدر يضيف/يعدّل/يحذف بيانات الأصول (ترع/كباري/آبار)
+    function isEditorOrAdmin() {
+      return isSignedIn() && myRole() in ['admin', 'editor'];
+    }
+
+    // ── users: الملفات الشخصية (الاسم + الصلاحية، من غير كلمة مرور) ──
+    match /users/{uid} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    // ── activityLog: أي مستخدم مسجّل دخول يقدر يسجّل حدث (دخول/خروج)،
+    //    لكن القراءة والتعديل والحذف للمسؤولين فقط ──
+    match /activityLog/{id} {
+      allow create: if isSignedIn();
+      allow read: if isAdmin();
+      allow update, delete: if false;
+    }
+
+    // ── specs / linedCanals / bridges / wells وأي مجموعة بيانات تانية:
+    //    القراءة لأي مستخدم مسجّل دخول، والتعديل للمحرر/المسؤول فقط ──
+    match /{collection}/{doc} {
+      allow read: if isSignedIn();
+      allow write: if isEditorOrAdmin();
+    }
+  }
+}
