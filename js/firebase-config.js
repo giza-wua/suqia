@@ -118,37 +118,43 @@ async function loginUser(username, password) {
   const uid = username.toLowerCase().trim();
   const email = usernameToEmail(uid);
   try {
-    // 1) المسار العادي: حساب Firebase Auth حقيقي موجود بالفعل
-    await signInWithEmailAndPassword(auth, email, password);
-    const profileSnap = await getDoc(doc(db, "users", uid));
-    if (!profileSnap.exists()) {
-      await signOut(auth);
-      return { ok: false, error: "الحساب غير مكتمل — تواصل مع المسؤول" };
-    }
-    const profile = profileSnap.data();
-    return { ok: true, user: { id: uid, username: uid, name: profile.name, role: profile.role } };
-  } catch (authErr) {
-    if (authErr.code !== "auth/user-not-found" && authErr.code !== "auth/invalid-credential") {
-      if (authErr.code === "auth/wrong-password") return { ok: false, error: "كلمة المرور غير صحيحة" };
-      if (authErr.code === "auth/too-many-requests") return { ok: false, error: "محاولات كتير غلط — حاول تاني بعد شوية" };
-      if (authErr.code === "auth/operation-not-allowed") return { ok: false, error: "⚠️ لازم تفعّل Email/Password من Firebase Console ← Authentication ← Sign-in method أولاً (راجع SETUP.md)" };
-      if (authErr.code === "auth/network-request-failed") return { ok: false, error: "تعذّر الاتصال بالإنترنت — تحقق من الشبكة" };
-      return { ok: false, error: `خطأ في الاتصال بالخادم (${authErr.code || authErr.message})` };
-    }
-    // 2) لسه مفيش حساب Firebase Auth بالإيميل ده — يمكن مستخدم قديم لسه ما اتنقلش
-    const legacySnap = await getDoc(doc(db, "users", uid));
-    if (!legacySnap.exists()) return { ok: false, error: "اسم المستخدم غير موجود" };
-    const legacy = legacySnap.data();
-    if (!legacy.passwordHash || !(await verifyPassword(password, legacy.passwordHash))) {
-      return { ok: false, error: "كلمة المرور غير صحيحة" };
-    }
-    // كلمة المرور صح على النظام القديم — رحّل الحساب لـ Firebase Auth الحقيقي دلوقتي، بصمت
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
-      return { ok: true, user: { id: uid, username: uid, name: legacy.name, role: legacy.role } };
-    } catch {
-      return { ok: false, error: "تعذّر ترقية الحساب — حاول مرة أخرى" };
+      // 1) المسار العادي: حساب Firebase Auth حقيقي موجود بالفعل
+      await signInWithEmailAndPassword(auth, email, password);
+      const profileSnap = await getDoc(doc(db, "users", uid));
+      if (!profileSnap.exists()) {
+        await signOut(auth);
+        return { ok: false, error: "الحساب غير مكتمل — تواصل مع المسؤول" };
+      }
+      const profile = profileSnap.data();
+      return { ok: true, user: { id: uid, username: uid, name: profile.name, role: profile.role } };
+    } catch (authErr) {
+      if (authErr.code !== "auth/user-not-found" && authErr.code !== "auth/invalid-credential") {
+        if (authErr.code === "auth/wrong-password") return { ok: false, error: "كلمة المرور غير صحيحة" };
+        if (authErr.code === "auth/too-many-requests") return { ok: false, error: "محاولات كتير غلط — حاول تاني بعد شوية" };
+        if (authErr.code === "auth/operation-not-allowed") return { ok: false, error: "⚠️ لازم تفعّل Email/Password من Firebase Console ← Authentication ← Sign-in method أولاً (راجع SETUP.md)" };
+        if (authErr.code === "auth/network-request-failed") return { ok: false, error: "تعذّر الاتصال بالإنترنت — تحقق من الشبكة" };
+        if (authErr.code === "permission-denied" || authErr.code === "auth/permission-denied") return { ok: false, error: "⚠️ قواعد Firestore لسه مش منشورة صح — راجع ملف firestore.rules في SETUP.md" };
+        return { ok: false, error: `خطأ (${authErr.code || authErr.name || "غير معروف"}): ${authErr.message || ""}` };
+      }
+      // 2) لسه مفيش حساب Firebase Auth بالإيميل ده — يمكن مستخدم قديم لسه ما اتنقلش
+      const legacySnap = await getDoc(doc(db, "users", uid));
+      if (!legacySnap.exists()) return { ok: false, error: "اسم المستخدم غير موجود" };
+      const legacy = legacySnap.data();
+      if (!legacy.passwordHash || !(await verifyPassword(password, legacy.passwordHash))) {
+        return { ok: false, error: "كلمة المرور غير صحيحة" };
+      }
+      // كلمة المرور صح على النظام القديم — رحّل الحساب لـ Firebase Auth الحقيقي دلوقتي، بصمت
+      try {
+        await createUserWithEmailAndPassword(auth, email, password);
+        return { ok: true, user: { id: uid, username: uid, name: legacy.name, role: legacy.role } };
+      } catch (migrateErr) {
+        return { ok: false, error: `تعذّر ترقية الحساب (${migrateErr.code || migrateErr.message || "خطأ غير معروف"})` };
+      }
     }
+  } catch (fatalErr) {
+    // شبكة توقف هنا: أي خطأ غير متوقع تماماً بيتصيد هنا بدل ما يوصل للواجهة كخطأ غامض
+    return { ok: false, error: `خطأ غير متوقع: ${fatalErr.code || fatalErr.name || ""} ${fatalErr.message || ""}`.trim() };
   }
 }
 
@@ -395,7 +401,7 @@ async function exportCollectionData(col) {
 
 async function exportAllData() {
   const COLS = ['specs', 'bridges', 'linedCanals', 'wells'];
-  const result = { version: '1.1.9', exportedAt: new Date().toISOString(), collections: {} };
+  const result = { version: '1.1.10', exportedAt: new Date().toISOString(), collections: {} };
   for (const col of COLS) {
     const snap = await getDocs(collection(db, col));
     result.collections[col] = snap.docs.map(d => ({ _id: d.id, ...d.data() }));
