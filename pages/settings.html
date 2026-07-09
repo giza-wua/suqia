@@ -5,7 +5,7 @@
   <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>سُقيا — الإعدادات</title>
   <link rel="icon" type="image/svg+xml" href="../assets/icons/favicon.svg"/>
-  <link rel="stylesheet" href="../css/style.css?v=1.1.6"/>
+  <link rel="stylesheet" href="../css/style.css?v=1.1.7"/>
   <style>
     .settings-tabs{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:20px;overflow-x:auto}
     .stab{padding:11px 18px;font-size:13px;font-weight:800;color:var(--text-3);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap;transition:.18s;font-family:inherit;background:none;border-top:none;border-left:none;border-right:none}
@@ -45,7 +45,7 @@
   <aside class="sidebar" id="sidebar">
     <div class="sb-brand">
       <div class="sb-logo"><svg viewBox="0 0 24 24" fill="none" stroke="#0c1a33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3.4 4 6 7.6 6 11a6 6 0 0 1-12 0c0-3.4 2.6-7 6-11Z"/><path d="M9.2 14.2c.4 1.6 1.6 2.6 3.2 2.8"/></svg></div>
-      <div class="sb-brand-text"><h2>سُقيا</h2><span>إدارة أصول ري الجيزة &nbsp;<em class="sb-version">v1.1.6</em></span></div>
+      <div class="sb-brand-text"><h2>سُقيا</h2><span>إدارة أصول ري الجيزة &nbsp;<em class="sb-version">v1.1.7</em></span></div>
     </div>
     <nav class="sb-nav">
       <div class="sb-section">الرئيسية</div>
@@ -115,7 +115,7 @@
             <div style="font-size:11.5px;color:rgba(255,255,255,.6);margin-top:2px">للأمانة العامة لروابط مستخدمي المياه بالجيزة</div>
             <div style="font-size:10px;color:rgba(255,255,255,.35);margin-top:4px">الإدارة العامة لري الجيزة — وزارة الموارد المائية والري</div>
           </div>
-          <span class="badge" style="background:rgba(11,180,172,.25);color:var(--gold-lt);font-size:11px">v1.1.6</span>
+          <span class="badge" style="background:rgba(11,180,172,.25);color:var(--gold-lt);font-size:11px">v1.1.7</span>
         </div>
       </div>
 
@@ -140,7 +140,7 @@
                 <span class="badge badge-amber" style="margin-top:5px">مشرف النظام</span></div>
             </div>
             <div class="info-row"><span class="info-key">اسم المستخدم</span><span class="info-val" id="acc-username">—</span></div>
-            <div class="info-row"><span class="info-key">إصدار التطبيق</span><span class="info-val">v1.1.6</span></div>
+            <div class="info-row"><span class="info-key">إصدار التطبيق</span><span class="info-val">v1.1.7</span></div>
             <div class="info-row"><span class="info-key">المطوِّر</span><span class="info-val">المكتب الإعلامي التابع للأمانة العامة</span></div>
             <div class="info-row"><span class="info-key">الجهة</span><span class="info-val">الأمانة العامة لروابط مستخدمي المياه بالجيزة</span></div>
           </div>
@@ -364,8 +364,8 @@
 
 <script src="../data/seed_data.js"></script>
 <script type="module">
-import { requireAuth, clearSession, getUsers, createUser, updateUser, deleteUser, hashPassword, addRecord, deleteRecord, getCollection, verifyPassword, exportAllData, exportCollectionData, importCollectionData, checkFirebaseHealth, forceSyncAll, getLastSyncAll, getLastSync, clearCache, deleteAllCollectionData, getCollectionCount, logActivity, getActivityLog } from "../js/firebase-config.js?v=1.1.6";
-import { wireThemeToggle, arabicDate, openModal, closeModal, toast, initials, confirmDelete, initGlobalSearch, wireConnectionStatus } from "../js/shared.js?v=1.1.6";
+import { requireAuth, clearSession, getUsers, createUser, updateUser, deleteUser, hashPassword, addRecord, deleteRecord, getCollection, verifyPassword, exportAllData, exportCollectionData, importCollectionData, checkFirebaseHealth, forceSyncAll, getLastSyncAll, getLastSync, clearCache, deleteAllCollectionData, getCollectionCount, logActivity, getActivityLog } from "../js/firebase-config.js?v=1.1.7";
+import { wireThemeToggle, arabicDate, openModal, closeModal, toast, initials, confirmDelete, wireConnectionStatus } from "../js/shared.js?v=1.1.7";
 
 const user = requireAuth();
 
@@ -393,17 +393,6 @@ if (user.role === 'viewer' || user.role === 'editor') {
   document.querySelectorAll('.admin-only-tab').forEach(el => el.style.display = 'none');
 }
 
-initGlobalSearch(async () => {
-  const [specs, lined, bridges, wells] = await Promise.all([
-    getCollection('specs'), getCollection('linedCanals'), getCollection('bridges'), getCollection('wells')
-  ]);
-  return [
-    ...specs.map(r => ({ name: r.name || r.eng || '—', type: 'ترعة', page: 'canals.html', q: r.name || r.eng })),
-    ...lined.map(r => ({ name: r.name || '—', type: 'ترعة مبطنة', page: 'canals.html', q: r.name })),
-    ...bridges.map(r => ({ name: r.name || '—', type: 'كوبري', page: 'bridges.html', q: r.name })),
-    ...wells.map(r => ({ name: r.name || '—', type: 'بئر', page: 'wells.html', q: r.name })),
-  ];
-});
 
 // ── Account info ──
 document.getElementById('my-avatar').textContent = initials(user.name);
@@ -586,7 +575,7 @@ document.querySelectorAll('[data-col]').forEach(btn=>{
     const statusEl=document.getElementById('export-status');
     try{
       const data=await exportCollectionData(col);
-      const backup={version:'1.1.6',collection:col,count:data.length,exportedAt:new Date().toISOString(),data};
+      const backup={version:'1.1.7',collection:col,count:data.length,exportedAt:new Date().toISOString(),data};
       const blob=new Blob([JSON.stringify(backup,null,2)],{type:'application/json'});
       const a=document.createElement('a');a.href=URL.createObjectURL(blob);
       a.download=`suqia_${col}_${new Date().toISOString().slice(0,10)}.json`;
