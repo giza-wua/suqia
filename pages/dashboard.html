@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#071226"/>
   <title>سُقيا — لوحة التحكم</title>
   <link rel="icon" type="image/svg+xml" href="../assets/icons/favicon.svg"/>
-  <link rel="stylesheet" href="../css/style.css?v=1.1.10"/>
+  <link rel="stylesheet" href="../css/style.css?v=1.2.5"/>
 </head>
 <body>
 <div class="shell">
@@ -17,7 +17,7 @@
       <div class="sb-logo">
         <svg viewBox="0 0 24 24" fill="none" stroke="#0c1a33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3.4 4 6 7.6 6 11a6 6 0 0 1-12 0c0-3.4 2.6-7 6-11Z"/><path d="M9.2 14.2c.4 1.6 1.6 2.6 3.2 2.8"/></svg>
       </div>
-      <div class="sb-brand-text"><h2>سُقيا</h2><span>إدارة أصول ري الجيزة &nbsp;<em class="sb-version">v1.1.10</em></span></div>
+      <div class="sb-brand-text"><h2>سُقيا</h2><span>إدارة أصول ري الجيزة &nbsp;<em class="sb-version">v1.2.5</em></span></div>
     </div>
     <nav class="sb-nav">
       <div class="sb-section">الرئيسية</div>
@@ -191,8 +191,8 @@
 </div>
 
 <script type="module">
-import { requireAuth, clearSession, getCollection, logActivity } from "../js/firebase-config.js?v=1.1.10";
-import { wireThemeToggle, arabicDate, greeting, initGlobalSearch, wireConnectionStatus } from "../js/shared.js?v=1.1.10";
+import { requireAuth, clearSession, getCollection, logActivity } from "../js/firebase-config.js?v=1.2.5";
+import { wireThemeToggle, arabicDate, greeting, initGlobalSearch, wireConnectionStatus } from "../js/shared.js?v=1.2.5";
 
 const user = requireAuth();
   // ── Sidebar ──
@@ -216,7 +216,7 @@ const user = requireAuth();
     if(mb) mb.addEventListener('click',()=>{ sb.classList.toggle('open'); ov.classList.toggle('show'); });
     if(ov) ov.addEventListener('click',()=>{ sb.classList.remove('open'); ov.classList.remove('show'); });
     // تسجيل الخروج
-    document.getElementById('btn-logout').addEventListener('click',()=>{ logActivity('تسجيل خروج'); clearSession(); location.href='../index.html'; });
+    document.getElementById('btn-logout').addEventListener('click',async()=>{ await logActivity('تسجيل خروج'); clearSession(); location.href='../index.html'; });
   })();
 
 // ── Theme + date ──

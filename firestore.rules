@@ -39,9 +39,15 @@ service cloud.firestore {
       return isSignedIn() && myRole() in ['admin', 'editor'];
     }
 
-    // ── users: الملفات الشخصية (الاسم + الصلاحية، من غير كلمة مرور) ──
+    // ── users: الملفات الشخصية (الاسم + الصلاحية) ──
+    // ⚠️ القراءة مسموحة حتى من غير تسجيل دخول (allow read: if true) عمداً:
+    // مستخدم قديم لسه ما ترحّلش لـ Firebase Auth الحقيقي محتاج التطبيق يتحقق
+    // من الـ passwordHash القديم بتاعه *قبل* ما يكون عنده جلسة موثّقة أصلاً —
+    // ده تحديداً سبب وجود مسار الترحيل (شوف loginUser في firebase-config.js).
+    // بمجرد ما كل المستخدمين يترحّلوا، ممكن نشدّد القاعدة دي لاحقاً لـ isSignedIn().
+    // الكتابة (تعديل/حذف مستخدمين) تفضل للمسؤول فقط دايماً — مفيش تنازل هنا.
     match /users/{uid} {
-      allow read: if isSignedIn();
+      allow read: if true;
       allow write: if isAdmin();
     }
 

@@ -154,6 +154,9 @@ async function loginUser(username, password) {
     }
   } catch (fatalErr) {
     // شبكة توقف هنا: أي خطأ غير متوقع تماماً بيتصيد هنا بدل ما يوصل للواجهة كخطأ غامض
+    if (fatalErr.code === "permission-denied") {
+      return { ok: false, error: "⚠️ قواعد Firestore لسه مش منشورة صح — انسخ محتوى ملف firestore.rules وانشره من Firebase Console (راجع SETUP.md)" };
+    }
     return { ok: false, error: `خطأ غير متوقع: ${fatalErr.code || fatalErr.name || ""} ${fatalErr.message || ""}`.trim() };
   }
 }
@@ -401,7 +404,7 @@ async function exportCollectionData(col) {
 
 async function exportAllData() {
   const COLS = ['specs', 'bridges', 'linedCanals', 'wells'];
-  const result = { version: '1.1.10', exportedAt: new Date().toISOString(), collections: {} };
+  const result = { version: '1.2.5', exportedAt: new Date().toISOString(), collections: {} };
   for (const col of COLS) {
     const snap = await getDocs(collection(db, col));
     result.collections[col] = snap.docs.map(d => ({ _id: d.id, ...d.data() }));

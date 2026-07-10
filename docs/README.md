@@ -2,21 +2,24 @@
 
 # 💧 سُقيا — منصة إدارة أصول ري الجيزة
 
-**الإصدار:** v1.1.10 | **الجهة:** الإدارة العامة لري الجيزة — وزارة الموارد المائية والري
+**الإصدار:** v1.2.5 | **الجهة:** الإدارة العامة لري الجيزة — وزارة الموارد المائية والري
 
-> هذه نسخة موسّعة من التوثيق. للمقدمة السريعة راجع [`README.md`](../README.md) في جذر المشروع.
+> هذه نسخة موسّعة من التوثيق. للمقدمة السريعة راجع [`README.md`](../README.md) في جذر المشروع. لخطوات الإعداد والنشر التفصيلية راجع [`SETUP.md`](SETUP.md).
 
 ---
 
 ## نظرة عامة
 
-**سُقيا** منصة ويب متكاملة لإدارة وتوثيق الأصول الهندسية لري محافظة الجيزة، تشمل:
+**سُقيا** منصة ويب متكاملة لإدارة وتوثيق الأصول الهندسية لري محافظة الجيزة، مبنية بالكامل بـ Vanilla JS (بدون frameworks) وقاعدة بيانات Firebase Firestore.
 
 | الوحدة | الوصف | Firestore Collection |
 |--------|-------|----------------------|
+| 📊 لوحة التحكم | نظرة عامة على الأصول + بحث موحّد | — |
 | 🌊 ترع الإدارة | الأورنيك الهندسي للترع (مقاطع + مناوبات + تبطين) | `specs` + `linedCanals` |
 | 🌉 الكباري | كباري الترع والمصارف | `bridges` |
 | 💧 الآبار الجوفية | آبار المياه الجوفية وبيانات الطلمبات | `wells` |
+| 🗺️ الخريطة | خريطة تفاعلية موحّدة (Leaflet) لكل الأصول اللي ليها إحداثيات | — |
+| ⚙️ الإعدادات | الحساب، المستخدمون والصلاحيات، سجل النشاط، قاعدة البيانات | `users`, `activityLog` |
 
 ---
 
@@ -24,46 +27,48 @@
 
 ```
 suqia/
-├── README.md           ← ملخص سريع (جذر المشروع)
-├── CHANGELOG.md        ← سجل التغييرات (جذر المشروع)
+├── README.md              ← ملخص سريع (جذر المشروع)
+├── CHANGELOG.md            ← سجل التغييرات (جذر المشروع)
+├── firestore.rules         ← قواعد أمان Firestore (لازم تُنشر يدوياً)
 ├── assets/
-│   ├── fonts/          ← خطوط Cairo محلية (woff2)
-│   └── icons/          ← favicon.svg
+│   ├── fonts/              ← خطوط Cairo محلية (woff2)
+│   └── icons/              ← favicon.svg
 ├── css/
-│   ├── 01-tokens.css   ← متغيرات التصميم وألوان الهوية
-│   ├── 02-base.css     ← Reset وعناصر أساسية
-│   ├── 03-layout.css   ← Sidebar + Topbar + Shell + Bottom Nav (موبايل)
-│   ├── 04-components.css ← كروت + أزرار + DataList + Badges
-│   ├── 05-pages.css    ← Modal + Forms + Dashboard + Media Queries للموبايل
-│   └── style.css       ← @import فقط
+│   ├── 01-tokens.css       ← متغيرات التصميم وألوان الهوية
+│   ├── 02-base.css         ← Reset وعناصر أساسية
+│   ├── 03-layout.css       ← Sidebar + Topbar + Shell + Bottom Nav (موبايل)
+│   ├── 04-components.css   ← كروت + أزرار + DataList + Badges + FAB + بحث موحّد
+│   ├── 05-pages.css        ← Modal + Forms + Dashboard + Media Queries للموبايل
+│   └── style.css           ← @import فقط
 ├── data/
-│   └── seed_data.js    ← بيانات الاستيراد الأصلية
-├── docs/               ← التوثيق التفصيلي
-│   ├── README.md
+│   └── seed_data.js        ← بيانات الاستيراد الأصلية
+├── docs/                   ← التوثيق التفصيلي
+│   ├── README.md           ← أنت هنا
 │   ├── CHANGELOG.md
-│   └── SETUP.md
+│   └── SETUP.md            ← دليل الإعداد والنشر خطوة بخطوة
 ├── js/
-│   ├── firebase-config.js ← Firebase + Auth + Cache
-│   ├── shared.js          ← UI helpers + DataList class
-│   └── sidebar.js         ← (قديم — الـ sidebar الآن inline)
+│   ├── firebase-config.js  ← Firebase + Auth + Cache + Offline (IndexedDB)
+│   └── shared.js            ← UI helpers + DataList + بحث موحّد + حالة الاتصال
 ├── pages/
-│   ├── dashboard.html  ← لوحة التحكم الرئيسية
-│   ├── canals.html     ← ترع الإدارة (موحّد)
-│   ├── bridges.html    ← الكباري
-│   ├── wells.html      ← الآبار الجوفية
-│   ├── map.html        ← الخريطة التفاعلية الموحّدة
-│   ├── settings.html   ← إدارة المستخدمين + الاستيراد
-│   └── specs.html      ← redirect → canals.html
-└── index.html          ← صفحة تسجيل الدخول
+│   ├── dashboard.html      ← لوحة التحكم الرئيسية
+│   ├── canals.html         ← ترع الإدارة (موحّد)
+│   ├── bridges.html        ← الكباري
+│   ├── wells.html          ← الآبار الجوفية
+│   ├── map.html            ← الخريطة التفاعلية الموحّدة
+│   ├── settings.html       ← الحساب، المستخدمون، سجل النشاط، قاعدة البيانات
+│   └── specs.html          ← redirect → canals.html
+└── index.html              ← صفحة تسجيل الدخول
 ```
+
+> ملاحظة: `js/sidebar.js` كان موجود قديماً كطريقة بديلة لبناء الشريط الجانبي، لكنه اتحذف نهائياً (v1.2.5) لأنه كان كود ميت غير مستخدم في أي صفحة — الشريط الجانبي الآن inline في كل صفحة مباشرة.
 
 ---
 
 ## التشغيل السريع
 
 ### المتطلبات
-- مشروع Firebase مع Firestore مُفعَّل
-- خادم ويب ثابت (VS Code Live Server / Python / Nginx)
+- مشروع Firebase مع **Firestore + Authentication** مُفعَّلين (Authentication خطوة إجبارية منذ v1.1.8)
+- خادم ويب ثابت (VS Code Live Server / Python / Nginx / Cloudflare Pages)
 
 ### الخطوات
 
@@ -75,26 +80,19 @@ suqia/
 
 2. **ضبط Firebase** — في `js/firebase-config.js`:
    ```js
-   const firebaseConfig = {
+   const FIREBASE_CONFIG = {
      apiKey: "YOUR_KEY",
+     authDomain: "YOUR_PROJECT.firebaseapp.com",
      projectId: "YOUR_PROJECT",
      // ...
    };
    ```
 
-3. **ضبط Firestore Rules** — في Firebase Console:
-   ```
-   rules_version = '2';
-   service cloud.firestore {
-     match /databases/{database}/documents {
-       match /{document=**} {
-         allow read, write: if true; // للتطوير
-       }
-     }
-   }
-   ```
+3. **فعّل Firebase Authentication** — من Firebase Console: Authentication ← Sign-in method ← فعّل **Email/Password**. (تفاصيل كاملة في `SETUP.md`)
 
-4. **تشغيل الخادم**
+4. **انشر قواعد Firestore** — انسخ محتوى `firestore.rules` من جذر المشروع، والصقه في Firebase Console ← Firestore Database ← Rules ← Publish.
+
+5. **تشغيل الخادم**
    ```bash
    # Python
    python -m http.server 7070
@@ -102,30 +100,34 @@ suqia/
    npx serve .
    ```
 
-5. **أول تسجيل دخول**
-   - اسم المستخدم: `maged`
-   - كلمة المرور: `maged@2025`
+6. **أول تسجيل دخول** — بحساب المسؤول الأول (هيترحّل تلقائياً لنظام Firebase Auth الحقيقي أول مرة يدخل بنجاح).
 
-6. **استيراد البيانات**
-   - اذهب إلى `الإعدادات` ← `ابدأ الاستيراد`
+7. **استيراد البيانات** — الإعدادات ← ابدأ الاستيراد.
 
 ---
 
 ## دعم الموبايل
 
-منذ v1.1.4:
-- شريط تنقل سفلي ثابت (Bottom Navigation) في كل الصفحات الخمس، مع تفعيل تلقائي للعنصر النشط
+- شريط تنقل سفلي ثابت (Bottom Navigation) في كل الصفحات الست، مع تفعيل تلقائي للعنصر النشط
+- زرار الإضافة عائم (FAB) بدل ما يكون جوه شريط العنوان — بيمنع تكسّر الهيدر على الشاشات الضيقة
+- البحث الموحّد موجود في لوحة التحكم فقط، عشان ميضغطش على شريط العنوان في باقي الصفحات
 - مساحات لمس مريحة (≥40px) لكل الأزرار والأيقونات
 - تم فحص كل صفحة فعلياً بمتصفح حقيقي على عرض 375px للتأكد من عدم وجود تمدد أفقي أو محتوى مقصوص
 
 ---
 
-## نظام المصادقة
+## نظام المصادقة والصلاحيات
 
-- مصادقة مخصصة عبر Firestore (بدون Firebase Auth)
-- كلمات المرور مُشفَّرة بـ SHA-256 مع salt ثابت
-- جلسات محفوظة في `sessionStorage`
-- المستخدم الأول: `maged` — يُضاف تلقائياً عند أول دخول
+- **Firebase Authentication حقيقي** — اسم مستخدم وكلمة مرور عادي، بيتحوّل لإيميل داخلي وهمي (`username@suqia.local`) تلقائياً من غير ما المستخدم يحس بفرق. القرار ده اتاخد بدل الاعتماد على مصادقة مخصصة عشان قواعد Firestore تقدر تتحقق فعلياً من هوية المستخدم عبر `request.auth`.
+- حسابات قديمة (من قبل v1.1.8) بترحّل تلقائياً وبصمت لـ Firebase Auth أول مرة تسجّل دخول بنجاح — من غير ما تحتاج تعمل أي حاجة.
+- جلسات محفوظة في `sessionStorage` (للواجهة، تحديد آخر مستخدم مسجّل) + جلسة Firebase Auth حقيقية (للحماية الفعلية في قواعد Firestore).
+- 3 صلاحيات حقيقية: 👑 مسؤول (كل شيء + إدارة المستخدمين) / ✏️ محرر (إضافة وتعديل البيانات) / 👁️ مشاهد (عرض فقط، بدون أي أزرار تعديل).
+- سجل نشاط: كل عملية دخول/خروج بتتسجل في `activityLog`، ظاهرة للمسؤول من تبويب الإعدادات.
+
+> ⚠️ **قيود معروفة (بدون خادم خلفي Cloud Functions):**
+> - المسؤول مش يقدر يغيّر كلمة مرور مستخدم تاني مباشرة — كل مستخدم بيغيّرها بنفسه من تبويب "الحساب".
+> - حذف مستخدم بيمنعه من الدخول فعلياً، لكن حساب Firebase Auth بتاعه بيفضل موجود تقنياً، فمتقدرش تنشئ مستخدم جديد بنفس الاسم القديم بعد حذفه.
+> - التفاصيل الكاملة وأسبابها التقنية والحل المستقبلي المقترح (Cloud Function اختيارية) في [`SETUP.md`](SETUP.md).
 
 ---
 
@@ -134,10 +136,13 @@ suqia/
 | التقنية | الاستخدام |
 |---------|-----------|
 | Firebase Firestore | قاعدة البيانات الرئيسية |
+| Firebase Authentication | تسجيل الدخول والجلسات الحقيقية |
+| IndexedDB | نسخة احتياطية دائمة تدعم القراءة أوفلاين |
+| Leaflet + OpenStreetMap | الخريطة التفاعلية (بدون مفتاح API) |
 | Vanilla JS (ES Modules) | منطق التطبيق بدون frameworks |
 | خط Cairo (محلي) | واجهة عربية RTL |
-| ExcelJS | تصدير Excel |
-| CSS Variables | نظام تصميم متكيّف (فاتح/داكن) |
+| ExcelJS + jsPDF + html2canvas | تصدير Excel وPDF |
+| CSS Variables | نظام تصميم متكيّف (فاتح/داكن) + متجاوب للموبايل |
 
 ---
 
