@@ -5,7 +5,7 @@
   <meta charset="UTF-8" /><meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <title>سُقيا — الكباري</title>
   <link rel="icon" type="image/svg+xml" href="../assets/icons/favicon.svg"/>
-  <link rel="stylesheet" href="../css/style.css?v=1.2.5" />
+  <link rel="stylesheet" href="../css/style.css?v=1.2.6" />
 </head>
 <body>
 <div class="shell">
@@ -14,7 +14,7 @@
       <div class="sb-logo">
         <svg viewBox="0 0 24 24" fill="none" stroke="#0c1a33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3.4 4 6 7.6 6 11a6 6 0 0 1-12 0c0-3.4 2.6-7 6-11Z"/><path d="M9.2 14.2c.4 1.6 1.6 2.6 3.2 2.8"/></svg>
       </div>
-      <div class="sb-brand-text"><h2>سُقيا</h2><span>إدارة أصول ري الجيزة &nbsp;<em class="sb-version">v1.2.5</em></span></div>
+      <div class="sb-brand-text"><h2>سُقيا</h2><span>إدارة أصول ري الجيزة &nbsp;<em class="sb-version">v1.2.6</em></span></div>
     </div>
     <nav class="sb-nav">
       <div class="sb-section">الرئيسية</div>
@@ -215,8 +215,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script type="module">
-import { requireAuth, clearSession, getCollection, addRecord, updateRecord, deleteRecord, logActivity } from "../js/firebase-config.js?v=1.2.5";
-import { wireThemeToggle, arabicDate, DataList, openModal, closeModal, setupModalClose, toast, confirmDelete, wireLocationButton, mapsLinkHtml, exportToExcel, exportToPDF, wireConnectionStatus } from "../js/shared.js?v=1.2.5";
+import { requireAuth, clearSession, getCollection, addRecord, updateRecord, deleteRecord, logActivity } from "../js/firebase-config.js?v=1.2.6";
+import { wireThemeToggle, arabicDate, DataList, openModal, closeModal, setupModalClose, toast, confirmDelete, wireLocationButton, mapsLinkHtml, exportToExcel, exportToPDF, wireConnectionStatus } from "../js/shared.js?v=1.2.6";
 
 const user = requireAuth();
 
@@ -330,10 +330,20 @@ function applyFilters() {
   document.getElementById('filter-count').textContent = tot > 0 ? (hasF ? `${cnt} من ${tot} كبري` : `${tot} كبري`) : '';
 }
 
+// ── وصف الفلاتر النشطة حالياً، لاستخدامه في عنوان ملفات التصدير ──
+function describeFilters() {
+  const parts = [];
+  if (activeTypes.size) parts.push(`النوع: ${[...activeTypes].join('، ')}`);
+  const lMin = document.getElementById('f-load-min').value, lMax = document.getElementById('f-load-max').value;
+  if (lMin || lMax) parts.push(`الحمل: ${lMin||'0'}–${lMax||'∞'} طن`);
+  if (tbl.searchQuery) parts.push(`بحث: "${tbl.searchQuery}"`);
+  return parts.length ? parts.join(' • ') : 'كل السجلات (بدون فلتر)';
+}
+
 document.getElementById('btn-export').addEventListener('click', async () => {
   if(!tbl.filtered.length) { toast('لا توجد بيانات للتصدير','error'); return; }
   await exportToExcel({
-    title:'تقرير الكباري', subtitle:'كل السجلات',
+    title:'تقرير الكباري', subtitle:describeFilters(), recordCount:tbl.filtered.length,
     columns:[{key:'name',label:'اسم الكبري',width:30},{key:'canalName',label:'الترعة',width:22},{key:'bridgeType',label:'النوع',width:14},{key:'location',label:'الموقع',width:16},{key:'load',label:'الحمل (طن)',width:14},{key:'condition',label:'الحالة',width:14},{key:'notes',label:'ملاحظات',width:30}],
     rows: tbl.filtered, filename: `كباري_${new Date().toISOString().slice(0,10)}.xlsx`,
   });
@@ -342,7 +352,7 @@ document.getElementById('btn-export').addEventListener('click', async () => {
 document.getElementById('btn-export-pdf').addEventListener('click', async () => {
   if(!tbl.filtered.length) { toast('لا توجد بيانات للتصدير','error'); return; }
   await exportToPDF({
-    title:'تقرير الكباري', subtitle:'كل السجلات',
+    title:'تقرير الكباري', subtitle:describeFilters(), recordCount:tbl.filtered.length,
     columns:[{key:'name',label:'اسم الكبري'},{key:'canalName',label:'الترعة'},{key:'bridgeType',label:'النوع'},{key:'location',label:'الموقع'},{key:'condition',label:'الحالة'}],
     rows: tbl.filtered, filename: `كباري_${new Date().toISOString().slice(0,10)}.pdf`,
   });

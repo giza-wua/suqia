@@ -5,7 +5,7 @@
   <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>سُقيا — ترع الإدارة</title>
   <link rel="icon" type="image/svg+xml" href="../assets/icons/favicon.svg"/>
-  <link rel="stylesheet" href="../css/style.css?v=1.2.5"/>
+  <link rel="stylesheet" href="../css/style.css?v=1.2.6"/>
   <style>
     .rot-badge{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:6px;font-size:11px;font-weight:900;margin-left:3px}
     .rot-a{background:rgba(11,180,172,.15);color:var(--teal-dk)}
@@ -27,7 +27,7 @@
       <div class="sb-logo">
         <svg viewBox="0 0 24 24" fill="none" stroke="#0c1a33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3.4 4 6 7.6 6 11a6 6 0 0 1-12 0c0-3.4 2.6-7 6-11Z"/><path d="M9.2 14.2c.4 1.6 1.6 2.6 3.2 2.8"/></svg>
       </div>
-      <div class="sb-brand-text"><h2>سُقيا</h2><span>إدارة أصول ري الجيزة &nbsp;<em class="sb-version">v1.2.5</em></span></div>
+      <div class="sb-brand-text"><h2>سُقيا</h2><span>إدارة أصول ري الجيزة &nbsp;<em class="sb-version">v1.2.6</em></span></div>
     </div>
     <nav class="sb-nav">
       <div class="sb-section">الرئيسية</div>
@@ -231,8 +231,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script type="module">
-import { requireAuth, clearSession, getCollection, addRecord, updateRecord, deleteRecord, logActivity } from "../js/firebase-config.js?v=1.2.5";
-import { wireThemeToggle, arabicDate, DataList, openModal, closeModal, toast, confirmDelete, wireLocationButton, mapsLinkHtml, exportToExcel, exportToPDF, wireConnectionStatus } from "../js/shared.js?v=1.2.5";
+import { requireAuth, clearSession, getCollection, addRecord, updateRecord, deleteRecord, logActivity } from "../js/firebase-config.js?v=1.2.6";
+import { wireThemeToggle, arabicDate, DataList, openModal, closeModal, toast, confirmDelete, wireLocationButton, mapsLinkHtml, exportToExcel, exportToPDF, wireConnectionStatus } from "../js/shared.js?v=1.2.6";
 
 const user = requireAuth();
 
@@ -374,11 +374,25 @@ function applyFilters(){
   document.getElementById('filter-count').textContent=tot>0?(hasF?`${cnt} من ${tot} ترعة`:`${tot} ترعة`):'';
 }
 
+// ── وصف الفلاتر النشطة حالياً، لاستخدامه في عنوان ملفات التصدير ──
+function describeFilters(){
+  const parts=[];
+  if(activeLetter) parts.push(`تبدأ بحرف "${activeLetter}"`);
+  if(activeEngs.size) parts.push(`الإدارة: ${[...activeEngs].join('، ')}`);
+  if(activeRots.size) parts.push(`المناوبة: ${[...activeRots].join('، ')}`);
+  if(activeLining==='yes') parts.push('مبطنة فقط');
+  if(activeLining==='no') parts.push('غير مبطنة فقط');
+  const lMin=document.getElementById('f-len-min').value,lMax=document.getElementById('f-len-max').value;
+  if(lMin||lMax) parts.push(`الطول: ${lMin||'0'}–${lMax||'∞'} كم`);
+  if(tbl.searchQuery) parts.push(`بحث: "${tbl.searchQuery}"`);
+  return parts.length? parts.join(' • ') : 'كل السجلات (بدون فلتر)';
+}
+
 // ══ Export ══
 document.getElementById('btn-export').addEventListener('click',async()=>{
   if(!tbl.filtered.length){toast('لا توجد بيانات للتصدير','error');return;}
   const rows=tbl.filtered.map(r=>({name:r.name||'',eng:r._eng||'',feeder:r.canalName||r.feeder||'',length:r.length||'',zomam:r.zomam||'',discharge:r.discharge||'',rotations:r._rotations.join(' / ')||'',lined:r._lining?'مبطنة':'',linedLength:r._lining?.linedLength||r._lining?.totalLength||'',liningType:r._lining?.liningType||'',notes:r.notes||''}));
-  await exportToExcel({title:'تقرير ترع الإدارة — محافظة الجيزة',subtitle:activeEngs.size?[...activeEngs].join(' / '):'كل الإدارات',
+  await exportToExcel({title:'تقرير ترع الإدارة — محافظة الجيزة',subtitle:describeFilters(),recordCount:tbl.filtered.length,
     columns:[{key:'name',label:'اسم الترعة',width:28},{key:'eng',label:'الإدارة الهندسية',width:14},{key:'feeder',label:'المغذية',width:20},{key:'length',label:'الطول (كم)',width:12},{key:'zomam',label:'الزمام (فدان)',width:14},{key:'discharge',label:'القنن المائي',width:14},{key:'rotations',label:'المناوبة',width:10},{key:'lined',label:'مبطنة؟',width:8},{key:'linedLength',label:'الطول المبطن (كم)',width:16},{key:'liningType',label:'نوع التبطين',width:16},{key:'notes',label:'ملاحظات',width:30}],
     rows,filename:`ترع_الإدارة_${new Date().toISOString().slice(0,10)}.xlsx`});
   toast('تم التصدير بنجاح','success');
@@ -386,7 +400,7 @@ document.getElementById('btn-export').addEventListener('click',async()=>{
 document.getElementById('btn-export-pdf').addEventListener('click',async()=>{
   if(!tbl.filtered.length){toast('لا توجد بيانات للتصدير','error');return;}
   const rows=tbl.filtered.map(r=>({name:r.name||'',eng:r._eng||'',feeder:r.canalName||r.feeder||'',length:r.length||'',rotations:r._rotations.join(' / ')||'',lined:r._lining?'مبطنة':'غير مبطنة'}));
-  await exportToPDF({title:'تقرير ترع الإدارة — محافظة الجيزة',subtitle:activeEngs.size?[...activeEngs].join(' / '):'كل الإدارات',
+  await exportToPDF({title:'تقرير ترع الإدارة — محافظة الجيزة',subtitle:describeFilters(),recordCount:tbl.filtered.length,
     columns:[{key:'name',label:'اسم الترعة'},{key:'eng',label:'الإدارة'},{key:'feeder',label:'المغذية'},{key:'length',label:'الطول (كم)'},{key:'rotations',label:'المناوبة'},{key:'lined',label:'التبطين'}],
     rows,filename:`ترع_الإدارة_${new Date().toISOString().slice(0,10)}.pdf`});
   toast('تم التصدير بنجاح','success');
