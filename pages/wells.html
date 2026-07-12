@@ -5,7 +5,13 @@
   <meta charset="UTF-8" /><meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <title>سُقيا — الآبار الجوفية</title>
   <link rel="icon" type="image/svg+xml" href="../assets/icons/favicon.svg"/>
-  <link rel="stylesheet" href="../css/style.css?v=1.2.6" />
+  <link rel="manifest" href="../manifest.json"/>
+  <link rel="apple-touch-icon" href="../assets/icons/icon-192.png"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-title" content="سُقيا"/>
+  <link rel="stylesheet" href="../css/style.css?v=1.2.7" />
 </head>
 <body>
 <div class="shell">
@@ -14,7 +20,7 @@
       <div class="sb-logo">
         <svg viewBox="0 0 24 24" fill="none" stroke="#0c1a33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3.4 4 6 7.6 6 11a6 6 0 0 1-12 0c0-3.4 2.6-7 6-11Z"/><path d="M9.2 14.2c.4 1.6 1.6 2.6 3.2 2.8"/></svg>
       </div>
-      <div class="sb-brand-text"><h2>سُقيا</h2><span>إدارة أصول ري الجيزة &nbsp;<em class="sb-version">v1.2.6</em></span></div>
+      <div class="sb-brand-text"><h2>سُقيا</h2><span>إدارة أصول ري الجيزة &nbsp;<em class="sb-version">v1.2.7</em></span></div>
     </div>
     <nav class="sb-nav">
       <div class="sb-section">الرئيسية</div>
@@ -189,8 +195,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script type="module">
-import { requireAuth, clearSession, getCollection, addRecord, updateRecord, deleteRecord, logActivity } from "../js/firebase-config.js?v=1.2.6";
-import { wireThemeToggle, arabicDate, DataList, openModal, closeModal, setupModalClose, toast, confirmDelete, wireLocationButton, mapsLinkHtml, exportToExcel, exportToPDF, wireConnectionStatus } from "../js/shared.js?v=1.2.6";
+if ("serviceWorker" in navigator) { navigator.serviceWorker.register("/sw.js").catch(() => {}); }
+import { requireAuth, clearSession, getCollection, addRecord, updateRecord, deleteRecord, logActivity } from "../js/firebase-config.js?v=1.2.7";
+import { wireThemeToggle, arabicDate, DataList, openModal, closeModal, setupModalClose, toast, confirmDelete, wireLocationButton, mapsLinkHtml, exportToExcel, exportToPDF, wireConnectionStatus } from "../js/shared.js?v=1.2.7";
 
 const user = requireAuth();
 
@@ -362,6 +369,7 @@ document.getElementById('btn-edit').addEventListener('click', () => { closeModal
 document.getElementById('btn-delete').addEventListener('click', () => {
   confirmDelete(document.getElementById('btn-delete'), async () => {
     await deleteRecord('wells', current.id);
+    await logActivity('حذف بئر', {name: current.name||current.id});
     closeModal('modal-view'); toast('تم الحذف ✓','success');
     tbl.setData(tbl.allData.filter(r => r.id !== current.id));
   });
@@ -391,9 +399,9 @@ document.getElementById('btn-save').addEventListener('click', async () => {
   btn.disabled = true; btn.textContent = 'جاري الحفظ…';
   try {
     if(current && document.getElementById('form-title').textContent.includes('تعديل')) {
-      await updateRecord('wells', current.id, data); toast('تم التعديل ✓','success');
+      await updateRecord('wells', current.id, data); await logActivity('تعديل بئر',{name:data.name||current.name}); toast('تم التعديل ✓','success');
     } else {
-      await addRecord('wells', data); toast('تمت الإضافة ✓','success');
+      await addRecord('wells', data); await logActivity('إضافة بئر',{name:data.name}); toast('تمت الإضافة ✓','success');
     }
     closeModal('modal-form'); current = null; location.reload();
   } finally {

@@ -6,7 +6,13 @@
   <meta name="theme-color" content="#071226"/>
   <title>سُقيا — لوحة التحكم</title>
   <link rel="icon" type="image/svg+xml" href="../assets/icons/favicon.svg"/>
-  <link rel="stylesheet" href="../css/style.css?v=1.2.6"/>
+  <link rel="manifest" href="../manifest.json"/>
+  <link rel="apple-touch-icon" href="../assets/icons/icon-192.png"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-title" content="سُقيا"/>
+  <link rel="stylesheet" href="../css/style.css?v=1.2.7"/>
 </head>
 <body>
 <div class="shell">
@@ -17,7 +23,7 @@
       <div class="sb-logo">
         <svg viewBox="0 0 24 24" fill="none" stroke="#0c1a33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3.4 4 6 7.6 6 11a6 6 0 0 1-12 0c0-3.4 2.6-7 6-11Z"/><path d="M9.2 14.2c.4 1.6 1.6 2.6 3.2 2.8"/></svg>
       </div>
-      <div class="sb-brand-text"><h2>سُقيا</h2><span>إدارة أصول ري الجيزة &nbsp;<em class="sb-version">v1.2.6</em></span></div>
+      <div class="sb-brand-text"><h2>سُقيا</h2><span>إدارة أصول ري الجيزة &nbsp;<em class="sb-version">v1.2.7</em></span></div>
     </div>
     <nav class="sb-nav">
       <div class="sb-section">الرئيسية</div>
@@ -175,6 +181,24 @@
         </div>
       </div>
 
+      <!-- تنبيهات الصيانة -->
+      <div class="card" id="alerts-card" style="display:none;margin-top:4px">
+        <div class="card-header"><span class="card-title">🛠️ تنبيهات الصيانة</span> <span class="badge badge-gray" id="alerts-count" style="font-size:10px"></span></div>
+        <div class="card-body" id="alerts-body"></div>
+      </div>
+
+      <!-- نظرة تحليلية -->
+      <div class="stat-grid" id="charts-grid" style="display:none;grid-template-columns:1fr 1fr;margin-top:4px;gap:14px">
+        <div class="card">
+          <div class="card-header"><span class="card-title">🌉 الكباري حسب النوع</span></div>
+          <div class="card-body" id="chart-bridges"></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">💧 الآبار حسب المركز</span></div>
+          <div class="card-body" id="chart-wells"></div>
+        </div>
+      </div>
+
       <!-- Quick links: admin only -->
       <div class="card" id="quick-card" style="display:none;margin-top:4px">
         <div class="card-header"><span class="card-title">⚡ وصول سريع</span></div>
@@ -191,8 +215,9 @@
 </div>
 
 <script type="module">
-import { requireAuth, clearSession, getCollection, logActivity } from "../js/firebase-config.js?v=1.2.6";
-import { wireThemeToggle, arabicDate, greeting, initGlobalSearch, wireConnectionStatus } from "../js/shared.js?v=1.2.6";
+if ("serviceWorker" in navigator) { navigator.serviceWorker.register("/sw.js").catch(() => {}); }
+import { requireAuth, clearSession, getCollection, logActivity } from "../js/firebase-config.js?v=1.2.7";
+import { wireThemeToggle, arabicDate, greeting, initGlobalSearch, wireConnectionStatus } from "../js/shared.js?v=1.2.7";
 
 const user = requireAuth();
   // ── Sidebar ──
@@ -239,31 +264,135 @@ initGlobalSearch(async () => {
   ];
 });
 
-// ── Counts — كل collection على حدة بدل Promise.all ──
-async function loadOneCount(col, elId) {
+// ── تحميل البيانات الكاملة (مش بس العدد) — نعيد استخدامها للتنبيهات والرسوم ──
+async function loadOneFull(col, elId) {
   try {
     const data = await getCollection(col);
     const el = document.getElementById(elId);
     if(el) el.textContent = data.length;
-    return data.length;
+    return data;
   } catch(e) {
     const el = document.getElementById(elId);
     if(el) el.textContent = '—';
     console.warn('count error:', col, e.message);
-    return 0;
+    return [];
   }
 }
 (async () => {
-  const counts = await Promise.all([
-    loadOneCount('specs',       'cnt-canals-admin'),
-    loadOneCount('bridges',     'cnt-bridges'),
-    loadOneCount('linedCanals', 'cnt-canals'),
-    loadOneCount('wells',       'cnt-wells'),
+  const [specs, bridges, linedCanals, wells] = await Promise.all([
+    loadOneFull('specs',       'cnt-canals-admin'),
+    loadOneFull('bridges',     'cnt-bridges'),
+    loadOneFull('linedCanals', 'cnt-canals'),
+    loadOneFull('wells',       'cnt-wells'),
   ]);
-  const total = counts.reduce((a,b)=>a+b,0);
+  const total = specs.length + bridges.length + linedCanals.length + wells.length;
   const ws = document.getElementById('ws-total');
   if(ws) ws.textContent = total;
+
+  renderMaintenanceAlerts({ specs, bridges, wells });
+  renderCharts({ bridges, wells });
 })();
+
+// ══ تنبيهات الصيانة ══════════════════════
+// بنعتمد على حقل updatedAt (بيتحدّث تلقائياً عند أي إضافة/تعديل)
+function toDate(ts) {
+  if (!ts) return null;
+  if (ts.toDate) return ts.toDate();
+  if (ts.seconds) return new Date(ts.seconds * 1000);
+  const d = new Date(ts); return isNaN(d) ? null : d;
+}
+function renderMaintenanceAlerts({ specs, bridges, wells }) {
+  const STALE_DAYS = 365;
+  const now = Date.now();
+  const groups = [
+    { data: specs,   label: 'ترعة', page: 'canals.html' },
+    { data: bridges, label: 'كوبري', page: 'bridges.html' },
+    { data: wells,   label: 'بئر', page: 'wells.html' },
+  ];
+  const stale = [];
+  groups.forEach(g => g.data.forEach(r => {
+    const d = toDate(r.updatedAt);
+    // لو مفيش تاريخ تحديث خالص، أو قديم أكتر من سنة، اعتبره محتاج مراجعة
+    const daysAgo = d ? Math.floor((now - d.getTime()) / 86400000) : null;
+    if (daysAgo === null || daysAgo > STALE_DAYS) {
+      stale.push({ name: r.name || '—', label: g.label, page: g.page, daysAgo });
+    }
+  }));
+
+  const card = document.getElementById('alerts-card');
+  const body = document.getElementById('alerts-body');
+  const countBadge = document.getElementById('alerts-count');
+  if (!stale.length) {
+    card.style.display = '';
+    countBadge.textContent = 'كل شيء محدَّث ✓';
+    body.innerHTML = `<div class="empty" style="padding:16px"><div class="icon">✅</div><p>مفيش سجلات محتاجة مراجعة — كل البيانات محدَّثة خلال آخر سنة</p></div>`;
+    return;
+  }
+  card.style.display = '';
+  countBadge.textContent = `${stale.length} سجل`;
+  const shown = stale.slice(0, 6);
+  body.innerHTML = `
+    <p style="font-size:12px;color:var(--text-2);margin-bottom:10px">السجلات دي ما اتحدّثتش من أكتر من سنة (أو مالهاش تاريخ تحديث مسجَّل) — يستاهل تتراجع:</p>
+    ${shown.map(s => `
+      <a href="${s.page}?q=${encodeURIComponent(s.name)}" style="display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);text-decoration:none;color:var(--text)">
+        <span style="font-size:13px;font-weight:700">${s.name} <span style="color:var(--text-3);font-weight:600">— ${s.label}</span></span>
+        <span class="badge badge-gray" style="font-size:10px">${s.daysAgo===null?'بدون تاريخ':`منذ ${s.daysAgo} يوم`}</span>
+      </a>`).join('')}
+    ${stale.length > shown.length ? `<p style="font-size:11px;color:var(--text-3);margin-top:10px">و${stale.length - shown.length} سجل آخر…</p>` : ''}
+  `;
+}
+
+// ══ الرسوم التحليلية (SVG بسيط، من غير مكتبات خارجية) ══
+const CHART_COLORS = ['#0bb4ac','#d9a536','#1c8fd9','#e2477b','#7c6ff0','#16a87a','#e08a1f','#94a3b8'];
+function renderDonut(containerId, dataMap) {
+  const el = document.getElementById(containerId);
+  const entries = Object.entries(dataMap).filter(([,v]) => v > 0);
+  if (!entries.length) { el.innerHTML = `<div class="empty" style="padding:10px"><p style="font-size:12px">لا توجد بيانات كافية</p></div>`; return; }
+  const total = entries.reduce((a,[,v]) => a+v, 0);
+  const R = 40, C = 2 * Math.PI * R;
+  let offset = 0;
+  const circles = entries.map(([label, val], i) => {
+    const frac = val / total;
+    const dash = frac * C;
+    const circle = `<circle cx="50" cy="50" r="${R}" fill="none" stroke="${CHART_COLORS[i % CHART_COLORS.length]}" stroke-width="14" stroke-dasharray="${dash} ${C-dash}" stroke-dashoffset="${-offset}" transform="rotate(-90 50 50)"/>`;
+    offset += dash;
+    return circle;
+  }).join('');
+  const legend = entries.map(([label, val], i) => `
+    <div style="display:flex;align-items:center;gap:7px;font-size:12px;font-weight:700;color:var(--text-2)">
+      <span style="width:10px;height:10px;border-radius:50%;background:${CHART_COLORS[i % CHART_COLORS.length]};flex-shrink:0"></span>
+      ${label} <span style="color:var(--text-3);font-weight:600">(${val})</span>
+    </div>`).join('');
+  el.innerHTML = `
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <svg viewBox="0 0 100 100" style="width:120px;height:120px;flex-shrink:0"><g>${circles}</g><text x="50" y="54" text-anchor="middle" font-size="16" font-weight="900" fill="var(--text)">${total}</text></svg>
+      <div style="display:flex;flex-direction:column;gap:6px">${legend}</div>
+    </div>`;
+}
+function renderBarChart(containerId, dataMap) {
+  const el = document.getElementById(containerId);
+  const entries = Object.entries(dataMap).filter(([,v]) => v > 0).sort((a,b) => b[1]-a[1]);
+  if (!entries.length) { el.innerHTML = `<div class="empty" style="padding:10px"><p style="font-size:12px">لا توجد بيانات كافية</p></div>`; return; }
+  const max = Math.max(...entries.map(([,v]) => v));
+  el.innerHTML = entries.map(([label, val], i) => `
+    <div style="margin-bottom:9px">
+      <div style="display:flex;justify-content:space-between;font-size:11.5px;font-weight:700;color:var(--text-2);margin-bottom:3px"><span>${label}</span><span>${val}</span></div>
+      <div style="background:var(--surface-2);border-radius:99px;height:8px;overflow:hidden"><div style="width:${(val/max*100).toFixed(0)}%;height:100%;background:${CHART_COLORS[i % CHART_COLORS.length]};border-radius:99px"></div></div>
+    </div>`).join('');
+}
+function renderCharts({ bridges, wells }) {
+  const grid = document.getElementById('charts-grid');
+  if (!bridges.length && !wells.length) return;
+  grid.style.display = 'grid';
+  const byType = {};
+  bridges.forEach(b => { const t = b.bridgeType || 'غير محدَّد'; byType[t] = (byType[t]||0) + 1; });
+  renderDonut('chart-bridges', byType);
+
+  const byDistrict = {};
+  wells.forEach(w => { const d = w.district || 'غير محدَّد'; byDistrict[d] = (byDistrict[d]||0) + 1; });
+  renderBarChart('chart-wells', byDistrict);
+}
+
 </script>
 </body>
 </html>

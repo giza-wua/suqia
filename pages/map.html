@@ -6,8 +6,14 @@
   <meta name="theme-color" content="#071226"/>
   <title>سُقيا — الخريطة</title>
   <link rel="icon" type="image/svg+xml" href="../assets/icons/favicon.svg"/>
+  <link rel="manifest" href="../manifest.json"/>
+  <link rel="apple-touch-icon" href="../assets/icons/icon-192.png"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-title" content="سُقيا"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
-  <link rel="stylesheet" href="../css/style.css?v=1.2.6"/>
+  <link rel="stylesheet" href="../css/style.css?v=1.2.7"/>
   <style>
     .map-wrap{position:relative;height:calc(100vh - 160px);min-height:420px;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);box-shadow:var(--shadow-1)}
     #map{height:100%;width:100%;background:var(--surface-2)}
@@ -30,7 +36,7 @@
       <div class="sb-logo">
         <svg viewBox="0 0 24 24" fill="none" stroke="#0c1a33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3.4 4 6 7.6 6 11a6 6 0 0 1-12 0c0-3.4 2.6-7 6-11Z"/><path d="M9.2 14.2c.4 1.6 1.6 2.6 3.2 2.8"/></svg>
       </div>
-      <div class="sb-brand-text"><h2>سُقيا</h2><span>إدارة أصول ري الجيزة &nbsp;<em class="sb-version">v1.2.6</em></span></div>
+      <div class="sb-brand-text"><h2>سُقيا</h2><span>إدارة أصول ري الجيزة &nbsp;<em class="sb-version">v1.2.7</em></span></div>
     </div>
     <nav class="sb-nav">
       <div class="sb-section">الرئيسية</div>
@@ -139,8 +145,9 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script type="module">
-import { requireAuth, clearSession, getCollection, logActivity } from "../js/firebase-config.js?v=1.2.6";
-import { wireThemeToggle, arabicDate, wireConnectionStatus } from "../js/shared.js?v=1.2.6";
+if ("serviceWorker" in navigator) { navigator.serviceWorker.register("/sw.js").catch(() => {}); }
+import { requireAuth, clearSession, getCollection, logActivity } from "../js/firebase-config.js?v=1.2.7";
+import { wireThemeToggle, arabicDate, wireConnectionStatus } from "../js/shared.js?v=1.2.7";
 
 const user = requireAuth();
 // ── Sidebar ──

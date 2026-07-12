@@ -5,7 +5,13 @@
   <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>سُقيا — ترع الإدارة</title>
   <link rel="icon" type="image/svg+xml" href="../assets/icons/favicon.svg"/>
-  <link rel="stylesheet" href="../css/style.css?v=1.2.6"/>
+  <link rel="manifest" href="../manifest.json"/>
+  <link rel="apple-touch-icon" href="../assets/icons/icon-192.png"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-title" content="سُقيا"/>
+  <link rel="stylesheet" href="../css/style.css?v=1.2.7"/>
   <style>
     .rot-badge{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:6px;font-size:11px;font-weight:900;margin-left:3px}
     .rot-a{background:rgba(11,180,172,.15);color:var(--teal-dk)}
@@ -27,7 +33,7 @@
       <div class="sb-logo">
         <svg viewBox="0 0 24 24" fill="none" stroke="#0c1a33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3.4 4 6 7.6 6 11a6 6 0 0 1-12 0c0-3.4 2.6-7 6-11Z"/><path d="M9.2 14.2c.4 1.6 1.6 2.6 3.2 2.8"/></svg>
       </div>
-      <div class="sb-brand-text"><h2>سُقيا</h2><span>إدارة أصول ري الجيزة &nbsp;<em class="sb-version">v1.2.6</em></span></div>
+      <div class="sb-brand-text"><h2>سُقيا</h2><span>إدارة أصول ري الجيزة &nbsp;<em class="sb-version">v1.2.7</em></span></div>
     </div>
     <nav class="sb-nav">
       <div class="sb-section">الرئيسية</div>
@@ -231,8 +237,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script type="module">
-import { requireAuth, clearSession, getCollection, addRecord, updateRecord, deleteRecord, logActivity } from "../js/firebase-config.js?v=1.2.6";
-import { wireThemeToggle, arabicDate, DataList, openModal, closeModal, toast, confirmDelete, wireLocationButton, mapsLinkHtml, exportToExcel, exportToPDF, wireConnectionStatus } from "../js/shared.js?v=1.2.6";
+if ("serviceWorker" in navigator) { navigator.serviceWorker.register("/sw.js").catch(() => {}); }
+import { requireAuth, clearSession, getCollection, addRecord, updateRecord, deleteRecord, logActivity } from "../js/firebase-config.js?v=1.2.7";
+import { wireThemeToggle, arabicDate, DataList, openModal, closeModal, toast, confirmDelete, wireLocationButton, mapsLinkHtml, exportToExcel, exportToPDF, wireConnectionStatus } from "../js/shared.js?v=1.2.7";
 
 const user = requireAuth();
 
@@ -446,7 +453,7 @@ function openView(spec){
 document.getElementById('view-close').addEventListener('click',()=>closeModal('modal-view'));
 document.getElementById('modal-view').addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal('modal-view');});
 document.getElementById('btn-edit').addEventListener('click',()=>{closeModal('modal-view');openForm(currentItem);});
-document.getElementById('btn-delete').addEventListener('click',()=>{ confirmDelete(document.getElementById('btn-delete'),async()=>{ await deleteRecord('specs',currentItem.id);closeModal('modal-view');toast('تم الحذف','success');location.reload(); }); });
+document.getElementById('btn-delete').addEventListener('click',()=>{ confirmDelete(document.getElementById('btn-delete'),async()=>{ await deleteRecord('specs',currentItem.id); await logActivity('حذف ترعة', {name: currentItem.name||currentItem.id}); closeModal('modal-view');toast('تم الحذف','success');location.reload(); }); });
 
 // ══ Form ══
 const FF=['name','eng','canalName','bank','length','zomam','discharge','notes'];
@@ -464,8 +471,8 @@ document.getElementById('btn-save').addEventListener('click',async()=>{
   if(lat)data.lat=parseFloat(lat);if(lng)data.lng=parseFloat(lng);
   const btn=document.getElementById('btn-save');btn.disabled=true;const orig=btn.textContent;btn.textContent='جاري الحفظ…';
   try{
-    if(currentItem&&document.getElementById('form-title').textContent.includes('تعديل')){await updateRecord('specs',currentItem.id,data);toast('تم التعديل','success');}
-    else{await addRecord('specs',data);toast('تمت الإضافة','success');}
+    if(currentItem&&document.getElementById('form-title').textContent.includes('تعديل')){await updateRecord('specs',currentItem.id,data);await logActivity('تعديل ترعة',{name:data.name||currentItem.name});toast('تم التعديل','success');}
+    else{await addRecord('specs',data);await logActivity('إضافة ترعة',{name:data.name});toast('تمت الإضافة','success');}
     closeModal('modal-form');currentItem=null;location.reload();
   }finally{btn.disabled=false;btn.textContent=orig;}
 });

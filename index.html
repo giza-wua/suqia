@@ -7,7 +7,13 @@
   <meta name="theme-color" content="#071226"/>
   <title>سُقيا — تسجيل الدخول</title>
   <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg"/>
-  <link rel="stylesheet" href="css/style.css?v=1.2.6"/>
+  <link rel="manifest" href="manifest.json"/>
+  <link rel="apple-touch-icon" href="assets/icons/icon-192.png"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-title" content="سُقيا"/>
+  <link rel="stylesheet" href="css/style.css?v=1.2.7"/>
 </head>
 <body>
 
@@ -73,7 +79,13 @@
 </div>
 
 <script type="module">
-  import { loginUser, saveSession, getSession, logActivity } from "./js/firebase-config.js?v=1.2.6";
+  // ── تسجيل Service Worker (يدعم التثبيت والعمل بدون إنترنت) ──
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("/sw.js").catch(() => {});
+    });
+  }
+  import { loginUser, saveSession, getSession, logActivity } from "./js/firebase-config.js?v=1.2.7";
 
   // لو في session موجودة — روح للداشبورد مباشرة
   if (getSession()) {
