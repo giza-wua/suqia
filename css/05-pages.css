@@ -102,7 +102,7 @@
 .section-card-grid .sv2{display:block;font-size:13px;font-weight:800;color:var(--text)}
 
 /* ══ SETTINGS / USERS ══ */
-.settings-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+
 .user-row{display:flex;align-items:center;gap:11px;padding:12px 0;border-bottom:1px solid var(--border);transition:.15s}
 .user-row:last-child{border-bottom:none}
 .user-row:hover{padding-right:5px}
@@ -166,7 +166,6 @@
   .form-grid{grid-template-columns:1fr}
   .card-header{flex-wrap:wrap;gap:8px}
   .page-header{flex-direction:column;align-items:flex-start}
-  .settings-grid{grid-template-columns:1fr}
 
   .modal-overlay{align-items:flex-end;padding:0}
   .modal{max-width:100%;max-height:94vh;border-radius:var(--radius-xl) var(--radius-xl) 0 0;animation:modalSlideUp .3s var(--ease-out)}

@@ -11,7 +11,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
   <meta name="apple-mobile-web-app-title" content="سُقيا"/>
-  <link rel="stylesheet" href="../css/style.css?v=1.2.7" />
+  <link rel="stylesheet" href="../css/style.css?v=1.2.8" />
 </head>
 <body>
 <div class="shell">
@@ -20,7 +20,7 @@
       <div class="sb-logo">
         <svg viewBox="0 0 24 24" fill="none" stroke="#0c1a33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3.4 4 6 7.6 6 11a6 6 0 0 1-12 0c0-3.4 2.6-7 6-11Z"/><path d="M9.2 14.2c.4 1.6 1.6 2.6 3.2 2.8"/></svg>
       </div>
-      <div class="sb-brand-text"><h2>سُقيا</h2><span>إدارة أصول ري الجيزة &nbsp;<em class="sb-version">v1.2.7</em></span></div>
+      <div class="sb-brand-text"><h2>سُقيا</h2><span>إدارة أصول ري الجيزة &nbsp;<em class="sb-version">v1.2.8</em></span></div>
     </div>
     <nav class="sb-nav">
       <div class="sb-section">الرئيسية</div>
@@ -222,8 +222,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script type="module">
 if ("serviceWorker" in navigator) { navigator.serviceWorker.register("/sw.js").catch(() => {}); }
-import { requireAuth, clearSession, getCollection, addRecord, updateRecord, deleteRecord, logActivity } from "../js/firebase-config.js?v=1.2.7";
-import { wireThemeToggle, arabicDate, DataList, openModal, closeModal, setupModalClose, toast, confirmDelete, wireLocationButton, mapsLinkHtml, exportToExcel, exportToPDF, wireConnectionStatus } from "../js/shared.js?v=1.2.7";
+import { requireAuth, clearSession, getCollection, addRecord, updateRecord, deleteRecord, logActivity } from "../js/firebase-config.js?v=1.2.8";
+import { wireThemeToggle, arabicDate, DataList, openModal, closeModal, setupModalClose, toast, confirmDelete, wireLocationButton, mapsLinkHtml, exportToExcel, exportToPDF, wireConnectionStatus } from "../js/shared.js?v=1.2.8";
 
 const user = requireAuth();
 

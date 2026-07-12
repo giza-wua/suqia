@@ -84,8 +84,7 @@
 .loading{min-height:200px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:11px;color:var(--text-3)}
 .spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--teal);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.skel{background:linear-gradient(90deg,var(--surface-2) 25%,var(--surface-3) 50%,var(--surface-2) 75%);background-size:200% 100%;animation:skel 1.3s ease-in-out infinite;border-radius:8px}
-@keyframes skel{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
 
 /* ══ STAT CARD — modern icon wrap ══ */
 .s-icon-wrap {

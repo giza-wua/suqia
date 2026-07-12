@@ -78,14 +78,6 @@ function requireAuth() {
   }
   return u;
 }
-function requireAdmin() {
-  const u = requireAuth();
-  if (u && u.role !== "admin") {
-    window.location.href = "dashboard.html";
-    return null;
-  }
-  return u;
-}
 
 // ══ Password hashing (SHA-256 + salt) ════
 // ⚠️ دي بقت تُستخدم فقط للتحقق من حسابات قديمة لسه ما تنقلتش لـ Firebase Auth الحقيقي
@@ -328,11 +320,6 @@ async function idbGetCollection(col) {
     });
   } catch { return null; }
 }
-function isOnline() { return typeof navigator !== "undefined" ? navigator.onLine : true; }
-async function getOfflineTimestamp(col) {
-  const rec = await idbGetCollection(col);
-  return rec ? rec.ts : null;
-}
 
 async function getCollection(col) {
   // 1. Cache أولاً
@@ -404,7 +391,7 @@ async function exportCollectionData(col) {
 
 async function exportAllData() {
   const COLS = ['specs', 'bridges', 'linedCanals', 'wells'];
-  const result = { version: '1.2.7', exportedAt: new Date().toISOString(), collections: {} };
+  const result = { version: '1.2.8', exportedAt: new Date().toISOString(), collections: {} };
   for (const col of COLS) {
     const snap = await getDocs(collection(db, col));
     result.collections[col] = snap.docs.map(d => ({ _id: d.id, ...d.data() }));
@@ -484,7 +471,7 @@ async function deleteAllCollectionData(col) {
 }
 
 export {
-  addRecord, changeMyPassword, clearCache, clearSession, createUser, db, deleteRecord, deleteUser,
-  checkFirebaseHealth, deleteAllCollectionData, exportAllData, exportCollectionData, forceSyncAll, getActivityLog, getCollection, getCollectionCount, getLastSync, getLastSyncAll, getOfflineTimestamp, getSession, getUsers, hashPassword, importCollectionData, isOnline, logActivity, loginUser, requireAdmin, requireAuth, saveSession, setLastSync, updateRecord, updateUser, verifyPassword
+  addRecord, changeMyPassword, clearCache, clearSession, createUser, deleteRecord, deleteUser,
+  checkFirebaseHealth, deleteAllCollectionData, exportAllData, exportCollectionData, forceSyncAll, getActivityLog, getCollection, getCollectionCount, getLastSync, getLastSyncAll, getSession, getUsers, importCollectionData, logActivity, loginUser, requireAuth, saveSession, updateRecord, updateUser
 };
 
