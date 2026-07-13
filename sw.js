@@ -5,7 +5,7 @@
 //  (شوف js/firebase-config.js) — الاتنين بيكملوا بعض: ده للواجهة، وده للبيانات.
 // ══════════════════════════════════════════
 
-const CACHE_NAME = "suqia-shell-v1.2.8";
+const CACHE_NAME = "suqia-shell-v1.3.0";
 const APP_SHELL = [
   "/index.html",
   "/manifest.json",

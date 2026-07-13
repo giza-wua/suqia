@@ -391,7 +391,7 @@ async function exportCollectionData(col) {
 
 async function exportAllData() {
   const COLS = ['specs', 'bridges', 'linedCanals', 'wells'];
-  const result = { version: '1.2.8', exportedAt: new Date().toISOString(), collections: {} };
+  const result = { version: '1.3.0', exportedAt: new Date().toISOString(), collections: {} };
   for (const col of COLS) {
     const snap = await getDocs(collection(db, col));
     result.collections[col] = snap.docs.map(d => ({ _id: d.id, ...d.data() }));
