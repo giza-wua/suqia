@@ -75,7 +75,7 @@
 
 /* ══ BOTTOM NAV (mobile only) ══ */
 .bottom-nav{display:none}
-@media(max-width:768px){
+@media(max-width:1024px){
   .bottom-nav{
     display:flex;position:fixed;bottom:0;right:0;left:0;z-index:220;
     background:rgba(255,255,255,.94);backdrop-filter:blur(18px) saturate(1.4);

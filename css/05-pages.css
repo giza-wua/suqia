@@ -151,8 +151,7 @@
 .btn-gps{white-space:nowrap;flex-shrink:0}
 
 /* ══ RESPONSIVE ══ */
-@media(max-width:900px){.stat-grid{grid-template-columns:1fr 1fr}}
-@media(max-width:768px){
+@media(max-width:1024px){
   #charts-grid{grid-template-columns:1fr!important}
   .sidebar{transform:translateX(100%)}
   .sidebar.open{transform:translateX(0);box-shadow:var(--shadow-3)}

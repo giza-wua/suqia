@@ -111,7 +111,7 @@
 .gs-item{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 12px;border-radius:12px;color:var(--text);text-decoration:none;font-size:13.5px;font-weight:700;transition:.12s}
 .gs-item:hover{background:var(--surface-2)}
 .gs-badge{font-size:10px;font-weight:800;padding:3px 10px;border-radius:99px;background:var(--surface-2);color:var(--text-3);flex-shrink:0}
-@media(max-width:768px){
+@media(max-width:1024px){
   .gs-overlay{padding:8vh 10px 0}
   .gs-box{max-width:100%}
 }
@@ -133,7 +133,7 @@
 .fab-add svg{width:24px;height:24px;stroke-width:2.4}
 .fab-add:hover{transform:translateY(-2px) scale(1.04); box-shadow:0 14px 32px -6px rgba(11,180,172,.6), 0 4px 10px rgba(0,0,0,.14)}
 .fab-add:active{transform:scale(.94)}
-@media(max-width:768px){
+@media(max-width:1024px){
   .fab-add{bottom:calc(78px + env(safe-area-inset-bottom,0px)); left:16px; width:52px; height:52px}
   .fab-add svg{width:22px;height:22px}
 }
