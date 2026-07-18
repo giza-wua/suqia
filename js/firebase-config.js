@@ -268,7 +268,7 @@ function clearCache(col) {
     sessionStorage.removeItem(cacheTime(col));
   } else {
     // امسح كل الـ cache
-    ["specs", "bridges", "linedCanals", "wells"].forEach((c) => {
+    ["specs", "bridges", "linedCanals", "wells", "drains"].forEach((c) => {
       sessionStorage.removeItem(cacheKey(c));
       sessionStorage.removeItem(cacheTime(c));
     });
@@ -390,8 +390,8 @@ async function exportCollectionData(col) {
 }
 
 async function exportAllData() {
-  const COLS = ['specs', 'bridges', 'linedCanals', 'wells'];
-  const result = { version: '1.3.1', exportedAt: new Date().toISOString(), collections: {} };
+  const COLS = ['specs', 'bridges', 'linedCanals', 'wells', 'drains'];
+  const result = { version: '1.4.0', exportedAt: new Date().toISOString(), collections: {} };
   for (const col of COLS) {
     const snap = await getDocs(collection(db, col));
     result.collections[col] = snap.docs.map(d => ({ _id: d.id, ...d.data() }));
@@ -446,7 +446,7 @@ async function getCollectionCount(col) {
 }
 
 async function forceSyncAll() {
-  const COLS = ['specs', 'bridges', 'linedCanals', 'wells'];
+  const COLS = ['specs', 'bridges', 'linedCanals', 'wells', 'drains'];
   COLS.forEach(c => clearCache(c));
   const counts = {};
   for (const col of COLS) {

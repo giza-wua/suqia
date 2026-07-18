@@ -3,7 +3,7 @@
 <head>
   <script>(function(){try{var t=localStorage.getItem('suqia_theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
   <meta charset="UTF-8" /><meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <title>سُقيا — الآبار الجوفية</title>
+  <title>سُقيا — المصارف</title>
   <link rel="icon" type="image/svg+xml" href="../assets/icons/favicon.svg"/>
   <link rel="manifest" href="../manifest.json"/>
   <link rel="apple-touch-icon" href="../assets/icons/icon-192.png"/>
@@ -99,10 +99,14 @@
     </a>
   </nav>
 
+
   <div class="main">
     <header class="topbar">
       <button class="mob-btn" id="mob-btn"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 6.5h17M3.5 12h17M3.5 17.5h17"/></svg></button>
-      <div class="tb-title"><div class="tb-bc">سُقيا › البيانات الهندسية</div><div class="tb-page">️ الآبار الجوفية</div></div>
+      <div class="tb-title">
+        <div class="tb-bc">سُقيا › البيانات الهندسية</div>
+        <div class="tb-page">المصارف</div>
+      </div>
       <div class="tb-actions">
         <div class="tb-date" id="tb-date"></div>
         <div class="tb-live" id="tb-live"><div class="dot"></div><span>متصل</span></div>
@@ -110,21 +114,33 @@
       </div>
     </header>
 
-    <button class="fab-add admin-only" id="btn-add" style="display:none" title="إضافة بئر جديد">
+    <button class="fab-add admin-only" id="btn-add" style="display:none" title="إضافة مصرف جديد">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
     </button>
+
     <main class="page">
+      <!-- Filter -->
       <div class="card" style="margin-bottom:14px">
         <div class="card-header" id="filter-toggle" style="cursor:pointer;user-select:none">
-          <span class="card-title"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg> بحث متقدم</span>
+          <span class="card-title">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+            بحث متقدم
+          </span>
           <svg id="filter-chevron" class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </div>
         <div class="filter-panel" id="filter-body" style="display:none">
           
-          <div style="margin-bottom:12px"><label class="form-label">المركز</label><div class="chip-row" id="district-row"></div></div>
+          <div style="margin-bottom:12px">
+            <label class="form-label">الإدارة الهندسية</label>
+            <div class="chip-row" id="eng-row"></div>
+          </div>
+          <div style="margin-bottom:12px">
+            <label class="form-label">البر</label>
+            <div class="chip-row" id="bank-row"></div>
+          </div>
           <div class="form-grid" style="margin-bottom:10px">
-            <div class="form-group"><label class="form-label">المنسوب من (م)</label><input class="form-input" id="f-wl-min" type="number" placeholder="0" /></div>
-            <div class="form-group"><label class="form-label">المنسوب إلى (م)</label><input class="form-input" id="f-wl-max" type="number" placeholder="50" /></div>
+            <div class="form-group"><label class="form-label">الطول من (كم)</label><input class="form-input" id="f-len-min" type="number" placeholder="0" /></div>
+            <div class="form-group"><label class="form-label">الطول إلى (كم)</label><input class="form-input" id="f-len-max" type="number" placeholder="50" /></div>
           </div>
           <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
             <span id="filter-count" style="font-size:11px;color:var(--text-2);font-weight:800"></span>
@@ -136,7 +152,10 @@
           </div>
         </div>
       </div>
-      <div class="card" id="tbl-container"></div>
+      <!-- Data list -->
+      <div class="card" id="tbl-container">
+        
+      </div>
     </main>
   </div>
 </div>
@@ -145,7 +164,10 @@
 <div class="modal-overlay" id="modal-view">
   <div class="modal">
     <div class="modal-handle"></div>
-    <div class="modal-header"><h3>⛏️ <span id="view-title"></span></h3><button class="modal-close"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <div class="modal-header">
+      <h3><span id="view-title"></span></h3>
+      <button class="modal-close"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
     <div class="modal-body detail-list" id="view-body"></div>
     <div class="modal-footer" id="view-footer">
       <button class="btn btn-secondary btn-sm admin-only" id="btn-delete" style="display:none"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg> حذف</button>
@@ -158,35 +180,37 @@
 <div class="modal-overlay" id="modal-form">
   <div class="modal">
     <div class="modal-handle"></div>
-    <div class="modal-header"><h3 id="form-title">➕ إضافة بئر جوفي</h3><button class="modal-close"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <div class="modal-header"><h3 id="form-title">➕ إضافة مصرف</h3><button class="modal-close"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
     <div class="modal-body">
       <div class="form-grid">
-        <div class="form-group"><label class="form-label">اسم البئر *</label><input class="form-input" id="f-name" placeholder="بئر قرية المنصورية" /></div>
-        <div class="form-group"><label class="form-label">المركز</label><input class="form-input" id="f-district" placeholder="كرداسة" /></div>
-        <div class="form-group" style="grid-column:1/-1"><label class="form-label">الموقع</label><input class="form-input" id="f-location" placeholder="شارع النيل - قرية المنصورية" /></div>
-        <div class="form-group"><label class="form-label">النوع / الغرض</label><input class="form-input" id="f-purpose" placeholder="شرب / زراعة" /></div>
-        <div class="form-group"><label class="form-label">العمق (م)</label><input class="form-input" id="f-depth" type="number" placeholder="120" /></div>
-        <div class="form-group"><label class="form-label">القطر (بوصة)</label><input class="form-input" id="f-diameter" type="number" placeholder="8" /></div>
-        <div class="form-group"><label class="form-label">المنسوب الحرج (م)</label><input class="form-input" id="f-waterLevel" type="number" placeholder="15.5" /></div>
-        <div class="form-group"><label class="form-label">الطاقة التصميمية (م³/يوم)</label><input class="form-input" id="f-designCapacity" type="number" placeholder="500" /></div>
-        <div class="form-group"><label class="form-label">الطاقة الفعلية (م³/يوم)</label><input class="form-input" id="f-actualCapacity" type="number" placeholder="450" /></div>
-        <div class="form-group"><label class="form-label">نوع الطلمبة</label><input class="form-input" id="f-pumpType" placeholder="غاطسة" /></div>
-        <div class="form-group"><label class="form-label">قدرة الطلمبة (حصان)</label><input class="form-input" id="f-pumpPower" type="number" placeholder="30" /></div>
-        <div class="form-group"><label class="form-label">سنة الحفر</label><input class="form-input" id="f-drillYear" type="number" placeholder="2015" /></div>
+        <div class="form-group" style="grid-column:1/-1"><label class="form-label">اسم المصرف *</label><input class="form-input" id="f-name" placeholder="مصرف الرصد" /></div>
         <div class="form-group">
-          <label class="form-label">الحالة</label>
-          <select class="form-input" id="f-condition">
+          <label class="form-label">الإدارة الهندسية</label>
+          <select class="form-input" id="f-eng">
             <option value="">-- اختر --</option>
-            <option>يعمل بكفاءة</option><option>يعمل جزئياً</option>
-            <option>متوقف مؤقت</option><option>خارج الخدمة</option><option>قيد الإنشاء</option>
+            <option>الجيزة</option><option>العياط</option><option>المنصورية</option>
+            <option>الرياح</option><option>إمبابة</option><option>مزغونة</option>
           </select>
         </div>
+        <div class="form-group">
+          <label class="form-label">البر</label>
+          <select class="form-input" id="f-bank">
+            <option value="">--</option>
+            <option>أيمن</option><option>أيسر</option>
+          </select>
+        </div>
+        <div class="form-group" style="grid-column:1/-1"><label class="form-label">المصرف المغذي / المصب</label><input class="form-input" id="f-canalName" placeholder="يصب في مصرف الرصد الرئيسي" /></div>
+        <div class="form-group"><label class="form-label">الطول الكلي (كم)</label><input class="form-input" id="f-length" type="number" step="0.01" placeholder="4.2" /></div>
+        <div class="form-group"><label class="form-label">الزمام المخدوم (فدان)</label><input class="form-input" id="f-zomam" type="number" placeholder="1200" /></div>
         <div class="form-group" style="grid-column:1/-1">
           <label class="form-label">الموقع الجغرافي (GPS)</label>
           <div class="gps-row">
             <input class="form-input" id="f-lat" type="number" step="0.000001" placeholder="خط العرض" />
             <input class="form-input" id="f-lng" type="number" step="0.000001" placeholder="خط الطول" />
-            <button type="button" class="btn btn-secondary btn-sm btn-gps" id="btn-gps"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg> موقعي</button>
+            <button type="button" class="btn btn-secondary btn-sm btn-gps" id="btn-gps">
+              <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
+              موقعي الحالي
+            </button>
           </div>
         </div>
         <div class="form-group" style="grid-column:1/-1"><label class="form-label">ملاحظات</label><textarea class="form-input" id="f-notes" rows="2" placeholder="ملاحظات إضافية"></textarea></div>
@@ -231,28 +255,27 @@ if (user.role !== 'viewer') {
 
 const _qParam = new URLSearchParams(location.search).get('q');
 
-const COND_BADGE = {"يعمل بكفاءة":"badge-green","يعمل جزئياً":"badge-blue","متوقف مؤقت":"badge-amber","خارج الخدمة":"badge-red","قيد الإنشاء":"badge-gray"};
-const FIELDS     = [{key:"name",label:"اسم البئر"},{key:"district",label:"المركز"},{key:"location",label:"الموقع"},{key:"purpose",label:"النوع"},{key:"depth",label:"العمق (م)"},{key:"diameter",label:"القطر (بوصة)"},{key:"waterLevel",label:"المنسوب الحرج (م)"},{key:"designCapacity",label:"الطاقة التصميمية (م³/يوم)"},{key:"actualCapacity",label:"الطاقة الفعلية (م³/يوم)"},{key:"pumpType",label:"نوع الطلمبة"},{key:"pumpPower",label:"قدرة الطلمبة (حصان)"},{key:"drillYear",label:"سنة الحفر"},{key:"condition",label:"الحالة"},{key:"notes",label:"ملاحظات"}];
-const FF         = ["name","district","location","purpose","depth","diameter","waterLevel","designCapacity","actualCapacity","pumpType","pumpPower","drillYear","condition","notes"];
+const FIELDS = [{key:"name",label:"اسم المصرف"},{key:"eng",label:"الإدارة الهندسية"},{key:"canalName",label:"المصرف المغذي / المصب"},{key:"bank",label:"البر"},{key:"length",label:"الطول الكلي (كم)"},{key:"zomam",label:"الزمام المخدوم (فدان)"},{key:"notes",label:"ملاحظات"}];
+const FF     = ["name","eng","canalName","bank","length","zomam","notes"];
 
 const tbl = new DataList({
   containerId: "tbl-container",
   columns: [
-    {key:"name",     label:"اسم البئر",  searchable:true},
-    {key:"district", label:"المركز",     searchable:true, renderText:v=>v},
-    {key:"depth",    label:"العمق",      renderText:v=>v?v+"م":""},
-    {key:"condition",label:"الحالة",     badge:true,
-      render: v => v ? `<span class="badge ${COND_BADGE[v]||'badge-gray'}">${v}</span>` : ""},
+    {key:"name",   label:"اسم المصرف", searchable:true},
+    {key:"eng",    label:"الإدارة",    searchable:true, renderText:v=>v},
+    {key:"length", label:"الطول",      renderText:v=>v?v+' كم':''},
+    {key:"bank",   label:"البر",       badge:true,
+      render: v => v ? `<span class="badge badge-blue">${v}</span>` : ""},
   ],
   onRowClick: openView,
   emptyIcon: "",
-  emptyText: "لا توجد آبار — استورد البيانات من الإعدادات أو أضف بنفسك",
+  emptyText: "لا توجد مصارف — أضف أول مصرف بالزر أدناه",
   pageSize: 30,
 });
 
 (async () => {
   try {
-    const data = await getCollection("wells");
+    const data = await getCollection("drains");
     tbl.setData(data);
     applyFilters();
     if (_qParam) { tbl.searchQuery = _qParam; tbl._filter(); tbl.render(); }
@@ -260,36 +283,42 @@ const tbl = new DataList({
     const el = document.getElementById('tbl-container');
     if(el) el.innerHTML = `<div style="padding:40px;text-align:center">
       <p style="font-weight:800;color:var(--danger);margin-bottom:8px">${e.message||'خطأ في التحميل'}</p>
-      <p style="font-size:12px;color:var(--text-3);line-height:2">تأكد من Firestore rules + الاتصال +
-        <a href="settings.html" style="color:var(--teal)">استيراد البيانات</a></p>
+      <p style="font-size:12px;color:var(--text-3);line-height:2">تأكد من Firestore rules + <a href="settings.html" style="color:var(--teal)">استيراد البيانات</a></p>
       <button onclick="location.reload()" style="margin-top:14px;padding:9px 22px;background:var(--teal);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit">إعادة المحاولة</button>
     </div>`;
-    console.error('wells load:', e);
+    console.error('drains load:', e);
   }
 })();
 
-// ── فلاتر ──
+const ENG_LIST = ['الجيزة','العياط','المنصورية','الرياح','إمبابة','مزغونة'];
+const BANK_LIST = ['أيمن','أيسر'];
 
-const DISTRICTS = ['كرداسة','اوسيم','منشأة القناطر','أبو النمرس','البدرشين','الحوامدية'];
+const activeEngs = new Set();
+let activeBank = null;
 
-const activeDistricts = new Set();
+document.getElementById('eng-row').innerHTML  = ENG_LIST.map(e=>`<button class="filter-chip" data-eng="${e}">${e}</button>`).join('');
+document.getElementById('bank-row').innerHTML = BANK_LIST.map(b=>`<button class="filter-chip" data-bank="${b}">${b}</button>`).join('');
+document.getElementById('f-len-min').addEventListener('input', applyFilters);
+document.getElementById('f-len-max').addEventListener('input', applyFilters);
 
-
-document.getElementById('district-row').innerHTML = DISTRICTS.map(d=>`<button class="filter-chip" data-d="${d}">${d}</button>`).join('');
-document.getElementById('f-wl-min').addEventListener('input', applyFilters);
-document.getElementById('f-wl-max').addEventListener('input', applyFilters);
-
-document.getElementById('district-row').addEventListener('click', e => {
+document.getElementById('eng-row').addEventListener('click', e => {
   const b = e.target.closest('.filter-chip'); if(!b) return;
-  const v = b.dataset.d;
-  activeDistricts.has(v) ? activeDistricts.delete(v) : activeDistricts.add(v);
-  b.classList.toggle('active', activeDistricts.has(v));
+  const v = b.dataset.eng;
+  activeEngs.has(v) ? activeEngs.delete(v) : activeEngs.add(v);
+  b.classList.toggle('active', activeEngs.has(v));
+  applyFilters();
+});
+document.getElementById('bank-row').addEventListener('click', e => {
+  const b = e.target.closest('.filter-chip'); if(!b) return;
+  const v = b.dataset.bank;
+  activeBank = activeBank === v ? null : v;
+  document.querySelectorAll('#bank-row .filter-chip').forEach(x=>x.classList.toggle('active', x.dataset.bank===activeBank));
   applyFilters();
 });
 document.getElementById('btn-clear-filters').addEventListener('click', () => {
-  activeDistricts.clear();
-  document.querySelectorAll('.letter-btn,.filter-chip').forEach(b => b.classList.remove('active'));
-  document.getElementById('f-wl-min').value = ''; document.getElementById('f-wl-max').value = '';
+  activeEngs.clear(); activeBank = null;
+  document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
+  document.getElementById('f-len-min').value = ''; document.getElementById('f-len-max').value = '';
   applyFilters();
 });
 document.getElementById('filter-toggle').addEventListener('click', () => {
@@ -300,71 +329,58 @@ document.getElementById('filter-toggle').addEventListener('click', () => {
 });
 
 function applyFilters() {
-  const wMin = parseFloat(document.getElementById('f-wl-min').value);
-  const wMax = parseFloat(document.getElementById('f-wl-max').value);
-  const hasF = activeDistricts.size || !isNaN(wMin) || !isNaN(wMax);
+  const lMin = parseFloat(document.getElementById('f-len-min').value);
+  const lMax = parseFloat(document.getElementById('f-len-max').value);
+  const hasF = activeEngs.size || activeBank || !isNaN(lMin) || !isNaN(lMax);
   tbl.setExtraFilter(hasF ? row => {
-    if(activeDistricts.size && !activeDistricts.has((row.district||'').trim())) return false;
-    const v = parseFloat(row.waterLevel);
-    if(!isNaN(wMin) && !(v >= wMin)) return false;
-    if(!isNaN(wMax) && !(v <= wMax)) return false;
+    if(activeEngs.size && !activeEngs.has((row.eng||'').trim())) return false;
+    if(activeBank && (row.bank||'').trim() !== activeBank) return false;
+    const v = parseFloat(row.length);
+    if(!isNaN(lMin) && !(v >= lMin)) return false;
+    if(!isNaN(lMax) && !(v <= lMax)) return false;
     return true;
   } : null);
   const cnt = tbl.filtered.length, tot = tbl.allData.length;
-  document.getElementById('filter-count').textContent = tot > 0 ? (hasF ? `${cnt} من ${tot} بئر` : `${tot} بئر`) : '';
+  document.getElementById('filter-count').textContent = tot > 0 ? (hasF ? `${cnt} من ${tot} مصرف` : `${tot} مصرف`) : '';
 }
 
 // ── وصف الفلاتر النشطة حالياً، لاستخدامه في عنوان ملفات التصدير ──
 function describeFilters() {
   const parts = [];
-  if (activeDistricts.size) parts.push(`المركز: ${[...activeDistricts].join('، ')}`);
-  const wMin = document.getElementById('f-wl-min').value, wMax = document.getElementById('f-wl-max').value;
-  if (wMin || wMax) parts.push(`المنسوب: ${wMin||'0'}–${wMax||'∞'} م`);
+  if (activeEngs.size) parts.push(`الإدارة: ${[...activeEngs].join('، ')}`);
+  if (activeBank) parts.push(`البر: ${activeBank}`);
+  const lMin = document.getElementById('f-len-min').value, lMax = document.getElementById('f-len-max').value;
+  if (lMin || lMax) parts.push(`الطول: ${lMin||'0'}–${lMax||'∞'} كم`);
   if (tbl.searchQuery) parts.push(`بحث: "${tbl.searchQuery}"`);
   return parts.length ? parts.join(' • ') : 'كل السجلات (بدون فلتر)';
 }
 
-// ── Export ──
 document.getElementById('btn-export').addEventListener('click', async () => {
   if(!tbl.filtered.length) { toast('لا توجد بيانات للتصدير','error'); return; }
   await exportToExcel({
-    title:'تقرير الآبار الجوفية', subtitle:describeFilters(), recordCount:tbl.filtered.length,
-    columns:[
-      {key:'name',label:'اسم البئر',width:28},{key:'district',label:'المركز',width:16},
-      {key:'location',label:'الموقع',width:22},{key:'purpose',label:'النوع',width:14},
-      {key:'waterLevel',label:'المنسوب الحرج (م)',width:16},
-      {key:'designCapacity',label:'الطاقة التصميمية',width:16},
-      {key:'actualCapacity',label:'الطاقة الفعلية',width:16},
-      {key:'notes',label:'ملاحظات',width:30},
-    ],
-    rows: tbl.filtered,
-    filename: `آبار_${new Date().toISOString().slice(0,10)}.xlsx`,
+    title:'تقرير المصارف — محافظة الجيزة', subtitle:describeFilters(), recordCount:tbl.filtered.length,
+    columns:[{key:'name',label:'اسم المصرف',width:28},{key:'eng',label:'الإدارة الهندسية',width:16},{key:'canalName',label:'المغذي / المصب',width:24},{key:'bank',label:'البر',width:10},{key:'length',label:'الطول (كم)',width:12},{key:'zomam',label:'الزمام (فدان)',width:14},{key:'notes',label:'ملاحظات',width:30}],
+    rows: tbl.filtered, filename: `مصارف_${new Date().toISOString().slice(0,10)}.xlsx`,
   });
   toast(`تم تصدير ${tbl.filtered.length} سجل ✓`,'success');
 });
 document.getElementById('btn-export-pdf').addEventListener('click', async () => {
   if(!tbl.filtered.length) { toast('لا توجد بيانات للتصدير','error'); return; }
   await exportToPDF({
-    title:'تقرير الآبار الجوفية', subtitle:describeFilters(), recordCount:tbl.filtered.length,
-    columns:[
-      {key:'name',label:'اسم البئر'},{key:'district',label:'المركز'},
-      {key:'purpose',label:'النوع'},{key:'waterLevel',label:'المنسوب الحرج (م)'},
-      {key:'condition',label:'الحالة'},
-    ],
-    rows: tbl.filtered,
-    filename: `آبار_${new Date().toISOString().slice(0,10)}.pdf`,
+    title:'تقرير المصارف — محافظة الجيزة', subtitle:describeFilters(), recordCount:tbl.filtered.length,
+    columns:[{key:'name',label:'اسم المصرف'},{key:'eng',label:'الإدارة'},{key:'canalName',label:'المغذي / المصب'},{key:'bank',label:'البر'},{key:'length',label:'الطول (كم)'}],
+    rows: tbl.filtered, filename: `مصارف_${new Date().toISOString().slice(0,10)}.pdf`,
   });
   toast(`تم تصدير ${tbl.filtered.length} سجل ✓`,'success');
 });
 
-// ── View ──
 let current = null;
 function openView(row) {
   current = row;
   document.getElementById('view-title').textContent = row.name || '';
   const html = FIELDS.filter(f => row[f.key]).map(f => {
-    const val = f.key === 'condition'
-      ? `<span class="badge ${COND_BADGE[row[f.key]]||'badge-gray'}">${row[f.key]}</span>`
+    const val = f.key === 'bank'
+      ? `<span class="badge badge-blue">${row[f.key]}</span>`
       : row[f.key];
     return `<div class="detail-row"><span class="detail-key">${f.label}</span><span class="detail-val">${val}</span></div>`;
   }).join('') + mapsLinkHtml(row);
@@ -376,20 +392,19 @@ setupModalClose('modal-view'); setupModalClose('modal-form');
 document.getElementById('btn-edit').addEventListener('click', () => { closeModal('modal-view'); openForm(current); });
 document.getElementById('btn-delete').addEventListener('click', () => {
   confirmDelete(document.getElementById('btn-delete'), async () => {
-    await deleteRecord('wells', current.id);
-    await logActivity('حذف بئر', {name: current.name||current.id});
+    await deleteRecord('drains', current.id);
+    await logActivity('حذف مصرف', {name: current.name||current.id});
     closeModal('modal-view'); toast('تم الحذف ✓','success');
     tbl.setData(tbl.allData.filter(r => r.id !== current.id));
   });
 });
 
-// ── Form ──
 document.getElementById('btn-add').addEventListener('click', () => openForm(null));
 document.getElementById('btn-cancel').addEventListener('click', () => closeModal('modal-form'));
 wireLocationButton('btn-gps','f-lat','f-lng');
 
 function openForm(item) {
-  document.getElementById('form-title').textContent = item ? 'تعديل البئر' : 'إضافة بئر جوفي';
+  document.getElementById('form-title').textContent = item ? 'تعديل المصرف' : 'إضافة مصرف جديد';
   FF.forEach(k => { const el = document.getElementById('f-'+k); if(el) el.value = item?.[k] ?? ''; });
   document.getElementById('f-lat').value = item?.lat ?? '';
   document.getElementById('f-lng').value = item?.lng ?? '';
@@ -398,7 +413,7 @@ function openForm(item) {
 
 document.getElementById('btn-save').addEventListener('click', async () => {
   const name = document.getElementById('f-name').value.trim();
-  if(!name) { toast('اسم البئر مطلوب','error'); return; }
+  if(!name) { toast('اسم المصرف مطلوب','error'); return; }
   const data = {};
   FF.forEach(k => { const v = document.getElementById('f-'+k).value.trim(); if(v) data[k] = v; });
   const lat = document.getElementById('f-lat').value.trim(), lng = document.getElementById('f-lng').value.trim();
@@ -407,9 +422,9 @@ document.getElementById('btn-save').addEventListener('click', async () => {
   btn.disabled = true; btn.textContent = 'جاري الحفظ…';
   try {
     if(current && document.getElementById('form-title').textContent.includes('تعديل')) {
-      await updateRecord('wells', current.id, data); await logActivity('تعديل بئر',{name:data.name||current.name}); toast('تم التعديل ✓','success');
+      await updateRecord('drains', current.id, data); await logActivity('تعديل مصرف',{name:data.name||current.name}); toast('تم التعديل ✓','success');
     } else {
-      await addRecord('wells', data); await logActivity('إضافة بئر',{name:data.name}); toast('تمت الإضافة ✓','success');
+      await addRecord('drains', data); await logActivity('إضافة مصرف',{name:data.name}); toast('تمت الإضافة ✓','success');
     }
     closeModal('modal-form'); current = null; location.reload();
   } finally {

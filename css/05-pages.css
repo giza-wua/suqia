@@ -47,7 +47,7 @@
 .w-stat .n{font-size:24px;font-weight:900;color:#fff}
 .w-stat .l{font-size:10.5px;color:rgba(255,255,255,.45);font-weight:700}
 
-.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.stat-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px}
 .stat-card{
   background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;cursor:pointer;
   display:flex;flex-direction:column;align-items:flex-start;gap:10px;position:relative;overflow:hidden;
@@ -64,6 +64,8 @@
 .stat-card.c-teal:hover{border-color:rgba(11,180,172,.3)}
 .stat-card.c-water::after{background:radial-gradient(var(--violet),transparent 70%)}
 .stat-card.c-water:hover{border-color:rgba(124,111,240,.3)}
+.stat-card.c-coral::after{background:radial-gradient(var(--coral),transparent 70%)}
+.stat-card.c-coral:hover{border-color:rgba(232,99,63,.3)}
 .s-icon{font-size:28px;position:relative}
 .s-num{font-size:32px;font-weight:900;color:var(--nile);position:relative;line-height:1}
 :root[data-theme="dark"] .s-num{color:#fff}

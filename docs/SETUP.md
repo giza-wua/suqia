@@ -124,6 +124,20 @@ Firestore/
 │   └── {id}/            ← name, canalName, type, load, ...
 ├── linedCanals/
 │   └── {id}/            ← name, district, liningType, ...
-└── wells/
-    └── {id}/            ← name, district, depth, ...
+├── wells/
+│   └── {id}/            ← name, district, depth, ...
+└── drains/
+    └── {id}/            ← name, eng, canalName, bank, length, zomam, ... (نموذج مبسّط، بدون مناوبة أو تبطين — منذ v1.4.0)
 ```
+
+---
+
+## ملاحظة للمطورين: الاختبار من غير وصول حقيقي لـ Firebase
+
+في بيئات تطوير مقفولة الشبكة (مفيش وصول لـ `gstatic.com` أو `firestore.googleapis.com`)، منهجية الاختبار المتّبعة:
+
+1. انسخ `js/firebase-config.js` كامل، واستبدل **فقط** كتلة الـ `import` الخاصة بـ Firebase SDK (أول ~40 سطر: `initializeApp`, `getFirestore`, `collection`, `getDocs`, `addDoc`, إلخ) بدوال وهمية بسيطة (in-memory، أو محفوظة في `localStorage` عشان تعيش بعد `location.reload()`).
+2. **كل الكود اللي تحت الاستيراد يفضل زي ما هو من غير أي تعديل** — بيضمن إن الاختبار بيغطي المنطق الحقيقي (الكاش، الصلاحيات، سجل النشاط...) مش نسخة مبسّطة منه.
+3. استخدم `sessionStorage.setItem('suqia_user', ...)` لحقن جلسة مستخدم وهمية قبل فتح أي صفحة، بدل المرور بصفحة تسجيل الدخول فعلياً.
+4. افتح الصفحات بمتصفح حقيقي (Playwright/Puppeteer + Chromium headless) وتفاعل معاها فعلياً (كليك، ملء نماذج، فحص DOM) بدل افتراض إن الكود هيشتغل.
+5. ⚠️ درس مهم: أي `async` function بتتنادى من غير `await` قبل `location.href=...` أو `location.reload()` ممكن تتلغي كتابتها للشبكة قبل ما تخلص — اتأكد دايماً من الـ `await` قبل أي انتقال.

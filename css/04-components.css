@@ -98,6 +98,7 @@
 .s-icon-wrap.c-gold  { background: rgba(217,165,54,.14);  color: var(--gold-dk); }
 .s-icon-wrap.c-teal  { background: rgba(11,180,172,.13);  color: var(--teal-dk); }
 .s-icon-wrap.c-water { background: rgba(124,111,240,.13); color: var(--violet); }
+.s-icon-wrap.c-coral { background: rgba(232,99,63,.13);   color: var(--coral); }
 
 /* ══ GLOBAL SEARCH (بحث موحّد) ══ */
 .gs-overlay{display:none;position:fixed;inset:0;z-index:260;background:rgba(7,18,38,.6);backdrop-filter:blur(4px);padding:12vh 16px 0}
