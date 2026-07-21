@@ -1,0 +1,140 @@
+/* ══ THEME TOGGLE ══ */
+.theme-toggle{
+  width:36px;height:36px;border-radius:10px;border:1.5px solid var(--border);background:var(--surface);color:var(--text-2);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:.18s var(--ease);
+}
+.theme-toggle:hover{border-color:var(--teal);color:var(--teal);transform:translateY(-1px) rotate(-8deg)}
+
+/* ══ BUTTONS ══ */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:10.5px 18px;border-radius:var(--radius-sm);
+  font-size:13.5px;font-weight:800;font-family:inherit;transition:transform .15s var(--spring),box-shadow .2s var(--ease),background .18s var(--ease);
+  white-space:nowrap;border:1.5px solid transparent;
+}
+.btn:active{transform:scale(.96)}
+.btn-primary{background:linear-gradient(135deg,var(--teal),var(--teal-dk));color:#fff;box-shadow:var(--shadow-teal)}
+.btn-primary:hover{transform:translateY(-1.5px);box-shadow:0 14px 30px -8px rgba(11,180,172,.5)}
+.btn-secondary{background:var(--surface-2);color:var(--text-2);border-color:var(--border)}
+.btn-secondary:hover{border-color:var(--teal);color:var(--teal-dk);background:var(--surface)}
+.btn-danger{background:linear-gradient(135deg,var(--danger),#c52727);color:#fff;box-shadow:0 8px 20px -6px rgba(226,59,59,.45)}
+.btn-sm{padding:7.5px 13px;font-size:12px}
+.btn-icon{padding:8px;width:34px;height:34px}
+.btn:disabled{opacity:.55;cursor:not-allowed;transform:none!important}
+
+/* ══ CARD ══ */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-1);overflow:hidden}
+.card-header{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px 19px;border-bottom:1px solid var(--border)}
+.card-title{font-size:13.5px;font-weight:900;color:var(--text);display:flex;align-items:center;gap:7px}
+.card-body{padding:18px 19px}
+.page-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+
+/* ══ DATA LIST (بديل الجدول التقليدي) ══
+   كل سجل = كرت مستقل بزوايا دائرية، أيقونة هوية، رفعة عند المرور،
+   ضغطة تفاعلية، شارة جانبية ملونة — حي بدل جدول مسطح ميت */
+.list-toolbar{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.search-bar{flex:1;min-width:160px;position:relative}
+.search-bar svg{position:absolute;right:13px;top:50%;transform:translateY(-50%);width:15px;height:15px;color:var(--text-3);pointer-events:none}
+.search-input{
+  width:100%;padding:10px 38px 10px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);
+  font-size:13px;font-family:inherit;background:var(--surface-2);color:var(--text);outline:none;transition:.18s;
+}
+.search-input:focus{border-color:var(--teal);background:var(--surface);box-shadow:0 0 0 4px rgba(11,180,172,.1)}
+
+.data-list{padding:10px;display:flex;flex-direction:column;gap:8px}
+@keyframes rowIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.data-row{
+  display:flex;align-items:center;gap:13px;padding:13px 15px;border-radius:var(--radius-sm);
+  background:var(--surface-2);border:1.5px solid transparent;cursor:pointer;
+  transition:transform .18s var(--ease-out),box-shadow .2s var(--ease),border-color .18s var(--ease),background .18s var(--ease);
+  animation:rowIn .3s var(--ease-out) backwards;
+}
+.data-row:hover{transform:translateY(-2px);box-shadow:var(--shadow-2);border-color:var(--border-2);background:var(--card-hover)}
+.data-row:active{transform:translateY(0) scale(.99)}
+.data-row .dr-num{width:24px;height:24px;border-radius:8px;background:var(--surface-3);color:var(--text-3);font-size:10.5px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.data-row .dr-main{flex:1;min-width:0}
+.data-row .dr-title{font-size:14px;font-weight:800;color:var(--text);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.data-row .dr-meta{font-size:11.5px;color:var(--text-3);font-weight:600;display:flex;flex-wrap:wrap;gap:4px 10px}
+.data-row .dr-meta span{display:inline-flex;align-items:center}
+.data-row .dr-meta span:not(:last-child)::after{content:'·';margin-right:10px;color:var(--border-2)}
+.data-row .dr-badge{flex-shrink:0}
+.data-row .dr-chev{color:var(--text-3);flex-shrink:0;transition:transform .18s var(--ease)}
+.data-row:hover .dr-chev{transform:translateX(-3px);color:var(--teal)}
+
+.pagination{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 16px;flex-wrap:wrap;border-top:1px solid var(--border)}
+.pg-info{font-size:11.5px;color:var(--text-3);font-weight:700}
+.pg-btns{display:flex;gap:5px}
+.pg-btn{min-width:30px;height:30px;padding:0 6px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface);color:var(--text-2);font-size:12px;font-weight:800;transition:.15s}
+.pg-btn:hover:not(:disabled){border-color:var(--teal);color:var(--teal-dk)}
+.pg-btn.active{background:var(--nile);border-color:var(--nile);color:#fff}
+.pg-btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* ══ BADGES ══ */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:4px 11px;border-radius:99px;font-size:11px;font-weight:800;white-space:nowrap}
+.badge-green{background:rgba(22,168,122,.13);color:var(--success)}
+.badge-teal{background:rgba(11,180,172,.13);color:var(--teal-dk)}
+.badge-blue{background:rgba(28,143,217,.13);color:var(--info)}
+.badge-amber{background:rgba(232,148,31,.15);color:var(--gold-dk)}
+.badge-red{background:rgba(226,59,59,.13);color:var(--danger)}
+.badge-gray{background:var(--surface-3);color:var(--text-3)}
+
+/* ══ EMPTY / LOADING ══ */
+.empty{text-align:center;padding:54px 20px;color:var(--text-3)}
+.empty .icon{font-size:44px;margin-bottom:12px;opacity:.3}
+.empty p{font-size:13.5px;font-weight:700}
+.loading{min-height:200px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:11px;color:var(--text-3)}
+.spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--teal);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+
+/* ══ STAT CARD — modern icon wrap ══ */
+.s-icon-wrap {
+  width: 48px; height: 48px; border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: transform .2s var(--spring);
+}
+.s-icon-wrap svg { width: 26px; height: 26px; }
+.stat-card:hover .s-icon-wrap { transform: scale(1.12) rotate(-4deg); }
+.s-icon-wrap.c-blue  { background: rgba(28,143,217,.13); color: var(--info); }
+.s-icon-wrap.c-gold  { background: rgba(217,165,54,.14);  color: var(--gold-dk); }
+.s-icon-wrap.c-teal  { background: rgba(11,180,172,.13);  color: var(--teal-dk); }
+.s-icon-wrap.c-water { background: rgba(124,111,240,.13); color: var(--violet); }
+.s-icon-wrap.c-coral { background: rgba(232,99,63,.13);   color: var(--coral); }
+
+/* ══ GLOBAL SEARCH (بحث موحّد) ══ */
+.gs-overlay{display:none;position:fixed;inset:0;z-index:260;background:rgba(7,18,38,.6);backdrop-filter:blur(4px);padding:12vh 16px 0}
+.gs-overlay.show{display:block;animation:fadeIn .18s var(--ease)}
+.gs-box{max-width:560px;margin:0 auto;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-xl);box-shadow:var(--shadow-3);overflow:hidden}
+.gs-input-wrap{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--border);color:var(--text-3)}
+.gs-input-wrap svg{width:19px;height:19px;flex-shrink:0}
+.gs-input-wrap input{flex:1;border:none;background:transparent;outline:none;font-family:'Cairo',sans-serif;font-size:14.5px;font-weight:700;color:var(--text)}
+.gs-results{max-height:52vh;overflow-y:auto;padding:6px}
+.gs-hint{padding:22px 10px;text-align:center;font-size:12.5px;color:var(--text-3);font-weight:700}
+.gs-item{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 12px;border-radius:12px;color:var(--text);text-decoration:none;font-size:13.5px;font-weight:700;transition:.12s}
+.gs-item:hover{background:var(--surface-2)}
+.gs-badge{font-size:10px;font-weight:800;padding:3px 10px;border-radius:99px;background:var(--surface-2);color:var(--text-3);flex-shrink:0}
+@media(max-width:1024px){
+  .gs-overlay{padding:8vh 10px 0}
+  .gs-box{max-width:100%}
+}
+
+/* ══ FAB — زرار الإضافة العائم ══
+   شايلناه من شريط العنوان (كان بيكسر الهيدر على الموبايل) وحطيناه
+   كزرار عائم ثابت، نمط معروف وشائع في التطبيقات، وميكسرش أي حاجة
+   لأنه مش جزء من الـ topbar المزدحم أصلاً. */
+.fab-add{
+  position:fixed; z-index:150;
+  bottom:26px; left:24px;
+  width:56px; height:56px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  background:linear-gradient(135deg,var(--teal),var(--teal-dk));
+  color:#fff; border:none; cursor:pointer;
+  box-shadow:0 10px 26px -6px rgba(11,180,172,.55), 0 2px 8px rgba(0,0,0,.12);
+  transition:transform .18s var(--ease), box-shadow .18s var(--ease);
+}
+.fab-add svg{width:24px;height:24px;stroke-width:2.4}
+.fab-add:hover{transform:translateY(-2px) scale(1.04); box-shadow:0 14px 32px -6px rgba(11,180,172,.6), 0 4px 10px rgba(0,0,0,.14)}
+.fab-add:active{transform:scale(.94)}
+@media(max-width:1024px){
+  .fab-add{bottom:calc(78px + env(safe-area-inset-bottom,0px)); left:16px; width:52px; height:52px}
+  .fab-add svg{width:22px;height:22px}
+}

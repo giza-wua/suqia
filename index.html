@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <script>(function(){try{var t=localStorage.getItem('suqia_theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <meta name="theme-color" content="#071226"/>
+  <title>سُقيا — تسجيل الدخول</title>
+  <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg"/>
+  <link rel="manifest" href="manifest.json"/>
+  <link rel="apple-touch-icon" href="assets/icons/icon-192.png"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-title" content="سُقيا"/>
+  <link rel="stylesheet" href="css/style.css?v=1.4.0"/>
+</head>
+<body>
+
+<div class="login-page">
+  <div class="login-box">
+
+    <!-- Logo + Brand -->
+    <div class="login-brand">
+      <div class="login-logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#0c1a33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 3c3.4 4 6 7.6 6 11a6 6 0 0 1-12 0c0-3.4 2.6-7 6-11Z"/>
+          <path d="M9.2 14.2c.4 1.6 1.6 2.6 3.2 2.8"/>
+        </svg>
+      </div>
+      <h1>سُقيا</h1>
+      <div class="flow-line"></div>
+      <p class="slogan">
+        المركز الإعلامي للأمانة العامة<br>
+        لروابط مستخدمي المياه بالجيزة
+      </p>
+    </div>
+
+    <!-- Login Form -->
+    <div class="login-form">
+      <div class="form-group">
+        <label class="form-label">اسم المستخدم</label>
+        <input class="form-input" id="inp-user" type="text"
+               placeholder="أدخل اسم المستخدم"
+               autocomplete="username" autocapitalize="none" autocorrect="off"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">كلمة المرور</label>
+        <div style="position:relative">
+          <input class="form-input" id="inp-pass" type="password"
+                 placeholder="••••••••" autocomplete="current-password"
+                 style="padding-left:42px"/>
+          <button id="btn-eye" type="button"
+                  style="position:absolute;left:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(255,255,255,.4);cursor:pointer;padding:0;display:flex"
+                  title="إظهار/إخفاء">
+            <svg id="eye-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div class="login-error" id="login-error" style="display:none"></div>
+      <button class="login-submit" id="btn-login" type="button">دخول</button>
+    </div>
+
+    <!-- Credits under form -->
+    <div style="text-align:center;margin-top:30px">
+      <img src="assets/branding/amana-logo.png" alt="شعار الأمانة العامة" style="width:92px;height:92px;display:block;margin:0 auto 12px"/>
+      <p style="font-size:13px;color:rgba(255,255,255,.6);font-weight:800;line-height:1.9">
+        الأمانة العامة لروابط مستخدمي المياه بالجيزة
+      </p>
+      <p style="font-size:10px;color:rgba(255,255,255,.25);margin-top:8px;font-weight:600;line-height:1.8">
+        تصميم وتطوير<br>
+        المكتب الإعلامي التابع للأمانة العامة
+      </p>
+    </div>
+
+  </div>
+</div>
+
+<script type="module">
+  // ── تسجيل Service Worker (يدعم التثبيت والعمل بدون إنترنت) ──
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("./sw.js").catch(() => {});
+    });
+  }
+  import { loginUser, saveSession, getSession, logActivity } from "./js/firebase-config.js?v=1.4.0";
+
+  // لو في session موجودة — روح للداشبورد مباشرة
+  if (getSession()) {
+    window.location.replace("pages/dashboard.html");
+  }
+
+  const btnLogin = document.getElementById("btn-login");
+  const inpUser  = document.getElementById("inp-user");
+  const inpPass  = document.getElementById("inp-pass");
+  const errBox   = document.getElementById("login-error");
+
+  // إظهار / إخفاء كلمة المرور
+  document.getElementById("btn-eye").addEventListener("click", () => {
+    const isHidden = inpPass.type === "password";
+    inpPass.type = isHidden ? "text" : "password";
+    document.getElementById("eye-icon").innerHTML = isHidden
+      ? `<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+         <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+         <line x1="1" y1="1" x2="23" y2="23"/>`
+      : `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+         <circle cx="12" cy="12" r="3"/>`;
+  });
+
+  function showError(msg) {
+    errBox.textContent = "⚠️ " + msg;
+    errBox.style.display = "block";
+    errBox.animate(
+      [{ opacity: 0, transform: "translateY(-4px)" }, { opacity: 1, transform: "none" }],
+      { duration: 220 }
+    );
+  }
+
+  async function doLogin() {
+    const username = inpUser.value.trim();
+    const password = inpPass.value;
+    if (!username || !password) {
+      showError("يرجى إدخال اسم المستخدم وكلمة المرور");
+      return;
+    }
+    btnLogin.disabled = true;
+    btnLogin.textContent = "⏳ جاري الدخول...";
+    errBox.style.display = "none";
+
+    try {
+      const result = await loginUser(username, password);
+      if (result.ok) {
+        saveSession(result.user);
+        await logActivity("تسجيل دخول");
+        window.location.href = "pages/dashboard.html";
+      } else {
+        showError(result.error || "بيانات غير صحيحة");
+        btnLogin.disabled = false;
+        btnLogin.textContent = "دخول";
+        inpPass.select();
+      }
+    } catch (err) {
+      showError("خطأ غير متوقع: " + (err.code || err.name || "") + " " + (err.message || ""));
+      btnLogin.disabled = false;
+      btnLogin.textContent = "دخول";
+      console.error("Login error:", err);
+    }
+  }
+
+  btnLogin.addEventListener("click", doLogin);
+  inpPass.addEventListener("keydown", e => { if (e.key === "Enter") doLogin(); });
+  inpUser.addEventListener("keydown", e => { if (e.key === "Enter") inpPass.focus(); });
+</script>
+</body>
+</html>

@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <script>(function(){try{var t=localStorage.getItem('suqia_theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>سُقيا — ترع الإدارة</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/icons/favicon.svg"/>
+  <link rel="manifest" href="../manifest.json"/>
+  <link rel="apple-touch-icon" href="../assets/icons/icon-192.png"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-title" content="سُقيا"/>
+  <link rel="stylesheet" href="../css/style.css?v=1.4.0"/>
+  <style>
+    .rot-badge{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:6px;font-size:11px;font-weight:900;margin-left:3px}
+    .rot-a{background:rgba(11,180,172,.15);color:var(--teal-dk)}
+    .rot-b{background:rgba(217,165,54,.15);color:var(--gold-dk)}
+    .rot-c{background:rgba(124,111,240,.15);color:var(--violet)}
+    .rot-x{background:var(--surface-3);color:var(--text-3)}
+    .tab-row{display:flex;border-bottom:2px solid var(--border);margin-bottom:16px}
+    .tab-btn{padding:9px 16px;font-size:13px;font-weight:800;color:var(--text-3);cursor:pointer;border-bottom:2.5px solid transparent;margin-bottom:-2px;transition:.18s;font-family:inherit;background:none;border-top:none;border-left:none;border-right:none}
+    .tab-btn.active{color:var(--teal-dk);border-bottom-color:var(--teal)}
+    .tab-panel{display:none}.tab-panel.active{display:block}
+    .lining-block{background:linear-gradient(135deg,rgba(11,180,172,.07),rgba(11,180,172,.03));border:1.5px solid rgba(11,180,172,.2);border-radius:var(--radius-sm);padding:14px 16px;margin-top:14px}
+    .lining-block h4{font-size:12px;font-weight:900;color:var(--teal-dk);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+  </style>
+</head>
+<body>
+<div class="shell">
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-brand">
+      <div class="sb-logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#0c1a33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3.4 4 6 7.6 6 11a6 6 0 0 1-12 0c0-3.4 2.6-7 6-11Z"/><path d="M9.2 14.2c.4 1.6 1.6 2.6 3.2 2.8"/></svg>
+      </div>
+      <div class="sb-brand-text"><h2>سُقيا</h2><span>إدارة أصول ري الجيزة &nbsp;<em class="sb-version">v1.4.0</em></span></div>
+    </div>
+    <nav class="sb-nav">
+      <div class="sb-section">الرئيسية</div>
+      <a class="nav-item" href="dashboard.html"><svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v9.5a1 1 0 0 0 1 1h3.5v-6h5v6H18a1 1 0 0 0 1-1V10"/></svg>لوحة التحكم</a>
+      <div class="sb-section">البيانات الهندسية</div>
+      <a class="nav-item" href="canals.html"><svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9.5c2-2.7 4-2.7 6 0s4 2.7 6 0 4-2.7 6 0"/><path d="M2 15.5c2-2.7 4-2.7 6 0s4 2.7 6 0 4-2.7 6 0"/></svg>ترع الإدارة</a>
+      <a class="nav-item" href="drains.html"><svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6c1.5-1.8 3-1.8 4.5 0s3 1.8 4.5 0 3-1.8 4.5 0"/><path d="M12 10.5v7"/><path d="M9 14.5l3 3 3-3"/></svg>المصارف</a>
+      <a class="nav-item" href="bridges.html"><svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 18.5h20"/><path d="M4.5 18.5v-4a7.5 7.5 0 0 1 15 0v4"/><path d="M8 18.5v-3.5"/><path d="M16 18.5v-3.5"/></svg>الكباري</a>
+      <a class="nav-item" href="wells.html"><svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v3M12 18.5v3"/></svg>الآبار الجوفية</a>
+      <a class="nav-item" href="map.html"><svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 20l-6-3V4l6 3 6-3 6 3v13l-6-3-6 3z"/><path d="M9 7v13M15 4v13"/></svg>الخريطة</a>
+      <div class="sb-section">الإدارة</div>
+      <a class="nav-item" href="settings.html"><svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M3 12h3M18 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>الإعدادات</a>
+    </nav>
+    <div class="sb-footer">
+      <div class="sb-user"><div class="sb-avatar" id="sb-avatar">م</div>
+        <div><div class="sb-uname" id="sb-user-name">…</div><span class="sb-role" id="sb-user-role"></span></div>
+      </div>
+      <button class="sb-logout" id="btn-logout">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>تسجيل الخروج</button>
+    </div>
+  </aside>
+  <div id="sb-overlay"></div>
+  <!-- BOTTOM NAV (mobile) -->
+  <nav class="bottom-nav">
+    <a class="bn-item" href="dashboard.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v9.5a1 1 0 0 0 1 1h3.5v-6h5v6H18a1 1 0 0 0 1-1V10"/></svg>
+      الرئيسية
+    </a>
+    <a class="bn-item" href="canals.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9.5c2-2.7 4-2.7 6 0s4 2.7 6 0 4-2.7 6 0"/><path d="M2 15.5c2-2.7 4-2.7 6 0s4 2.7 6 0 4-2.7 6 0"/></svg>
+      ترع
+    </a>
+    <a class="bn-item" href="drains.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6c1.5-1.8 3-1.8 4.5 0s3 1.8 4.5 0 3-1.8 4.5 0"/><path d="M12 10.5v7"/><path d="M9 14.5l3 3 3-3"/></svg>
+      مصارف
+    </a>
+    <a class="bn-item" href="bridges.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 18.5h20"/><path d="M4.5 18.5v-4a7.5 7.5 0 0 1 15 0v4"/><path d="M8 18.5v-3.5"/><path d="M16 18.5v-3.5"/></svg>
+      كباري
+    </a>
+    <a class="bn-item" href="wells.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v3M12 18.5v3"/></svg>
+      آبار
+    </a>
+    <a class="bn-item" href="map.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 20l-6-3V4l6 3 6-3 6 3v13l-6-3-6 3z"/><path d="M9 7v13M15 4v13"/></svg>
+      خريطة
+    </a>
+    <a class="bn-item" href="settings.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M3 12h3M18 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>
+      إعدادات
+    </a>
+  </nav>
+
+
+  <div class="main">
+    <header class="topbar">
+      <button class="mob-btn" id="mob-btn"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3.5 6.5h17M3.5 12h17M3.5 17.5h17"/></svg></button>
+      <div class="tb-title">
+        <div class="tb-bc">سُقيا › البيانات الهندسية</div>
+        <div class="tb-page">ترع الإدارة</div>
+      </div>
+      <div class="tb-actions">
+        <div class="tb-date" id="tb-date"></div>
+        <div class="tb-live" id="tb-live"><div class="dot"></div><span>متصل</span></div>
+        <button class="theme-toggle" id="theme-toggle" title="تبديل الوضع"></button>
+      </div>
+    </header>
+
+    <button class="fab-add admin-only" id="btn-add" style="display:none" title="إضافة ترعة جديدة">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    </button>
+
+    <main class="page">
+      <!-- ── Filter ── -->
+      <div class="card" style="margin-bottom:14px">
+        <div class="card-header" id="filter-toggle" style="cursor:pointer;user-select:none">
+          <span class="card-title">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+            بحث وتصفية
+          </span>
+          <svg id="filter-chevron" class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="filter-panel" id="filter-body" style="display:none">
+          <div style="margin-bottom:12px">
+            <label class="form-label">الحرف الأول لاسم الترعة</label>
+            <div class="letter-row" id="letter-row"></div>
+          </div>
+          <div style="margin-bottom:12px">
+            <label class="form-label">الإدارة الهندسية</label>
+            <div class="chip-row" id="eng-row"></div>
+          </div>
+          <div style="margin-bottom:12px">
+            <label class="form-label">المناوبة</label>
+            <div class="chip-row" id="rot-row"></div>
+          </div>
+          <div style="margin-bottom:12px">
+            <label class="form-label">حالة التبطين</label>
+            <div class="chip-row" id="lining-row"></div>
+          </div>
+          <div class="form-grid" style="margin-bottom:10px">
+            <div class="form-group"><label class="form-label">الطول من (كم)</label><input class="form-input" id="f-len-min" type="number" placeholder="0"/></div>
+            <div class="form-group"><label class="form-label">الطول إلى (كم)</label><input class="form-input" id="f-len-max" type="number" placeholder="50"/></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+            <span id="filter-count" style="font-size:11px;color:var(--text-2);font-weight:800"></span>
+            <div style="display:flex;gap:8px">
+              <button class="btn btn-secondary btn-sm" id="btn-export">
+                <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                تصدير Excel
+              </button>
+              <button class="btn btn-secondary btn-sm" id="btn-export-pdf">
+                <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                تصدير PDF
+              </button>
+              <button class="btn btn-secondary btn-sm" id="btn-clear-filters">
+                <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                مسح الفلاتر
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- ── List ── -->
+      <div class="card" id="tbl-container"></div>
+    </main>
+  </div>
+</div>
+
+<!-- ══ VIEW MODAL ══ -->
+<div class="modal-overlay" id="modal-view">
+  <div class="modal modal-lg">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <h3 id="view-title" style="font-size:15px;font-weight:900;color:var(--nile);display:flex;align-items:center;gap:8px">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--teal);flex-shrink:0"><path d="M2 9.5c2-2.7 4-2.7 6 0s4 2.7 6 0 4-2.7 6 0"/><path d="M2 15.5c2-2.7 4-2.7 6 0s4 2.7 6 0 4-2.7 6 0"/></svg>
+        <span id="view-name">—</span>
+      </h3>
+      <button class="modal-close" id="view-close">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body" id="view-body" style="padding:0"></div>
+    <div class="modal-footer" id="view-footer">
+      <button class="btn btn-secondary btn-sm admin-only" id="btn-delete" style="display:none">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+        حذف
+      </button>
+      <button class="btn btn-primary btn-sm admin-only" id="btn-edit" style="display:none">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        تعديل
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ FORM MODAL ══ -->
+<div class="modal-overlay" id="modal-form">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header"><h3 id="form-title">إضافة ترعة</h3>
+      <button class="modal-close" id="form-close"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group"><label class="form-label">اسم الترعة *</label><input class="form-input" id="f-name" placeholder="ترعة النيل الغربي"/></div>
+        <div class="form-group"><label class="form-label">الإدارة الهندسية</label>
+          <select class="form-input" id="f-eng">
+            <option value="">-- اختر --</option>
+            <option>الجيزة</option><option>العياط</option><option>المنصورية</option>
+            <option>الرياح</option><option>إمبابة</option><option>مزغونة</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">الترعة المغذية</label><input class="form-input" id="f-canalName" placeholder="ترعة الإبراهيمية"/></div>
+        <div class="form-group"><label class="form-label">البر</label><select class="form-input" id="f-bank"><option value="">--</option><option>أيمن</option><option>أيسر</option></select></div>
+        <div class="form-group"><label class="form-label">الطول الكلي (كم)</label><input class="form-input" id="f-length" type="number" placeholder="12.5"/></div>
+        <div class="form-group"><label class="form-label">الزمام (فدان)</label><input class="form-input" id="f-zomam" type="number" placeholder="500"/></div>
+        <div class="form-group"><label class="form-label">القنن المائي (م³/فدان.يوم)</label><input class="form-input" id="f-discharge" type="number" placeholder="55"/></div>
+        <div class="form-group"><label class="form-label">مبطنة؟</label>
+          <select class="form-input" id="f-lined"><option value="">-- اختر --</option><option value="yes">نعم</option><option value="no">لا</option></select>
+        </div>
+        <div class="form-group" style="grid-column:1/-1">
+          <label class="form-label">الموقع الجغرافي (GPS)</label>
+          <div class="gps-row">
+            <input class="form-input" id="f-lat" type="number" step="0.000001" placeholder="خط العرض"/>
+            <input class="form-input" id="f-lng" type="number" step="0.000001" placeholder="خط الطول"/>
+            <button type="button" class="btn btn-secondary btn-sm btn-gps" id="btn-gps">
+              <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>موقعي
+            </button>
+          </div>
+        </div>
+        <div class="form-group" style="grid-column:1/-1"><label class="form-label">ملاحظات</label><textarea class="form-input" id="f-notes" rows="2" placeholder="ملاحظات إضافية"></textarea></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary btn-sm" id="btn-cancel">إلغاء</button>
+      <button class="btn btn-primary btn-sm" id="btn-save">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        حفظ
+      </button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script type="module">
+if ("serviceWorker" in navigator) { navigator.serviceWorker.register("../sw.js").catch(() => {}); }
+import { requireAuth, clearSession, getCollection, addRecord, updateRecord, deleteRecord, logActivity } from "../js/firebase-config.js?v=1.4.0";
+import { wireThemeToggle, arabicDate, DataList, openModal, closeModal, toast, confirmDelete, wireLocationButton, mapsLinkHtml, exportToExcel, exportToPDF, wireConnectionStatus, escapeHtml } from "../js/shared.js?v=1.4.0";
+
+const user = requireAuth();
+
+// ── Sidebar ──
+(function(){
+  const av=document.getElementById('sb-avatar'), nm=document.getElementById('sb-user-name'), rl=document.getElementById('sb-user-role');
+  const init=user.name.trim().split(' ').slice(0,2).map(w=>w[0]).join('');
+  if(av) av.textContent=init;
+  if(nm) nm.textContent=user.name;
+  if(rl) rl.textContent=user.role==='admin'?'مشرف':'مستخدم';
+  const pg=location.pathname.split('/').pop();
+  document.querySelectorAll('.nav-item, .bn-item').forEach(a=>{if(a.getAttribute('href')===pg)a.classList.add('active');});
+  const sb=document.getElementById('sidebar'),ov=document.getElementById('sb-overlay'),mb=document.getElementById('mob-btn');
+  if(mb) mb.addEventListener('click',()=>{ sb.classList.toggle('open'); ov.classList.toggle('show'); });
+  if(ov) ov.addEventListener('click',()=>{ sb.classList.remove('open'); ov.classList.remove('show'); });
+  document.getElementById('btn-logout').addEventListener('click',async()=>{ await logActivity('تسجيل خروج'); clearSession(); location.href='../index.html'; });
+})();
+
+wireThemeToggle();
+wireConnectionStatus();
+document.getElementById('tb-date').textContent = arabicDate();
+if (user.role !== 'viewer') {
+  document.querySelectorAll('.admin-only').forEach(el=>el.style.display='');
+}
+
+const _qParam = new URLSearchParams(location.search).get('q');
+
+// ══ Helpers ══
+function normEng(e){ if(!e)return'';e=e.trim(); if(/امبابه|إمبابة|امبابة/i.test(e))return'إمبابة'; if(/الرياح|ري الرياح/i.test(e))return'الرياح'; return e.trim(); }
+function coreName(n){ let x=(n||'').trim(); x=x.replace(/^(ترعة|فرع|مسقة|وصلة|دليل|ذيل|إمتداد|مغذى)\s+/,''); x=x.replace(/^["']?\d+["']?\s*/,''); x=x.replace(/^من\s+["']?\d+["']?\s+/,''); x=x.replace(/^["']/,''); return x.trim().replace(/\s+/g,' '); }
+function getRotations(spec){ const rots=new Set(); (spec.sections||[]).forEach(s=>{ const r=(s.rotation||'').trim(); if(!r)return; if(/^أ$/.test(r)||r.includes('أ،'))rots.add('أ'); if(/^ب$/.test(r)||r.includes('ب،')||r.includes(',ب'))rots.add('ب'); if(/^جـ$/.test(r)||/^ج$/.test(r)||r.includes('جـ')||r.includes('ج،'))rots.add('جـ'); }); return[...rots].sort(); }
+function rotBadgeHtml(rots){ return rots.map(r=>{ const cls=r==='أ'?'rot-a':r==='ب'?'rot-b':'rot-c'; return`<span class="rot-badge ${cls}">${r}</span>`; }).join(''); }
+function fixSideSlope(val){ if(!val)return''; const s=String(val).trim(); const m=s.match(/^(\d{1,2}):(\d{2}):00$/); if(m){const h=parseInt(m[1]),mi=parseInt(m[2]);return mi===0?String(h):`${h}:${mi}`;} return s; }
+
+function drawCross(sec){
+  const cv=document.getElementById('ccv'); if(!cv)return;
+  const dpr=window.devicePixelRatio||1,W=Math.round(cv.clientWidth)||560,H=Math.max(170,Math.min(Math.round(W*.42),280));
+  cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);cv.style.height=H+'px';
+  const ctx=cv.getContext('2d');ctx.scale(dpr,dpr);ctx.clearRect(0,0,W,H);
+  const isDark=document.documentElement.getAttribute('data-theme')==='dark';
+  const bw=parseFloat(sec.bed_width)||1;let hz=1;
+  const ssRaw=fixSideSlope(sec.side_slope)||'';
+  if(ssRaw.includes(':'))hz=(parseFloat(ssRaw.split(':')[0])||1)/(parseFloat(ssRaw.split(':')[1])||1);
+  else hz=parseFloat(ssRaw)||1;if(!isFinite(hz)||hz>12)hz=1;
+  const bl=parseFloat(sec.bed_level)||22,mx=parseFloat(sec.max_water)||(bl+1.5),mn=parseFloat(sec.min_water)||(bl+1);
+  const dep=Math.max(mx-bl,0.5),cx=W/2,bedY=H-36,dH=bedY-30;
+  const sc=Math.min((W-20)/(bw+2*hz*dep+4),dH/dep*.7);
+  const gndY=bedY-dep*sc,bL=cx-bw/2*sc,bR=cx+bw/2*sc,tL=bL-hz*dep*sc,tR=bR+hz*dep*sc;
+  ctx.fillStyle='#d4a96a';ctx.beginPath();ctx.moveTo(0,gndY);ctx.lineTo(tL,gndY);ctx.lineTo(bL,bedY);ctx.lineTo(bR,bedY);ctx.lineTo(tR,gndY);ctx.lineTo(W,gndY);ctx.lineTo(W,H);ctx.lineTo(0,H);ctx.closePath();ctx.fill();
+  ctx.save();ctx.strokeStyle='#c4914a';ctx.lineWidth=.7;for(let x=-H;x<W+H;x+=9){ctx.beginPath();ctx.moveTo(x,gndY);ctx.lineTo(x+H,gndY+H);ctx.stroke();}ctx.restore();
+  const minD=Math.max(mn-bl,0),dep_sc=dep>0?(bedY-gndY)/dep:1;
+  ctx.fillStyle='rgba(30,136,229,.25)';ctx.beginPath();ctx.moveTo(tL,gndY);ctx.lineTo(tR,gndY);ctx.lineTo(bR,bedY);ctx.lineTo(bL,bedY);ctx.closePath();ctx.fill();
+  const mnY=bedY-minD*dep_sc,mnL=bL-hz*minD*sc,mnR=bR+hz*minD*sc;
+  ctx.fillStyle='rgba(30,136,229,.5)';ctx.beginPath();ctx.moveTo(mnL,mnY);ctx.lineTo(mnR,mnY);ctx.lineTo(bR,bedY);ctx.lineTo(bL,bedY);ctx.closePath();ctx.fill();
+  ctx.strokeStyle=isDark?'#cbd5e1':'#0b1f3a';ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(0,gndY);ctx.lineTo(tL,gndY);ctx.lineTo(bL,bedY);ctx.lineTo(bR,bedY);ctx.lineTo(tR,gndY);ctx.lineTo(W,gndY);ctx.stroke();
+  ctx.setLineDash([5,3]);ctx.strokeStyle='#1565c0';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(tL,gndY);ctx.lineTo(tR,gndY);ctx.stroke();
+  ctx.strokeStyle='#64b5f6';ctx.beginPath();ctx.moveTo(mnL,mnY);ctx.lineTo(mnR,mnY);ctx.stroke();ctx.setLineDash([]);
+  ctx.strokeStyle='#c9a84c';ctx.fillStyle='#8a6a1f';ctx.lineWidth=1;
+  const dY=bedY+18;ctx.beginPath();ctx.moveTo(bL,bedY+4);ctx.lineTo(bL,dY);ctx.moveTo(bR,bedY+4);ctx.lineTo(bR,dY);ctx.moveTo(bL,dY);ctx.lineTo(bR,dY);ctx.stroke();
+  ctx.font='bold 11px Cairo, Arial';ctx.textAlign='center';ctx.fillText('B='+bw+'م',cx,dY+12);
+  ctx.fillStyle='#c62828';ctx.textAlign='left';ctx.fillText('قاع='+sec.bed_level,4,bedY-3);
+  ctx.fillStyle='#1565c0';ctx.textAlign='right';ctx.fillText('أقصى='+sec.max_water,W-4,gndY-4);
+  ctx.fillStyle='#0277bd';ctx.fillText('أقل='+sec.min_water,W-4,mnY-4);
+}
+
+// ══ State ══
+let allSpecs=[], liningMap=new Map(), currentItem=null;
+
+// ══ DataList — يتعرّف أولاً ══
+const tbl = new DataList({
+  containerId:'tbl-container',
+  columns:[
+    {key:'name',label:'اسم الترعة',searchable:true},
+    {key:'_eng',label:'الإدارة الهندسية',searchable:true,renderText:v=>v},
+    {key:'length',label:'الطول',renderText:v=>v?v+' كم':''},
+    {key:'_rotations',label:'المناوبة',badge:true,render:(v,row)=>{
+      const h=rotBadgeHtml(row._rotations||[]);
+      const lb=row._lining?'<span class="badge badge-teal" style="font-size:10px;margin-right:3px">مبطنة</span>':'';
+      return(h||lb)?`<div style="display:flex;flex-wrap:wrap;gap:3px;align-items:center">${h}${lb}</div>`:'';
+    }},
+  ],
+  onRowClick:openView, emptyText:'جاري التحميل…', pageSize:30,
+});
+
+// ══ تحميل البيانات (يُستخدم عند فتح الصفحة، وأيضاً بعد أي حفظ/حذف بدل إعادة تحميل الصفحة كلها) ══
+async function loadData(){
+  const [specs,lined]=await Promise.all([getCollection('specs'),getCollection('linedCanals')]);
+  liningMap=new Map();
+  lined.forEach(l=>{ const key=coreName(l.name||''); if(key)liningMap.set(key,l); });
+  allSpecs=specs.map(s=>({...s,_eng:normEng(s.eng),_rotations:getRotations(s),_lining:liningMap.get(coreName(s.name||''))||null,_core:coreName(s.name||'')}));
+  tbl.setData(allSpecs);
+  applyFilters();
+}
+
+// ══ تحميل في الخلفية — بدون spinner ══
+(async ()=>{
+  try{
+    await loadData();
+    if (_qParam) { tbl.searchQuery = _qParam; tbl._filter(); tbl.render(); }
+  }catch(e){
+    document.getElementById('tbl-container').innerHTML=`<div style="padding:40px;text-align:center">
+      <p style="font-weight:800;color:var(--danger);margin-bottom:8px">${e.message||'خطأ في التحميل'}</p>
+      <p style="font-size:12px;color:var(--text-3);line-height:2">تأكد من Firestore rules + الاتصال + الاستيراد من <a href="settings.html" style="color:var(--teal)">الإعدادات</a></p>
+      <button onclick="location.reload()" style="margin-top:14px;padding:9px 22px;background:var(--teal);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit">إعادة المحاولة</button>
+    </div>`;
+    console.error('canals load error:',e);
+  }
+})();
+
+// ══ Filters ══
+const ARABIC_LETTERS='ا ب ت ث ج ح خ د ذ ر ز س ش ص ض ط ظ ع غ ف ق ك ل م ن ه و ي'.split(' ');
+const ENG_LIST=['الجيزة','العياط','المنصورية','الرياح','إمبابة','مزغونة'];
+const ROT_LIST=['أ','ب','جـ'];
+const LINING_LIST=[{v:'all',l:'الكل'},{v:'yes',l:'مبطنة'},{v:'no',l:'غير مبطنة'}];
+
+document.getElementById('letter-row').innerHTML=ARABIC_LETTERS.map(L=>`<button class="letter-btn" data-letter="${L}">${L}</button>`).join('');
+document.getElementById('eng-row').innerHTML=ENG_LIST.map(e=>`<button class="filter-chip" data-eng="${e}">${e}</button>`).join('');
+document.getElementById('rot-row').innerHTML=ROT_LIST.map(r=>`<button class="filter-chip" data-rot="${r}">${r}</button>`).join('');
+document.getElementById('lining-row').innerHTML=LINING_LIST.map(x=>`<button class="filter-chip${x.v==='all'?' active':''}" data-lining="${x.v}">${x.l}</button>`).join('');
+
+let activeLetter=null,activeEngs=new Set(),activeRots=new Set(),activeLining='all';
+
+document.getElementById('letter-row').addEventListener('click',e=>{const b=e.target.closest('.letter-btn');if(!b)return;activeLetter=activeLetter===b.dataset.letter?null:b.dataset.letter;document.querySelectorAll('.letter-btn').forEach(x=>x.classList.toggle('active',x.dataset.letter===activeLetter));applyFilters();});
+document.getElementById('eng-row').addEventListener('click',e=>{const b=e.target.closest('.filter-chip');if(!b)return;const v=b.dataset.eng;activeEngs.has(v)?activeEngs.delete(v):activeEngs.add(v);b.classList.toggle('active',activeEngs.has(v));applyFilters();});
+document.getElementById('rot-row').addEventListener('click',e=>{const b=e.target.closest('.filter-chip');if(!b)return;const v=b.dataset.rot;activeRots.has(v)?activeRots.delete(v):activeRots.add(v);b.classList.toggle('active',activeRots.has(v));applyFilters();});
+document.getElementById('lining-row').addEventListener('click',e=>{const b=e.target.closest('.filter-chip');if(!b)return;activeLining=b.dataset.lining;document.querySelectorAll('#lining-row .filter-chip').forEach(x=>x.classList.toggle('active',x.dataset.lining===activeLining));applyFilters();});
+document.getElementById('f-len-min').addEventListener('input',applyFilters);
+document.getElementById('f-len-max').addEventListener('input',applyFilters);
+document.getElementById('btn-clear-filters').addEventListener('click',()=>{activeLetter=null;activeEngs.clear();activeRots.clear();activeLining='all';document.querySelectorAll('.letter-btn,.filter-chip').forEach(b=>b.classList.remove('active'));document.querySelectorAll('#lining-row .filter-chip[data-lining="all"]').forEach(b=>b.classList.add('active'));document.getElementById('f-len-min').value='';document.getElementById('f-len-max').value='';applyFilters();});
+document.getElementById('filter-toggle').addEventListener('click',()=>{const b=document.getElementById('filter-body');const open=b.style.display!=='none';b.style.display=open?'none':'block';document.getElementById('filter-chevron').classList.toggle('open',!open);});
+
+function applyFilters(){
+  const lMin=parseFloat(document.getElementById('f-len-min').value),lMax=parseFloat(document.getElementById('f-len-max').value);
+  const hasF=activeLetter||activeEngs.size||activeRots.size||activeLining!=='all'||!isNaN(lMin)||!isNaN(lMax);
+  tbl.setExtraFilter(hasF?(row)=>{
+    if(activeLetter&&!coreName(row.name||'').startsWith(activeLetter))return false;
+    if(activeEngs.size&&!activeEngs.has(row._eng))return false;
+    if(activeRots.size&&!row._rotations.some(r=>activeRots.has(r)))return false;
+    if(activeLining==='yes'&&!row._lining)return false;
+    if(activeLining==='no'&&row._lining)return false;
+    const v=parseFloat(row.length);if(!isNaN(lMin)&&!(v>=lMin))return false;if(!isNaN(lMax)&&!(v<=lMax))return false;
+    return true;
+  }:null);
+  const cnt=tbl.filtered.length,tot=tbl.allData.length;
+  document.getElementById('filter-count').textContent=tot>0?(hasF?`${cnt} من ${tot} ترعة`:`${tot} ترعة`):'';
+}
+
+// ── وصف الفلاتر النشطة حالياً، لاستخدامه في عنوان ملفات التصدير ──
+function describeFilters(){
+  const parts=[];
+  if(activeLetter) parts.push(`تبدأ بحرف "${activeLetter}"`);
+  if(activeEngs.size) parts.push(`الإدارة: ${[...activeEngs].join('، ')}`);
+  if(activeRots.size) parts.push(`المناوبة: ${[...activeRots].join('، ')}`);
+  if(activeLining==='yes') parts.push('مبطنة فقط');
+  if(activeLining==='no') parts.push('غير مبطنة فقط');
+  const lMin=document.getElementById('f-len-min').value,lMax=document.getElementById('f-len-max').value;
+  if(lMin||lMax) parts.push(`الطول: ${lMin||'0'}–${lMax||'∞'} كم`);
+  if(tbl.searchQuery) parts.push(`بحث: "${tbl.searchQuery}"`);
+  return parts.length? parts.join(' • ') : 'كل السجلات (بدون فلتر)';
+}
+
+// ══ Export ══
+document.getElementById('btn-export').addEventListener('click',async()=>{
+  if(!tbl.filtered.length){toast('لا توجد بيانات للتصدير','error');return;}
+  const rows=tbl.filtered.map(r=>({name:r.name||'',eng:r._eng||'',feeder:r.canalName||r.feeder||'',length:r.length||'',zomam:r.zomam||'',discharge:r.discharge||'',rotations:r._rotations.join(' / ')||'',lined:r._lining?'مبطنة':'',linedLength:r._lining?.linedLength||r._lining?.totalLength||'',liningType:r._lining?.liningType||'',notes:r.notes||''}));
+  await exportToExcel({title:'تقرير ترع الإدارة — محافظة الجيزة',subtitle:describeFilters(),recordCount:tbl.filtered.length,
+    columns:[{key:'name',label:'اسم الترعة',width:28},{key:'eng',label:'الإدارة الهندسية',width:14},{key:'feeder',label:'المغذية',width:20},{key:'length',label:'الطول (كم)',width:12},{key:'zomam',label:'الزمام (فدان)',width:14},{key:'discharge',label:'القنن المائي',width:14},{key:'rotations',label:'المناوبة',width:10},{key:'lined',label:'مبطنة؟',width:8},{key:'linedLength',label:'الطول المبطن (كم)',width:16},{key:'liningType',label:'نوع التبطين',width:16},{key:'notes',label:'ملاحظات',width:30}],
+    rows,filename:`ترع_الإدارة_${new Date().toISOString().slice(0,10)}.xlsx`});
+  toast('تم التصدير بنجاح','success');
+});
+document.getElementById('btn-export-pdf').addEventListener('click',async()=>{
+  if(!tbl.filtered.length){toast('لا توجد بيانات للتصدير','error');return;}
+  const rows=tbl.filtered.map(r=>({name:r.name||'',eng:r._eng||'',feeder:r.canalName||r.feeder||'',length:r.length||'',rotations:r._rotations.join(' / ')||'',lined:r._lining?'مبطنة':'غير مبطنة'}));
+  await exportToPDF({title:'تقرير ترع الإدارة — محافظة الجيزة',subtitle:describeFilters(),recordCount:tbl.filtered.length,
+    columns:[{key:'name',label:'اسم الترعة'},{key:'eng',label:'الإدارة'},{key:'feeder',label:'المغذية'},{key:'length',label:'الطول (كم)'},{key:'rotations',label:'المناوبة'},{key:'lined',label:'التبطين'}],
+    rows,filename:`ترع_الإدارة_${new Date().toISOString().slice(0,10)}.pdf`});
+  toast('تم التصدير بنجاح','success');
+});
+
+// ══ View ══
+function openView(spec){
+  currentItem=spec;
+  document.getElementById('view-name').textContent=spec.name||'تفاصيل';
+  const sections=Array.isArray(spec.sections)?spec.sections:[];
+  const fs=sections.find(s=>s.bed_width&&parseFloat(s.bed_width)>0)||sections[0]||null;
+  const rots=spec._rotations||[];const hasLining=!!spec._lining;const ln=spec._lining||{};
+  let html=`<div style="padding:14px 20px 0">
+    <div class="spec-detail-grid">
+      <div class="spec-kv"><div class="sk">الإدارة الهندسية</div><div class="sv" style="font-size:13px">${escapeHtml(spec._eng||'—')}</div></div>
+      <div class="spec-kv"><div class="sk">الطول الكلي</div><div class="sv">${escapeHtml(spec.length||'—')} كم</div></div>
+      <div class="spec-kv"><div class="sk">الزمام</div><div class="sv" style="font-size:13px">${spec.zomam?Number(spec.zomam).toLocaleString('ar-EG'):escapeHtml(spec.zomam||'—')} فدان</div></div>
+      <div class="spec-kv"><div class="sk">القنن المائي</div><div class="sv">${escapeHtml(spec.discharge||55)} م³</div></div>
+      <div class="spec-kv"><div class="sk">المغذية</div><div class="sv" style="font-size:12px">${escapeHtml(spec.canalName||spec.feeder||'—')}</div></div>
+      <div class="spec-kv"><div class="sk">المناوبات</div><div class="sv">${rots.length?rotBadgeHtml(rots):'—'}</div></div>
+      <div class="spec-kv"><div class="sk">عدد المقاطع</div><div class="sv">${sections.length||'—'}</div></div>
+      <div class="spec-kv"><div class="sk">التبطين</div><div class="sv">${hasLining?'<span class="badge badge-teal">مبطنة</span>':'<span class="badge badge-gray">غير مبطنة</span>'}</div></div>
+    </div>`;
+  if(hasLining)html+=`<div class="lining-block"><h4>بيانات التبطين</h4><div class="spec-detail-grid">
+    ${ln.totalLength?`<div class="spec-kv"><div class="sk">الطول الكلي (كم)</div><div class="sv">${escapeHtml(ln.totalLength)}</div></div>`:''}
+    ${ln.linedLength?`<div class="spec-kv"><div class="sk">المبطن (كم)</div><div class="sv">${escapeHtml(ln.linedLength)}</div></div>`:''}
+    ${ln.liningType?`<div class="spec-kv"><div class="sk">نوع التبطين</div><div class="sv">${escapeHtml(ln.liningType)}</div></div>`:''}
+    ${ln.width?`<div class="spec-kv"><div class="sk">العرض (م)</div><div class="sv">${escapeHtml(ln.width)}</div></div>`:''}
+    ${ln.condition?`<div class="spec-kv"><div class="sk">الحالة</div><div class="sv"><span class="badge badge-teal">${escapeHtml(ln.condition)}</span></div></div>`:''}
+  </div></div>`;
+  if(fs&&fs.bed_width)html+=`<div class="cross-canvas-wrap" style="margin-top:14px"><div style="font-size:11px;font-weight:700;color:var(--text-2);text-align:center;margin-bottom:4px">القطاع العرضي — كم ${fs.from_km||'؟'}→${fs.to_km||'؟'}</div><canvas id="ccv" style="display:block;width:100%"></canvas></div>`;
+  if(sections.length)html+=`<div style="margin-top:14px;font-size:13px;font-weight:800;margin-bottom:6px">المقاطع (${sections.length})</div>
+    <div class="sections-desktop" style="overflow-x:auto"><table class="sections-tbl"><thead><tr><th>من كم</th><th>إلى كم</th><th>عرض القاع</th><th>الميل</th><th>منسوب القاع</th><th>أقصى منسوب</th><th>أقل منسوب</th><th>المناوبة</th></tr></thead><tbody>
+    ${sections.map(s=>`<tr><td><code>${escapeHtml(s.from_km||'—')}</code></td><td><code>${escapeHtml(s.to_km||'—')}</code></td><td style="color:var(--teal);font-weight:700">${escapeHtml(s.bed_width||'—')}</td><td>${escapeHtml(fixSideSlope(s.side_slope)||'—')}</td><td style="color:#c62828;font-weight:700">${escapeHtml(s.bed_level||'—')}</td><td style="color:#00897b;font-weight:700">${escapeHtml(s.max_water||'—')}</td><td style="color:#0277bd;font-weight:700">${escapeHtml(s.min_water||'—')}</td><td>${s.rotation?`<span class="badge badge-amber" style="font-size:10px">${escapeHtml(s.rotation)}</span>`:''}</td></tr>`).join('')}
+    </tbody></table></div>
+    <div class="sections-mobile">${sections.map((s,i)=>`<div class="section-card"><div class="section-card-head"><span>مقطع ${i+1}</span><span class="badge badge-amber">${escapeHtml(s.rotation||'—')}</span></div><div class="section-card-grid"><div><span class="sk">عرض القاع</span><span class="sv2" style="color:var(--teal)">${escapeHtml(s.bed_width||'—')}</span></div><div><span class="sk">الميل</span><span class="sv2">${escapeHtml(fixSideSlope(s.side_slope)||'—')}</span></div><div><span class="sk">منسوب القاع</span><span class="sv2" style="color:#c62828">${escapeHtml(s.bed_level||'—')}</span></div><div><span class="sk">أقصى منسوب</span><span class="sv2" style="color:#00897b">${escapeHtml(s.max_water||'—')}</span></div></div></div>`).join('')}</div>`;
+  html+=mapsLinkHtml(spec)+'</div>';
+  document.getElementById('view-body').innerHTML=html;
+  document.getElementById('view-footer').style.display='';
+  openModal('modal-view');
+  if(fs&&fs.bed_width)setTimeout(()=>drawCross(fs),60);
+}
+document.getElementById('view-close').addEventListener('click',()=>closeModal('modal-view'));
+document.getElementById('modal-view').addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal('modal-view');});
+document.getElementById('btn-edit').addEventListener('click',()=>{closeModal('modal-view');openForm(currentItem);});
+document.getElementById('btn-delete').addEventListener('click',()=>{ confirmDelete(document.getElementById('btn-delete'),async()=>{ await deleteRecord('specs',currentItem.id); await logActivity('حذف ترعة', {name: currentItem.name||currentItem.id}); closeModal('modal-view');toast('تم الحذف','success'); await loadData(); }); });
+
+// ══ Form ══
+const FF=['name','eng','canalName','bank','length','zomam','discharge','notes'];
+document.getElementById('btn-add').addEventListener('click',()=>openForm(null));
+document.getElementById('form-close').addEventListener('click',()=>closeModal('modal-form'));
+document.getElementById('modal-form').addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal('modal-form');});
+document.getElementById('btn-cancel').addEventListener('click',()=>closeModal('modal-form'));
+wireLocationButton('btn-gps','f-lat','f-lng');
+let isEditMode=false;
+function openForm(item){ isEditMode=!!item; document.getElementById('form-title').textContent=item?'تعديل الترعة':'إضافة ترعة جديدة'; FF.forEach(k=>{const el=document.getElementById('f-'+k);if(el)el.value=item?.[k]??'';}); document.getElementById('f-lat').value=item?.lat??''; document.getElementById('f-lng').value=item?.lng??''; openModal('modal-form'); }
+document.getElementById('btn-save').addEventListener('click',async()=>{
+  const name=document.getElementById('f-name').value.trim();
+  if(!name){toast('اسم الترعة مطلوب','error');return;}
+  const data={};FF.forEach(k=>{const v=document.getElementById('f-'+k).value.trim();if(v)data[k]=v;});
+  const lat=document.getElementById('f-lat').value.trim(),lng=document.getElementById('f-lng').value.trim();
+  if(lat)data.lat=parseFloat(lat);if(lng)data.lng=parseFloat(lng);
+  const btn=document.getElementById('btn-save');btn.disabled=true;const orig=btn.textContent;btn.textContent='جاري الحفظ…';
+  try{
+    if(currentItem&&isEditMode){await updateRecord('specs',currentItem.id,data);await logActivity('تعديل ترعة',{name:data.name||currentItem.name});toast('تم التعديل','success');}
+    else{await addRecord('specs',data);await logActivity('إضافة ترعة',{name:data.name});toast('تمت الإضافة','success');}
+    closeModal('modal-form');currentItem=null;await loadData();
+  }finally{btn.disabled=false;btn.textContent=orig;}
+});
+</script>
+</body>
+</html>

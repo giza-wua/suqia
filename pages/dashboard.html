@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <script>(function(){try{var t=localStorage.getItem('suqia_theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <meta name="theme-color" content="#071226"/>
+  <title>سُقيا — لوحة التحكم</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/icons/favicon.svg"/>
+  <link rel="manifest" href="../manifest.json"/>
+  <link rel="apple-touch-icon" href="../assets/icons/icon-192.png"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-title" content="سُقيا"/>
+  <link rel="stylesheet" href="../css/style.css?v=1.4.0"/>
+</head>
+<body>
+<div class="shell">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-brand">
+      <div class="sb-logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#0c1a33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3.4 4 6 7.6 6 11a6 6 0 0 1-12 0c0-3.4 2.6-7 6-11Z"/><path d="M9.2 14.2c.4 1.6 1.6 2.6 3.2 2.8"/></svg>
+      </div>
+      <div class="sb-brand-text"><h2>سُقيا</h2><span>إدارة أصول ري الجيزة &nbsp;<em class="sb-version">v1.4.0</em></span></div>
+    </div>
+    <nav class="sb-nav">
+      <div class="sb-section">الرئيسية</div>
+      <a class="nav-item" href="dashboard.html">
+        <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v9.5a1 1 0 0 0 1 1h3.5v-6h5v6H18a1 1 0 0 0 1-1V10"/></svg>
+        لوحة التحكم
+      </a>
+      <div class="sb-section">البيانات الهندسية</div>
+      <a class="nav-item" href="canals.html">
+        <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9.5c2-2.7 4-2.7 6 0s4 2.7 6 0 4-2.7 6 0"/><path d="M2 15.5c2-2.7 4-2.7 6 0s4 2.7 6 0 4-2.7 6 0"/></svg>
+        ترع الإدارة
+      </a>
+      <a class="nav-item" href="drains.html">
+        <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6c1.5-1.8 3-1.8 4.5 0s3 1.8 4.5 0 3-1.8 4.5 0"/><path d="M12 10.5v7"/><path d="M9 14.5l3 3 3-3"/></svg>
+        المصارف
+      </a>
+      <a class="nav-item" href="bridges.html">
+        <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 18.5h20"/><path d="M4.5 18.5v-4a7.5 7.5 0 0 1 15 0v4"/><path d="M8 18.5v-3.5"/><path d="M16 18.5v-3.5"/></svg>
+        الكباري
+      </a>
+      <a class="nav-item" href="wells.html">
+        <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v3M12 18.5v3"/></svg>
+        الآبار الجوفية
+      </a>
+      <a class="nav-item" href="map.html">
+        <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 20l-6-3V4l6 3 6-3 6 3v13l-6-3-6 3z"/><path d="M9 7v13M15 4v13"/></svg>
+        الخريطة
+      </a>
+      <div class="sb-section">الإدارة</div>
+      <a class="nav-item" href="settings.html">
+        <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M3 12h3M18 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>
+        الإعدادات
+      </a>
+    </nav>
+    <div class="sb-footer">
+      <div class="sb-user">
+        <div class="sb-avatar" id="sb-avatar">م</div>
+        <div><div class="sb-uname" id="sb-user-name">…</div><span class="sb-role" id="sb-user-role"></span></div>
+      </div>
+      <button class="sb-logout" id="btn-logout">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        تسجيل الخروج
+      </button>
+    </div>
+  </aside>
+  <div id="sb-overlay"></div>
+  <!-- BOTTOM NAV (mobile) -->
+  <nav class="bottom-nav">
+    <a class="bn-item" href="dashboard.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v9.5a1 1 0 0 0 1 1h3.5v-6h5v6H18a1 1 0 0 0 1-1V10"/></svg>
+      الرئيسية
+    </a>
+    <a class="bn-item" href="canals.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9.5c2-2.7 4-2.7 6 0s4 2.7 6 0 4-2.7 6 0"/><path d="M2 15.5c2-2.7 4-2.7 6 0s4 2.7 6 0 4-2.7 6 0"/></svg>
+      ترع
+    </a>
+    <a class="bn-item" href="drains.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6c1.5-1.8 3-1.8 4.5 0s3 1.8 4.5 0 3-1.8 4.5 0"/><path d="M12 10.5v7"/><path d="M9 14.5l3 3 3-3"/></svg>
+      مصارف
+    </a>
+    <a class="bn-item" href="bridges.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 18.5h20"/><path d="M4.5 18.5v-4a7.5 7.5 0 0 1 15 0v4"/><path d="M8 18.5v-3.5"/><path d="M16 18.5v-3.5"/></svg>
+      كباري
+    </a>
+    <a class="bn-item" href="wells.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v3M12 18.5v3"/></svg>
+      آبار
+    </a>
+    <a class="bn-item" href="map.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 20l-6-3V4l6 3 6-3 6 3v13l-6-3-6 3z"/><path d="M9 7v13M15 4v13"/></svg>
+      خريطة
+    </a>
+    <a class="bn-item" href="settings.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M3 12h3M18 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>
+      إعدادات
+    </a>
+  </nav>
+
+
+  <div class="main">
+    <header class="topbar">
+      <button class="mob-btn" id="mob-btn">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3.5 6.5h17M3.5 12h17M3.5 17.5h17"/></svg>
+      </button>
+      <div class="tb-title">
+        <div class="tb-bc">سُقيا › الرئيسية</div>
+        <div class="tb-page">لوحة التحكم</div>
+      </div>
+      <div class="tb-actions">
+        <div class="tb-date" id="tb-date"></div>
+        <div class="tb-live" id="tb-live"><div class="dot"></div><span>متصل</span></div>
+        <button class="theme-toggle" id="theme-toggle" title="تبديل الوضع"></button>
+      </div>
+    </header>
+
+    <main class="page">
+      <!-- Welcome -->
+      <div class="welcome">
+        <div style="position:relative;z-index:1">
+          <h1 id="welcome-msg">أهلاً 👋</h1>
+          <p id="welcome-date" style="font-size:12px;color:rgba(255,255,255,.45);margin-top:4px"></p>
+        </div>
+        <div class="welcome-stats">
+          <div class="w-stat"><div class="n" id="ws-total">—</div><div class="l">إجمالي الأصول</div></div>
+          <div class="w-stat"><div class="n">4</div><div class="l">فئات</div></div>
+          <div class="w-stat"><div class="n" style="color:#86efac">✓</div><div class="l">نشط</div></div>
+        </div>
+      </div>
+
+      <!-- Stat Cards — 4 modern SVG icons -->
+      <div class="stat-grid">
+
+        <!-- ترع الإدارة -->
+        <div class="stat-card c-blue" onclick="location.href='canals.html'">
+          <div class="s-icon-wrap c-blue">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+              <path d="M15 3h6v6"/><path d="M10 14 21 3"/>
+              <path d="M7 12h4M7 16h2"/>
+            </svg>
+          </div>
+          <div class="s-num" id="cnt-canals-admin">—</div>
+          <div class="s-label">ترع الإدارة</div>
+        </div>
+
+        <!-- الكباري -->
+        <div class="stat-card c-gold" onclick="location.href='bridges.html'">
+          <div class="s-icon-wrap c-gold">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 19h20"/><path d="M4 19v-5a8 8 0 0 1 16 0v5"/>
+              <path d="M9 19v-4"/><path d="M15 19v-4"/>
+              <path d="M2 13h3M19 13h3"/>
+            </svg>
+          </div>
+          <div class="s-num" id="cnt-bridges">—</div>
+          <div class="s-label">الكباري</div>
+        </div>
+
+        <!-- الترع المبطنة -->
+        <div class="stat-card c-teal" onclick="location.href='canals.html'">
+          <div class="s-icon-wrap c-teal">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 7c1.5-2 3-2 4.5 0S10.5 9 12 7s3-2 4.5 0S19.5 9 21 7"/>
+              <path d="M3 12c1.5-2 3-2 4.5 0S10.5 14 12 12s3-2 4.5 0S19.5 14 21 12"/>
+              <path d="M3 17c1.5-2 3-2 4.5 0S10.5 19 12 17s3-2 4.5 0S19.5 19 21 17"/>
+            </svg>
+          </div>
+          <div class="s-num" id="cnt-canals">—</div>
+          <div class="s-label">الترع المبطنة</div>
+        </div>
+
+        <!-- الآبار الجوفية -->
+        <div class="stat-card c-water" onclick="location.href='wells.html'">
+          <div class="s-icon-wrap c-water">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2 C12 2 18 9 18 14 A6 6 0 0 1 6 14 C6 9 12 2 12 2Z"/>
+              <path d="M9.5 14.5 Q11 17 13.5 15.5"/>
+              <path d="M12 20v2M9 21h6"/>
+            </svg>
+          </div>
+          <div class="s-num" id="cnt-wells">—</div>
+          <div class="s-label">الآبار الجوفية</div>
+        </div>
+
+        <!-- المصارف -->
+        <div class="stat-card c-coral" onclick="location.href='drains.html'">
+          <div class="s-icon-wrap c-coral">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 6c1.5-1.8 3-1.8 4.5 0s3 1.8 4.5 0 3-1.8 4.5 0"/>
+              <path d="M12 10.5v7"/><path d="M9 14.5l3 3 3-3"/>
+            </svg>
+          </div>
+          <div class="s-num" id="cnt-drains">—</div>
+          <div class="s-label">المصارف</div>
+        </div>
+      </div>
+
+      <!-- تنبيهات الصيانة -->
+      <div class="card" id="alerts-card" style="display:none;margin-top:4px">
+        <div class="card-header"><span class="card-title">🛠️ تنبيهات الصيانة</span> <span class="badge badge-gray" id="alerts-count" style="font-size:10px"></span></div>
+        <div class="card-body" id="alerts-body"></div>
+      </div>
+
+      <!-- نظرة تحليلية -->
+      <div class="stat-grid" id="charts-grid" style="display:none;grid-template-columns:1fr 1fr;margin-top:4px;gap:14px">
+        <div class="card">
+          <div class="card-header"><span class="card-title">🌉 الكباري حسب النوع</span></div>
+          <div class="card-body" id="chart-bridges"></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">💧 الآبار حسب المركز</span></div>
+          <div class="card-body" id="chart-wells"></div>
+        </div>
+      </div>
+
+      <!-- وصول سريع -->
+      <div class="card" id="quick-card" style="margin-top:4px">
+        <div class="card-header"><span class="card-title">⚡ وصول سريع</span></div>
+        <div class="card-body" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:9px">
+          <a href="canals.html"   class="btn btn-secondary" style="justify-content:center">🌊 ترع الإدارة</a>
+          <a href="drains.html"   class="btn btn-secondary" style="justify-content:center">🚰 مصارف</a>
+          <a href="bridges.html"  class="btn btn-secondary" style="justify-content:center">🌉 كباري</a>
+          <a href="wells.html"    class="btn btn-secondary" style="justify-content:center">💧 آبار</a>
+          <a href="map.html"      class="btn btn-secondary" style="justify-content:center">🗺️ الخريطة</a>
+          <a href="settings.html" class="btn btn-secondary" style="justify-content:center">⚙️ إعدادات</a>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script type="module">
+if ("serviceWorker" in navigator) { navigator.serviceWorker.register("../sw.js").catch(() => {}); }
+import { requireAuth, clearSession, getCollection, logActivity } from "../js/firebase-config.js?v=1.4.0";
+import { wireThemeToggle, arabicDate, greeting, initGlobalSearch, wireConnectionStatus, escapeHtml } from "../js/shared.js?v=1.4.0";
+
+const user = requireAuth();
+  // ── Sidebar ──
+  (function(){
+    const nm=document.getElementById('sb-user-name');
+    const av=document.getElementById('sb-avatar');
+    const rl=document.getElementById('sb-user-role');
+    const init=user.name.trim().split(' ').slice(0,2).map(w=>w[0]).join('');
+    if(av) av.textContent = init;
+    if(nm) nm.textContent = user.name;
+    if(rl) rl.textContent = user.role==='admin'?'مشرف':'مستخدم';
+    // تفعيل الرابط النشط
+    const pg = location.pathname.split('/').pop();
+    document.querySelectorAll('.nav-item, .bn-item').forEach(a=>{
+      if(a.getAttribute('href')===pg) a.classList.add('active');
+    });
+    // موبايل
+    const sb=document.getElementById('sidebar');
+    const ov=document.getElementById('sb-overlay');
+    const mb=document.getElementById('mob-btn');
+    if(mb) mb.addEventListener('click',()=>{ sb.classList.toggle('open'); ov.classList.toggle('show'); });
+    if(ov) ov.addEventListener('click',()=>{ sb.classList.remove('open'); ov.classList.remove('show'); });
+    // تسجيل الخروج
+    document.getElementById('btn-logout').addEventListener('click',async()=>{ await logActivity('تسجيل خروج'); clearSession(); location.href='../index.html'; });
+  })();
+
+// ── Theme + date ──
+wireThemeToggle();
+wireConnectionStatus();
+document.getElementById('tb-date').textContent = arabicDate();
+document.getElementById('welcome-msg').textContent = greeting(user.name.split(' ')[0]);
+document.getElementById('welcome-date').textContent = arabicDate();
+
+// ── بحث موحّد ──
+initGlobalSearch(async () => {
+  const [specs, canals, bridges, wells, drains] = await Promise.all([
+    getCollection('specs'), getCollection('linedCanals'), getCollection('bridges'), getCollection('wells'), getCollection('drains')
+  ]);
+  return [
+    ...specs.map(r => ({ name: r.name || r.eng || '—', type: 'ترعة', page: 'canals.html', q: r.name || r.eng })),
+    ...canals.map(r => ({ name: r.name || '—', type: 'ترعة مبطنة', page: 'canals.html', q: r.name })),
+    ...bridges.map(r => ({ name: r.name || '—', type: 'كوبري', page: 'bridges.html', q: r.name })),
+    ...wells.map(r => ({ name: r.name || '—', type: 'بئر', page: 'wells.html', q: r.name })),
+    ...drains.map(r => ({ name: r.name || '—', type: 'مصرف', page: 'drains.html', q: r.name })),
+  ];
+});
+
+// ── تحميل البيانات الكاملة (مش بس العدد) — نعيد استخدامها للتنبيهات والرسوم ──
+async function loadOneFull(col, elId) {
+  try {
+    const data = await getCollection(col);
+    const el = document.getElementById(elId);
+    if(el) el.textContent = data.length;
+    return data;
+  } catch(e) {
+    const el = document.getElementById(elId);
+    if(el) el.textContent = '—';
+    console.warn('count error:', col, e.message);
+    return [];
+  }
+}
+(async () => {
+  const [specs, bridges, linedCanals, wells, drains] = await Promise.all([
+    loadOneFull('specs',       'cnt-canals-admin'),
+    loadOneFull('bridges',     'cnt-bridges'),
+    loadOneFull('linedCanals', 'cnt-canals'),
+    loadOneFull('wells',       'cnt-wells'),
+    loadOneFull('drains',      'cnt-drains'),
+  ]);
+  const total = specs.length + bridges.length + linedCanals.length + wells.length + drains.length;
+  const ws = document.getElementById('ws-total');
+  if(ws) ws.textContent = total;
+
+  renderMaintenanceAlerts({ specs, bridges, wells, drains });
+  renderCharts({ bridges, wells });
+})();
+
+// ══ تنبيهات الصيانة ══════════════════════
+// بنعتمد على حقل updatedAt (بيتحدّث تلقائياً عند أي إضافة/تعديل)
+function toDate(ts) {
+  if (!ts) return null;
+  if (ts.toDate) return ts.toDate();
+  if (ts.seconds) return new Date(ts.seconds * 1000);
+  const d = new Date(ts); return isNaN(d) ? null : d;
+}
+function renderMaintenanceAlerts({ specs, bridges, wells, drains }) {
+  const STALE_DAYS = 365;
+  const now = Date.now();
+  const groups = [
+    { data: specs,   label: 'ترعة', page: 'canals.html' },
+    { data: bridges, label: 'كوبري', page: 'bridges.html' },
+    { data: wells,   label: 'بئر', page: 'wells.html' },
+    { data: drains||[], label: 'مصرف', page: 'drains.html' },
+  ];
+  const stale = [];
+  groups.forEach(g => g.data.forEach(r => {
+    const d = toDate(r.updatedAt);
+    // لو مفيش تاريخ تحديث خالص، أو قديم أكتر من سنة، اعتبره محتاج مراجعة
+    const daysAgo = d ? Math.floor((now - d.getTime()) / 86400000) : null;
+    if (daysAgo === null || daysAgo > STALE_DAYS) {
+      stale.push({ name: r.name || '—', label: g.label, page: g.page, daysAgo });
+    }
+  }));
+
+  const card = document.getElementById('alerts-card');
+  const body = document.getElementById('alerts-body');
+  const countBadge = document.getElementById('alerts-count');
+  if (!stale.length) {
+    card.style.display = '';
+    countBadge.textContent = 'كل شيء محدَّث ✓';
+    body.innerHTML = `<div class="empty" style="padding:16px"><div class="icon">✅</div><p>مفيش سجلات محتاجة مراجعة — كل البيانات محدَّثة خلال آخر سنة</p></div>`;
+    return;
+  }
+  card.style.display = '';
+  countBadge.textContent = `${stale.length} سجل`;
+  const shown = stale.slice(0, 6);
+  body.innerHTML = `
+    <p style="font-size:12px;color:var(--text-2);margin-bottom:10px">السجلات دي ما اتحدّثتش من أكتر من سنة (أو مالهاش تاريخ تحديث مسجَّل) — يستاهل تتراجع:</p>
+    ${shown.map(s => `
+      <a href="${s.page}?q=${encodeURIComponent(s.name)}" style="display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);text-decoration:none;color:var(--text)">
+        <span style="font-size:13px;font-weight:700">${escapeHtml(s.name)} <span style="color:var(--text-3);font-weight:600">— ${escapeHtml(s.label)}</span></span>
+        <span class="badge badge-gray" style="font-size:10px">${s.daysAgo===null?'بدون تاريخ':`منذ ${s.daysAgo} يوم`}</span>
+      </a>`).join('')}
+    ${stale.length > shown.length ? `<p style="font-size:11px;color:var(--text-3);margin-top:10px">و${stale.length - shown.length} سجل آخر…</p>` : ''}
+  `;
+}
+
+// ══ الرسوم التحليلية (SVG بسيط، من غير مكتبات خارجية) ══
+const CHART_COLORS = ['#0bb4ac','#d9a536','#1c8fd9','#e2477b','#7c6ff0','#16a87a','#e08a1f','#94a3b8'];
+function renderDonut(containerId, dataMap) {
+  const el = document.getElementById(containerId);
+  const entries = Object.entries(dataMap).filter(([,v]) => v > 0);
+  if (!entries.length) { el.innerHTML = `<div class="empty" style="padding:10px"><p style="font-size:12px">لا توجد بيانات كافية</p></div>`; return; }
+  const total = entries.reduce((a,[,v]) => a+v, 0);
+  const R = 40, C = 2 * Math.PI * R;
+  let offset = 0;
+  const circles = entries.map(([label, val], i) => {
+    const frac = val / total;
+    const dash = frac * C;
+    const circle = `<circle cx="50" cy="50" r="${R}" fill="none" stroke="${CHART_COLORS[i % CHART_COLORS.length]}" stroke-width="14" stroke-dasharray="${dash} ${C-dash}" stroke-dashoffset="${-offset}" transform="rotate(-90 50 50)"/>`;
+    offset += dash;
+    return circle;
+  }).join('');
+  const legend = entries.map(([label, val], i) => `
+    <div style="display:flex;align-items:center;gap:7px;font-size:12px;font-weight:700;color:var(--text-2)">
+      <span style="width:10px;height:10px;border-radius:50%;background:${CHART_COLORS[i % CHART_COLORS.length]};flex-shrink:0"></span>
+      ${escapeHtml(label)} <span style="color:var(--text-3);font-weight:600">(${val})</span>
+    </div>`).join('');
+  el.innerHTML = `
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <svg viewBox="0 0 100 100" style="width:120px;height:120px;flex-shrink:0"><g>${circles}</g><text x="50" y="54" text-anchor="middle" font-size="16" font-weight="900" fill="var(--text)">${total}</text></svg>
+      <div style="display:flex;flex-direction:column;gap:6px">${legend}</div>
+    </div>`;
+}
+function renderBarChart(containerId, dataMap) {
+  const el = document.getElementById(containerId);
+  const entries = Object.entries(dataMap).filter(([,v]) => v > 0).sort((a,b) => b[1]-a[1]);
+  if (!entries.length) { el.innerHTML = `<div class="empty" style="padding:10px"><p style="font-size:12px">لا توجد بيانات كافية</p></div>`; return; }
+  const max = Math.max(...entries.map(([,v]) => v));
+  el.innerHTML = entries.map(([label, val], i) => `
+    <div style="margin-bottom:9px">
+      <div style="display:flex;justify-content:space-between;font-size:11.5px;font-weight:700;color:var(--text-2);margin-bottom:3px"><span>${escapeHtml(label)}</span><span>${val}</span></div>
+      <div style="background:var(--surface-2);border-radius:99px;height:8px;overflow:hidden"><div style="width:${(val/max*100).toFixed(0)}%;height:100%;background:${CHART_COLORS[i % CHART_COLORS.length]};border-radius:99px"></div></div>
+    </div>`).join('');
+}
+function renderCharts({ bridges, wells }) {
+  const grid = document.getElementById('charts-grid');
+  if (!bridges.length && !wells.length) return;
+  grid.style.display = 'grid';
+  const byType = {};
+  bridges.forEach(b => { const t = b.bridgeType || 'غير محدَّد'; byType[t] = (byType[t]||0) + 1; });
+  renderDonut('chart-bridges', byType);
+
+  const byDistrict = {};
+  wells.forEach(w => { const d = w.district || 'غير محدَّد'; byDistrict[d] = (byDistrict[d]||0) + 1; });
+  renderBarChart('chart-wells', byDistrict);
+}
+
+</script>
+</body>
+</html>
