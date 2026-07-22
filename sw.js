@@ -1,13 +1,13 @@
 // ══════════════════════════════════════════
 //  سُقيا — Service Worker
-//  بيخزّن "هيكل" التطبيق (HTML/CSS/JS/خطوط) عشان يفتح حتى بدون إنترنت.
-//  البيانات نفسها (الترع/الكباري/الآبار) ليها نظام تخزين منفصل في IndexedDB
-//  (شوف js/firebase-config.js) — الاتنين بيكملوا بعض: ده للواجهة، وده للبيانات.
+//  يُخزِّن هيكل التطبيق (HTML/CSS/JS/الخطوط) حتى يفتح ولو من دون اتصال بالإنترنت.
+//  للبيانات نفسها (الترع والكباري والآبار) نظام تخزين منفصل عبر IndexedDB
+//  (يُراجَع js/firebase-config.js) — يكمِّل كل نظام الآخر: هذا للواجهة، وذاك للبيانات.
 // ══════════════════════════════════════════
 
-const CACHE_NAME = "suqia-shell-v1.4.0";
-// ⚠️ مسارات نسبية لمكان ملف الـ sw.js نفسه (مش لجذر الدومين) — عشان التطبيق
-// يشتغل صح سواء اتنشر على جذر الدومين أو جوه مجلد فرعي (subpath).
+const CACHE_NAME = "suqia-shell-v1.4.1";
+// ⚠️ مسارات نسبية إلى موضع ملف sw.js نفسه (وليس إلى جذر الدومين)، حتى يعمل التطبيق
+// بشكل صحيح سواء نُشر على جذر الدومين أو داخل مجلد فرعي (subpath).
 const SW_SCOPE = self.registration.scope; // مسار كامل لمجلد الـ scope (بينتهي بـ /)
 const APP_SHELL = [
   "index.html",
@@ -35,7 +35,7 @@ const APP_SHELL = [
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) =>
-      // نحاول نخزّن الكل، لكن لو حاجة فشلت (مثلاً خط مش موجود) منوقفش التثبيت كله
+      // تُخزَّن جميع الملفات قدر الإمكان، ولا يُوقَف التثبيت كله إذا فشل تخزين أحدها (كخط غير موجود مثلاً)
       Promise.allSettled(APP_SHELL.map((url) => cache.add(url)))
     )
   );
@@ -56,10 +56,10 @@ self.addEventListener("fetch", (event) => {
   if (request.method !== "GET") return;
 
   const url = new URL(request.url);
-  // متلمسش طلبات خارجية (Firebase, CDN) — سيبها تتعامل عادي مع الشبكة/الكاش بتاعها هي
+  // لا تُلمَس الطلبات الخارجية (Firebase، وشبكات توصيل المحتوى) — تُترَك لتتعامل مع الشبكة أو التخزين المؤقت الخاص بها
   if (url.origin !== self.location.origin) return;
 
-  // ملفات HTML: جرّب الشبكة أولاً (عشان آخر تحديث)، ولو مفيش نت استخدم النسخة المخزّنة
+  // ملفات HTML: تُجرَّب الشبكة أولاً (لضمان الحصول على آخر تحديث)، وإذا انعدم الاتصال تُستخدَم النسخة المخزَّنة
   if (request.mode === "navigate" || request.headers.get("accept")?.includes("text/html")) {
     event.respondWith(
       fetch(request)

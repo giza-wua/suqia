@@ -12,7 +12,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
   <meta name="apple-mobile-web-app-title" content="سُقيا"/>
-  <link rel="stylesheet" href="../css/style.css?v=1.4.0"/>
+  <link rel="stylesheet" href="../css/style.css?v=1.4.1"/>
 </head>
 <body>
 <div class="shell">
@@ -23,7 +23,7 @@
       <div class="sb-logo">
         <svg viewBox="0 0 24 24" fill="none" stroke="#0c1a33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3.4 4 6 7.6 6 11a6 6 0 0 1-12 0c0-3.4 2.6-7 6-11Z"/><path d="M9.2 14.2c.4 1.6 1.6 2.6 3.2 2.8"/></svg>
       </div>
-      <div class="sb-brand-text"><h2>سُقيا</h2><span>إدارة أصول ري الجيزة &nbsp;<em class="sb-version">v1.4.0</em></span></div>
+      <div class="sb-brand-text"><h2>سُقيا</h2><span>إدارة أصول ري الجيزة &nbsp;<em class="sb-version">v1.4.1</em></span></div>
     </div>
     <nav class="sb-nav">
       <div class="sb-section">الرئيسية</div>
@@ -237,8 +237,8 @@
 
 <script type="module">
 if ("serviceWorker" in navigator) { navigator.serviceWorker.register("../sw.js").catch(() => {}); }
-import { requireAuth, clearSession, getCollection, logActivity } from "../js/firebase-config.js?v=1.4.0";
-import { wireThemeToggle, arabicDate, greeting, initGlobalSearch, wireConnectionStatus, escapeHtml } from "../js/shared.js?v=1.4.0";
+import { requireAuth, clearSession, getCollection, logActivity } from "../js/firebase-config.js?v=1.4.1";
+import { wireThemeToggle, arabicDate, greeting, initGlobalSearch, wireConnectionStatus, escapeHtml } from "../js/shared.js?v=1.4.1";
 
 const user = requireAuth();
   // ── Sidebar ──
@@ -286,7 +286,7 @@ initGlobalSearch(async () => {
   ];
 });
 
-// ── تحميل البيانات الكاملة (مش بس العدد) — نعيد استخدامها للتنبيهات والرسوم ──
+// ── تحميل البيانات الكاملة (وليس العدد فقط) — تُستخدم للتنبيهات والرسوم البيانية ──
 async function loadOneFull(col, elId) {
   try {
     const data = await getCollection(col);
@@ -336,7 +336,7 @@ function renderMaintenanceAlerts({ specs, bridges, wells, drains }) {
   const stale = [];
   groups.forEach(g => g.data.forEach(r => {
     const d = toDate(r.updatedAt);
-    // لو مفيش تاريخ تحديث خالص، أو قديم أكتر من سنة، اعتبره محتاج مراجعة
+    // إذا لم يوجد تاريخ تحديث إطلاقاً، أو كان أقدم من سنة، فيُعتبر بحاجة إلى مراجعة
     const daysAgo = d ? Math.floor((now - d.getTime()) / 86400000) : null;
     if (daysAgo === null || daysAgo > STALE_DAYS) {
       stale.push({ name: r.name || '—', label: g.label, page: g.page, daysAgo });
@@ -349,7 +349,7 @@ function renderMaintenanceAlerts({ specs, bridges, wells, drains }) {
   if (!stale.length) {
     card.style.display = '';
     countBadge.textContent = 'كل شيء محدَّث ✓';
-    body.innerHTML = `<div class="empty" style="padding:16px"><div class="icon">✅</div><p>مفيش سجلات محتاجة مراجعة — كل البيانات محدَّثة خلال آخر سنة</p></div>`;
+    body.innerHTML = `<div class="empty" style="padding:16px"><div class="icon">✅</div><p>لا توجد سجلات بحاجة إلى مراجعة — جميع البيانات محدَّثة خلال العام الأخير</p></div>`;
     return;
   }
   card.style.display = '';

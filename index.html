@@ -13,7 +13,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
   <meta name="apple-mobile-web-app-title" content="سُقيا"/>
-  <link rel="stylesheet" href="css/style.css?v=1.4.0"/>
+  <link rel="stylesheet" href="css/style.css?v=1.4.1"/>
 </head>
 <body>
 
@@ -86,9 +86,9 @@
       navigator.serviceWorker.register("./sw.js").catch(() => {});
     });
   }
-  import { loginUser, saveSession, getSession, logActivity } from "./js/firebase-config.js?v=1.4.0";
+  import { loginUser, saveSession, getSession, logActivity } from "./js/firebase-config.js?v=1.4.1";
 
-  // لو في session موجودة — روح للداشبورد مباشرة
+  // إذا كانت هناك جلسة قائمة بالفعل — الانتقال مباشرة إلى لوحة التحكم
   if (getSession()) {
     window.location.replace("pages/dashboard.html");
   }

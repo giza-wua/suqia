@@ -41,12 +41,12 @@ import {
 const app = initializeApp(FIREBASE_CONFIG);
 const db = getFirestore(app);
 const auth = getAuth(app);
-// تطبيق ثانوي منفصل: بيسمح للمسؤول ينشئ حساب مستخدم جديد بكلمة مرور حقيقية
-// من غير ما جلسة دخول المسؤول الحالية تتأثر أو تتقفل
+// تطبيق ثانوي منفصل: يسمح للمسؤول بإنشاء حساب مستخدم جديد بكلمة مرور فعلية
+// دون أن تتأثر جلسة دخول المسؤول الحالية أو تُغلَق
 const secondaryApp = initializeApp(FIREBASE_CONFIG, "SuqiaSecondary");
 const secondaryAuth = getAuth(secondaryApp);
 
-// نطاق وهمي غير قابل للتوصيل — Firebase Auth محتاج شكل إيميل، والمستخدم مش هيشوفه أو يكتبه أبداً
+// نطاق صوري غير قابل للتوصيل — تتطلب خدمة Firebase Auth صيغة بريد إلكتروني، ولن يرى المستخدم هذا العنوان أو يكتبه إطلاقاً
 const AUTH_EMAIL_DOMAIN = "suqia.local";
 function usernameToEmail(username) {
   return `${username.toLowerCase().trim()}@${AUTH_EMAIL_DOMAIN}`;
@@ -80,7 +80,7 @@ function requireAuth() {
 }
 
 // ══ Password hashing (SHA-256 + salt) ════
-// ⚠️ دي بقت تُستخدم فقط للتحقق من حسابات قديمة لسه ما تنقلتش لـ Firebase Auth الحقيقي
+// ⚠️ أصبحت تُستخدم فقط للتحقق من الحسابات القديمة التي لم تُنقَل بعد إلى Firebase Auth الفعلي
 // (شوف loginUser تحت — أول ما أي مستخدم قديم يسجّل دخول بنجاح، بيترحّل تلقائياً)
 async function hashPassword(password) {
   const data = new TextEncoder().encode(password + "suqia_salt_giza_2025");
@@ -101,11 +101,11 @@ async function verifyPassword(first, second) {
   } catch { return false; }
 }
 
-// ══ Auth (Firebase Authentication حقيقي) ══
-// المستخدم بيكتب اسم مستخدم وكلمة مرور عادي زي ما هو دايماً —
-// من تحت بنحوّل اسم المستخدم لإيميل وهمي (مش حقيقي ومش هيتبعت له أي حاجة)
-// ونستخدم Firebase Auth الرسمي، عشان قواعد Firestore تقدر تتحقق من الهوية فعلياً
-// بدل ما الحماية تبقى شكلية بس على مستوى الواجهة.
+// ══ التوثيق (Firebase Authentication الفعلي) ══
+// يكتب المستخدم اسم مستخدم وكلمة مرور عاديين كما هو الحال دائماً —
+// ومن الخلف يُحوَّل اسم المستخدم إلى بريد إلكتروني صوري (غير حقيقي ولا يُرسَل إليه أي شيء)
+// وتُستخدم خدمة Firebase Auth الرسمية، لتتمكن قواعد Firestore من التحقق من الهوية فعلياً
+// بدلاً من أن تبقى الحماية شكلية على مستوى الواجهة فقط.
 async function loginUser(username, password) {
   const uid = username.toLowerCase().trim();
   const email = usernameToEmail(uid);
@@ -123,23 +123,23 @@ async function loginUser(username, password) {
     } catch (authErr) {
       if (authErr.code !== "auth/user-not-found" && authErr.code !== "auth/invalid-credential") {
         if (authErr.code === "auth/wrong-password") return { ok: false, error: "كلمة المرور غير صحيحة" };
-        if (authErr.code === "auth/too-many-requests") return { ok: false, error: "محاولات كتير غلط — حاول تاني بعد شوية" };
-        if (authErr.code === "auth/operation-not-allowed") return { ok: false, error: "⚠️ لازم تفعّل Email/Password من Firebase Console ← Authentication ← Sign-in method أولاً (راجع SETUP.md)" };
+        if (authErr.code === "auth/too-many-requests") return { ok: false, error: "محاولات كثيرة خاطئة — يُرجى المحاولة مرة أخرى بعد قليل" };
+        if (authErr.code === "auth/operation-not-allowed") return { ok: false, error: "⚠️ يجب تفعيل خيار Email/Password أولاً من لوحة تحكم Firebase ← Authentication ← Sign-in method (يُراجَع ملف SETUP.md)" };
         if (authErr.code === "auth/network-request-failed") return { ok: false, error: "تعذّر الاتصال بالإنترنت — تحقق من الشبكة" };
-        if (authErr.code === "permission-denied" || authErr.code === "auth/permission-denied") return { ok: false, error: "⚠️ قواعد Firestore لسه مش منشورة صح — راجع ملف firestore.rules في SETUP.md" };
+        if (authErr.code === "permission-denied" || authErr.code === "auth/permission-denied") return { ok: false, error: "⚠️ لم تُنشر قواعد Firestore بعد بالشكل الصحيح — يُراجَع ملف firestore.rules في SETUP.md" };
         return { ok: false, error: `خطأ (${authErr.code || authErr.name || "غير معروف"}): ${authErr.message || ""}` };
       }
-      // 2) لسه مفيش حساب Firebase Auth بالإيميل ده — يمكن مستخدم قديم لسه ما اتنقلش.
-      // ⚠️ ملحوظة أمان: قاعدة users/{uid} بقت تتطلب تسجيل دخول (isSignedIn) — وده يعني
-      // إن القراءة هنا (والمستخدم لسه مش مسجّل دخول أصلاً) هترجع permission-denied لأي
-      // حساب لسه فعلاً محتاج ترحيل يدوي، بدل ما كانت متاحة للجميع زي الإصدارات القديمة.
-      // ده تصرف مقصود لسد ثغرة كانت بتعرّض passwordHash لأي حد على الإنترنت.
+      // 2) لا يوجد بعد حساب Firebase Auth بهذا البريد الإلكتروني — قد يكون مستخدماً قديماً لم يُنقَل بعد.
+      // ⚠️ ملحوظة أمنية: أصبحت قاعدة users/{uid} تتطلب تسجيل الدخول (isSignedIn) — وهذا يعني
+      // أن القراءة هنا (والمستخدم لم يسجّل الدخول بعد أصلاً) ستُرجِع permission-denied لأي
+      // حساب لا يزال بحاجة فعلية إلى ترحيل يدوي، بدلاً من أن يكون متاحاً للجميع كما في الإصدارات القديمة.
+      // هذا تصرف مقصود لسدّ ثغرة كانت تُعرِّض حقل passwordHash لأي شخص على الإنترنت.
       let legacySnap;
       try {
         legacySnap = await getDoc(doc(db, "users", uid));
       } catch (legacyReadErr) {
         if (legacyReadErr.code === "permission-denied") {
-          return { ok: false, error: "هذا الحساب لسه محتاج ترحيل يدوي من المسؤول — تواصل معه لإعادة تفعيله" };
+          return { ok: false, error: "لا يزال هذا الحساب بحاجة إلى ترحيل يدوي من المسؤول — يُرجى التواصل معه لإعادة تفعيله" };
         }
         throw legacyReadErr;
       }
@@ -148,10 +148,10 @@ async function loginUser(username, password) {
       if (!legacy.passwordHash || !(await verifyPassword(password, legacy.passwordHash))) {
         return { ok: false, error: "كلمة المرور غير صحيحة" };
       }
-      // كلمة المرور صح على النظام القديم — رحّل الحساب لـ Firebase Auth الحقيقي دلوقتي، بصمت
+      // كلمة المرور صحيحة وفق النظام القديم — تُرحَّل الحساب الآن إلى Firebase Auth الفعلي، دون إشعار ظاهر
       try {
         await createUserWithEmailAndPassword(auth, email, password);
-        // امسح passwordHash القديم فوراً بعد الترحيل — من غير داعي يفضل متخزّن أبداً
+        // يُحذف حقل passwordHash القديم فور اكتمال الترحيل — لا داعي لبقائه مخزَّناً إطلاقاً
         updateDoc(doc(db, "users", uid), { passwordHash: null }).catch(() => {});
         return { ok: true, user: { id: uid, username: uid, name: legacy.name, role: legacy.role } };
       } catch (migrateErr) {
@@ -161,7 +161,7 @@ async function loginUser(username, password) {
   } catch (fatalErr) {
     // شبكة توقف هنا: أي خطأ غير متوقع تماماً بيتصيد هنا بدل ما يوصل للواجهة كخطأ غامض
     if (fatalErr.code === "permission-denied") {
-      return { ok: false, error: "⚠️ قواعد Firestore لسه مش منشورة صح — انسخ محتوى ملف firestore.rules وانشره من Firebase Console (راجع SETUP.md)" };
+      return { ok: false, error: "⚠️ لم تُنشر قواعد Firestore بعد بالشكل الصحيح — يُنسَخ محتوى ملف firestore.rules ويُنشر من لوحة تحكم Firebase (يُراجَع ملف SETUP.md)" };
     }
     return { ok: false, error: `خطأ غير متوقع: ${fatalErr.code || fatalErr.name || ""} ${fatalErr.message || ""}`.trim() };
   }
@@ -179,7 +179,7 @@ async function logActivity(action, meta = {}) {
       ts: serverTimestamp(),
     });
   } catch (e) {
-    // لا نوقف تدفق التطبيق لو فشل تسجيل النشاط
+    // لا نوقف تدفق التطبيق إذا فشل تسجيل النشاط
     console.warn("logActivity failed:", e.message);
   }
 }
@@ -199,22 +199,22 @@ async function createUser(username, password, name, role) {
   const email = usernameToEmail(uid);
   const existing = await getDoc(doc(db, "users", uid));
   if (existing.exists()) throw new Error("اسم المستخدم موجود بالفعل");
-  // بننشئ حساب Firebase Auth حقيقي على التطبيق الثانوي عشان جلسة المسؤول
-  // الحالية متتأثرش أو تتقفل من غير قصد
+  // يُنشأ حساب Firebase Auth فعلي على التطبيق الثانوي حتى لا تتأثر جلسة المسؤول
+  // الحالية أو تُغلَق دون قصد
   await createUserWithEmailAndPassword(secondaryAuth, email, password);
   await signOut(secondaryAuth);
   await setDoc(doc(db, "users", uid), { name, role, createdAt: serverTimestamp() });
   clearCache("users");
 }
 
-// تعديل بيانات مستخدم (اسم/صلاحية). تغيير كلمة المرور منفصل — شوف changeMyPassword تحت،
-// لأن Firebase Auth (بدون خادم Admin) بيسمح بس للمستخدم يغيّر كلمة مروره هو نفسه وهو مسجّل دخول.
+// تعديل بيانات مستخدم (الاسم أو الصلاحية). تغيير كلمة المرور منفصل — يُراجَع changeMyPassword أدناه،
+// لأن Firebase Auth (دون خادم Admin) لا يسمح إلا للمستخدم بتغيير كلمة مروره بنفسه أثناء تسجيل دخوله.
 async function updateUser(uid, data) {
   await updateDoc(doc(db, "users", uid), data);
   clearCache("users");
 }
 
-// تغيير كلمة مرور المستخدم الحالي نفسه فقط (بيطلب كلمة المرور الحالية للتأكيد)
+// تغيير كلمة مرور المستخدم الحالي نفسه فقط (يتطلب كلمة المرور الحالية للتأكيد)
 async function changeMyPassword(currentPassword, newPassword) {
   if (!auth.currentUser) throw new Error("يجب تسجيل الدخول أولاً");
   const cred = EmailAuthProvider.credential(auth.currentUser.email, currentPassword);
@@ -222,13 +222,13 @@ async function changeMyPassword(currentPassword, newPassword) {
   await updatePassword(auth.currentUser, newPassword);
 }
 
-// حذف مستخدم: بيشيل ملفه الشخصي (الاسم/الصلاحية) من Firestore، وده كافٍ عملياً لمنعه
-// من الدخول (loginUser بيرفض أي حساب من غير ملف شخصي). حساب Firebase Auth نفسه
-// بيفضل موجود تقنياً (حذفه فعلياً محتاج صلاحيات Admin SDK من سيرفر، مش متاحة في تطبيق
-// بدون خادم زي ده) — لكن من غير ملف شخصي في Firestore، المستخدم ميقدرش يستخدم التطبيق خالص.
-// ⚠️ ملاحظة: بسبب كده، لو حاولت تنشئ مستخدم جديد بنفس اسم المستخدم القديم بعد حذفه،
-// هيفشل (لأن حساب Firebase Auth القديم لسه موجود) — استخدم اسم مستخدم مختلف، أو
-// راجع SETUP.md لخطوة Cloud Function الاختيارية لو محتاج حذف كامل أو إعادة تعيين كلمة مرور.
+// حذف مستخدم: يُزيل ملفه الشخصي (الاسم والصلاحية) من Firestore، وهذا كافٍ عملياً لمنعه
+// من الدخول (ترفض الدالة loginUser أي حساب دون ملف شخصي). يبقى حساب Firebase Auth نفسه
+// موجوداً تقنياً (حذفه فعلياً يتطلب صلاحيات Admin SDK من خادم، وهي غير متاحة في تطبيق
+// دون خادم كهذا) — لكن دون ملف شخصي في Firestore، لا يستطيع المستخدم استخدام التطبيق إطلاقاً.
+// ⚠️ ملاحظة: بسبب ذلك، فإن محاولة إنشاء مستخدم جديد بنفس اسم المستخدم القديم بعد حذفه
+// ستفشل (لأن حساب Firebase Auth القديم لا يزال موجوداً) — يُستخدَم اسم مستخدم مختلف، أو
+// تُراجَع خطوة الدالة السحابية (Cloud Function) الاختيارية في SETUP.md عند الحاجة إلى حذف كامل أو إعادة تعيين كلمة مرور.
 async function deleteUser(uid) {
   await deleteDoc(doc(db, "users", uid));
   clearCache("users");
@@ -238,7 +238,7 @@ async function deleteUser(uid) {
 //  CACHE SYSTEM
 //  - يخزن البيانات في sessionStorage
 //  - سريع جداً بعد أول تحميل
-//  - بيتمسح أوتوماتيك لما حد يضيف/يعدل/يحذف
+//  - يُمسَح تلقائياً عند إضافة أو تعديل أو حذف أي سجل
 // ══════════════════════════════════════════
 const CACHE_TTL = 5 * 60 * 1000; // 5 دقايق بالـ ms
 
@@ -265,13 +265,13 @@ function setCache(col, data) {
     sessionStorage.setItem(cacheKey(col), JSON.stringify(data));
     sessionStorage.setItem(cacheTime(col), Date.now().toString());
   } catch (e) {
-    // لو sessionStorage ممتلي — امسح قديم وحاول تاني
+    // إذا كانت مساحة sessionStorage ممتلئة — تُمسَح البيانات القديمة وتُعاد المحاولة
     clearCache();
     try {
       sessionStorage.setItem(cacheKey(col), JSON.stringify(data));
       sessionStorage.setItem(cacheTime(col), Date.now().toString());
     } catch {
-      /* مش هيحصل حاجة، هيجيب من Firebase */
+      /* لن يحدث شيء جوهري، وستُجلب البيانات من Firebase مباشرة */
     }
   }
 }
@@ -281,7 +281,7 @@ function clearCache(col) {
     sessionStorage.removeItem(cacheKey(col));
     sessionStorage.removeItem(cacheTime(col));
   } else {
-    // امسح كل الـ cache
+    // تُمسَح كل بيانات التخزين المؤقت
     ["specs", "bridges", "linedCanals", "wells", "drains"].forEach((c) => {
       sessionStorage.removeItem(cacheKey(c));
       sessionStorage.removeItem(cacheTime(c));
@@ -291,10 +291,10 @@ function clearCache(col) {
 
 // ══ Collections CRUD (مع Cache) ══════════
 // ══════════════════════════════════════════
-//  IndexedDB — نسخة احتياطية دائمة (تدعم العمل بدون إنترنت)
-//  - sessionStorage فوق: سريع لكن بيتمسح لما التاب يتقفل
-//  - IndexedDB تحت: أبطأ شوية لكن باقي حتى بعد إعادة فتح المتصفح،
-//    وده اللي بيخلي التطبيق يقدر يعرض آخر بيانات معروفة لما مفيش إنترنت
+//  IndexedDB — نسخة احتياطية دائمة (تدعم العمل دون اتصال بالإنترنت)
+//  - التخزين المؤقت (sessionStorage) أعلاه: سريع لكنه يُمحى عند إغلاق التبويب
+//  - IndexedDB أدناه: أبطأ قليلاً لكنه يبقى محفوظاً حتى بعد إعادة فتح المتصفح،
+//    وهو ما يتيح للتطبيق عرض آخر بيانات معروفة عند انقطاع الإنترنت
 // ══════════════════════════════════════════
 const IDB_NAME = "suqia-offline";
 const IDB_VERSION = 1;
@@ -321,7 +321,7 @@ async function idbSetCollection(col, data) {
       tx.oncomplete = resolve;
       tx.onerror = () => reject(tx.error);
     });
-  } catch { /* IndexedDB مش متاح — تجاهل بصمت، مش حرج */ }
+  } catch { /* IndexedDB غير متاح — يُتجاهَل الأمر بصمت، فهذا غير جوهري */ }
 }
 async function idbGetCollection(col) {
   try {
@@ -351,10 +351,10 @@ async function getCollection(col) {
     const data = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
     data.sort((a, b) => String(a.name || "").localeCompare(String(b.name || ""), "ar"));
     setCache(col, data);
-    idbSetCollection(col, data); // نسخة احتياطية دائمة — من غير ما ننتظرها
+    idbSetCollection(col, data); // نسخة احتياطية دائمة — من دون انتظار اكتمالها
     return data;
   } catch (e) {
-    // 3. مفيش اتصال أو فشل الطلب؟ جرّب آخر نسخة محفوظة محلياً
+    // 3. لا يوجد اتصال أو فشل الطلب؟ تُستخدَم آخر نسخة محفوظة محلياً
     const offline = await idbGetCollection(col);
     if (offline) return offline.data;
     throw e;
@@ -363,7 +363,7 @@ async function getCollection(col) {
 
 async function addRecord(col, data) {
   await addDoc(collection(db, col), { ...data, updatedAt: serverTimestamp() });
-  clearCache(col); // امسح الـ cache عشان يجيب البيانات الجديدة
+  clearCache(col); // يُمسَح التخزين المؤقت لجلب البيانات الجديدة
 }
 
 async function updateRecord(col, id, data) {
@@ -405,7 +405,7 @@ async function exportCollectionData(col) {
 
 async function exportAllData() {
   const COLS = ['specs', 'bridges', 'linedCanals', 'wells', 'drains'];
-  const result = { version: '1.4.0', exportedAt: new Date().toISOString(), collections: {} };
+  const result = { version: '1.4.1', exportedAt: new Date().toISOString(), collections: {} };
   for (const col of COLS) {
     const snap = await getDocs(collection(db, col));
     result.collections[col] = snap.docs.map(d => ({ _id: d.id, ...d.data() }));

@@ -11,7 +11,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
   <meta name="apple-mobile-web-app-title" content="سُقيا"/>
-  <link rel="stylesheet" href="../css/style.css?v=1.4.0"/>
+  <link rel="stylesheet" href="../css/style.css?v=1.4.1"/>
   <style>
     .settings-tabs{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:20px;overflow-x:auto}
     .stab{padding:11px 18px;font-size:13px;font-weight:800;color:var(--text-3);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap;transition:.18s;font-family:inherit;background:none;border-top:none;border-left:none;border-right:none}
@@ -51,7 +51,7 @@
   <aside class="sidebar" id="sidebar">
     <div class="sb-brand">
       <div class="sb-logo"><svg viewBox="0 0 24 24" fill="none" stroke="#0c1a33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3.4 4 6 7.6 6 11a6 6 0 0 1-12 0c0-3.4 2.6-7 6-11Z"/><path d="M9.2 14.2c.4 1.6 1.6 2.6 3.2 2.8"/></svg></div>
-      <div class="sb-brand-text"><h2>سُقيا</h2><span>إدارة أصول ري الجيزة &nbsp;<em class="sb-version">v1.4.0</em></span></div>
+      <div class="sb-brand-text"><h2>سُقيا</h2><span>إدارة أصول ري الجيزة &nbsp;<em class="sb-version">v1.4.1</em></span></div>
     </div>
     <nav class="sb-nav">
       <div class="sb-section">الرئيسية</div>
@@ -126,7 +126,7 @@
             <div style="font-size:11.5px;color:rgba(255,255,255,.6);margin-top:2px">للأمانة العامة لروابط مستخدمي المياه بالجيزة</div>
             <div style="font-size:10px;color:rgba(255,255,255,.35);margin-top:4px">الإدارة العامة لري الجيزة — وزارة الموارد المائية والري</div>
           </div>
-          <span class="badge" style="background:rgba(11,180,172,.25);color:var(--gold-lt);font-size:11px">v1.4.0</span>
+          <span class="badge" style="background:rgba(11,180,172,.25);color:var(--gold-lt);font-size:11px">v1.4.1</span>
         </div>
       </div>
 
@@ -151,7 +151,7 @@
                 <span class="badge badge-amber" style="margin-top:5px">مشرف النظام</span></div>
             </div>
             <div class="info-row"><span class="info-key">اسم المستخدم</span><span class="info-val" id="acc-username">—</span></div>
-            <div class="info-row"><span class="info-key">إصدار التطبيق</span><span class="info-val">v1.4.0</span></div>
+            <div class="info-row"><span class="info-key">إصدار التطبيق</span><span class="info-val">v1.4.1</span></div>
             <div class="info-row"><span class="info-key">المطوِّر</span><span class="info-val">المكتب الإعلامي التابع للأمانة العامة</span></div>
             <div class="info-row"><span class="info-key">الجهة</span><span class="info-val">الأمانة العامة لروابط مستخدمي المياه بالجيزة</span></div>
             <div style="text-align:center;margin-top:18px;padding-top:16px;border-top:1px solid var(--border)">
@@ -201,7 +201,7 @@
           <div class="card-header"><span class="card-title">📤 تصدير نسخة احتياطية</span></div>
           <div class="card-body">
             <p style="font-size:12.5px;color:var(--text-2);line-height:1.7;margin-bottom:14px">
-              يتم تصدير البيانات الحالية من Firestore مباشرة — مش من ملفات المشروع.<br>
+              يتم تصدير البيانات الحالية من Firestore مباشرة، وليس من ملفات المشروع.<br>
               ملف JSON يحتوي على كل المجموعات ويمكن استعادته لاحقاً.
             </p>
             <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px">
@@ -305,9 +305,9 @@
           <div class="card-header"><span class="card-title">📦 استيراد البيانات الأصلية</span></div>
           <div class="card-body">
             <p style="font-size:12.5px;color:var(--text-2);margin-bottom:12px;line-height:1.8">
-              ⚠️ افعل ذلك <strong>مرة واحدة فقط</strong> أول ما تنشئ المشروع.<br>
+              ⚠️ يُنفَّذ ذلك <strong>مرة واحدة فقط</strong> عند إنشاء المشروع لأول مرة.<br>
               الكباري (475) + الترع المبطنة (66) + الآبار (70) + الأورنيك (276) ← Firestore<br>
-              لو عاوز تُعيد الاستيراد من أول: اضغط "حذف كل البيانات" أولاً.
+              في حال الرغبة في إعادة الاستيراد من البداية، يُرجى الضغط على زر "حذف جميع البيانات" أولاً.
             </p>
             <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px">
               <button class="btn btn-primary" id="btn-import-start">🚀 ابدأ الاستيراد الأصلي</button>
@@ -358,7 +358,7 @@
       <div class="form-group"><label class="form-label">اسم المستخدم</label><input class="form-input" id="ef-username" disabled/></div>
       <div class="form-group"><label class="form-label">الاسم الكامل</label><input class="form-input" id="ef-name"/></div>
       <div class="form-group" style="background:var(--surface-2);border-radius:10px;padding:10px 12px;font-size:12px;color:var(--text-3);line-height:1.7">
-        🔒 لأسباب أمنية، ما بقاش ممكن تغيير كلمة مرور مستخدم تاني من هنا مباشرة. كل مستخدم يقدر يغيّر كلمة مروره بنفسه من تبويب "الحساب" وهو مسجّل دخول. لو نسي كلمة المرور ومحتاج مسؤول يساعده، ده محتاج خطوة تقنية إضافية (Cloud Function) لسه مش مفعّلة — راجع ملف SETUP.md.
+        🔒 لأسباب أمنية، لم يعد بالإمكان تغيير كلمة مرور مستخدم آخر مباشرة من هذه الصفحة. يمكن لكل مستخدم تغيير كلمة مروره بنفسه من تبويب "الحساب" أثناء تسجيل دخوله. أما في حال نسيان كلمة المرور واحتياج المستخدم إلى مساعدة المسؤول، فإن ذلك يتطلب خطوة تقنية إضافية (دالة سحابية — Cloud Function) لم تُفعَّل بعد؛ يُرجى مراجعة ملف SETUP.md.
       </div>
       <div class="form-group">
         <label class="form-label">الصلاحية</label>
@@ -382,8 +382,8 @@
 
 <script type="module">
 if ("serviceWorker" in navigator) { navigator.serviceWorker.register("../sw.js").catch(() => {}); }
-import { requireAuth, clearSession, getUsers, createUser, updateUser, deleteUser, changeMyPassword, addRecord, deleteRecord, getCollection, exportAllData, exportCollectionData, importCollectionData, checkFirebaseHealth, forceSyncAll, getLastSyncAll, getLastSync, clearCache, deleteAllCollectionData, getCollectionCount, logActivity, getActivityLog } from "../js/firebase-config.js?v=1.4.0";
-import { wireThemeToggle, arabicDate, openModal, closeModal, toast, initials, confirmDelete, wireConnectionStatus, escapeHtml } from "../js/shared.js?v=1.4.0";
+import { requireAuth, clearSession, getUsers, createUser, updateUser, deleteUser, changeMyPassword, addRecord, deleteRecord, getCollection, exportAllData, exportCollectionData, importCollectionData, checkFirebaseHealth, forceSyncAll, getLastSyncAll, getLastSync, clearCache, deleteAllCollectionData, getCollectionCount, logActivity, getActivityLog } from "../js/firebase-config.js?v=1.4.1";
+import { wireThemeToggle, arabicDate, openModal, closeModal, toast, initials, confirmDelete, wireConnectionStatus, escapeHtml } from "../js/shared.js?v=1.4.1";
 
 const user = requireAuth();
 
@@ -511,7 +511,7 @@ document.getElementById('btn-save-add').addEventListener('click',async()=>{
   btn.disabled=true;btn.textContent='⏳…';
   try{await createUser(username,password,name,role);closeModal('modal-add');toast('تم إنشاء المستخدم ✓','success');loadUsers();}
   catch(e){
-    const msg = e.code==='auth/email-already-in-use' ? 'اسم المستخدم ده مُستخدم من قبل (حتى لو محذوف حالياً) — جرّب اسم مختلف' : (e.message||'حدث خطأ');
+    const msg = e.code==='auth/email-already-in-use' ? 'اسم المستخدم هذا مُستخدَم من قبل (حتى وإن كان محذوفاً حالياً)، يُرجى اختيار اسم مختلف' : (e.message||'حدث خطأ');
     errEl.textContent='⚠️ '+msg;errEl.style.display='block';
   }
   finally{btn.disabled=false;btn.textContent='✅ إنشاء';}
@@ -599,7 +599,7 @@ document.querySelectorAll('[data-col]').forEach(btn=>{
     const statusEl=document.getElementById('export-status');
     try{
       const data=await exportCollectionData(col);
-      const backup={version:'1.4.0',collection:col,count:data.length,exportedAt:new Date().toISOString(),data};
+      const backup={version:'1.4.1',collection:col,count:data.length,exportedAt:new Date().toISOString(),data};
       const blob=new Blob([JSON.stringify(backup,null,2)],{type:'application/json'});
       const a=document.createElement('a');a.href=URL.createObjectURL(blob);
       a.download=`suqia_${col}_${new Date().toISOString().slice(0,10)}.json`;
@@ -760,8 +760,8 @@ document.getElementById('btn-clear-cache').addEventListener('click',()=>{
 });
 
 // ══ SEED IMPORT ══
-// ⚠️ ملف seed_data.js (364 كيلوبايت) بقى يتحمّل عند الحاجة الفعلية بس (زر الاستيراد)،
-// مش بشكل مقفول على كل زيارة لصفحة الإعدادات — أفضل لاستهلاك بيانات الموبايل
+// ⚠️ ملف seed_data.js (364 كيلوبايت) أصبح يُحمَّل عند الحاجة الفعلية فقط (زر الاستيراد)،
+// وليس بشكل مطلق عند كل زيارة لصفحة الإعدادات — توفيرًا لاستهلاك بيانات الهاتف المحمول
 let DATA=null;
 function loadSeedData(){
   return new Promise((resolve,reject)=>{
