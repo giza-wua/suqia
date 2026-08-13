@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <script>(function(){try{var t=localStorage.getItem('zimam_theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}})();</script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>الخريطة الموحَّدة — منصة زمام الجيزة</title>
+    <link rel="icon" type="image/png" href="../assets/icons/icon-192.png" />
+    <link rel="stylesheet" href="../css/01-tokens.css" />
+    <link rel="stylesheet" href="../css/02-components.css" />
+    <link rel="stylesheet" href="../css/03-app-components.css" />
+    <link rel="stylesheet" href="../css/05-responsive.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+    <style>
+        #zimam-map { width: 100%; height: calc(100vh - var(--topbar-h) - 20px); min-height: 420px; border-radius: var(--radius-md); }
+        .leaflet-popup-content { font-family: 'Cairo', sans-serif; direction: rtl; text-align: right; font-size: 13px; }
+        .leaflet-popup-content b { font-size: 14px; }
+        .leaflet-popup-content a { color: var(--nile-light); font-weight: 800; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="offline-banner" id="offline-banner"><span id="offline-icon"></span> لا يوجد اتصال بالإنترنت الآن — يمكنك المتابعة وستتم المزامنة تلقائياً عند رجوع الاتصال</div>
+    <div id="admin-shell"></div>
+
+    <main class="admin-main">
+        <h1 id="page-title"></h1>
+        <p id="map-summary" style="color:var(--text-muted); margin:6px 0 14px; font-size:0.85rem;">⏳ جاري تحميل المواقع...</p>
+        <div id="map-empty-hint" class="card-box" style="display:none; text-align:center; padding:30px; color:var(--text-muted);">
+            لا توجد أي سجلات عليها إحداثيات GPS محفوظة بعد.
+        </div>
+        <div id="zimam-map"></div>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+    <script type="module">
+        import { requireAuth } from "../js/auth.js";
+        import { initTheme, renderAdminShell } from "../js/shared.js";
+        import { apiGet } from "../js/services/api.js";
+        import { escapeHtml, updateOnlineStatus } from "../js/utils/ui-helpers.js";
+        import { icon } from "../js/icons.js";
+
+        document.getElementById("page-title").innerHTML = `${icon("map", 24)} الخريطة الموحَّدة`;
+
+        document.getElementById("offline-icon").innerHTML = icon("warning", 15);
+        initTheme();
+        updateOnlineStatus();
+        renderAdminShell("map"); // فوري بدون بيانات — يلغي الوميض
+        const profile = await requireAuth();
+        renderAdminShell("map", profile); // تحديث بالبيانات الحقيقية
+
+        // ── الخريطة (منقولة من سُقيا، مُحدَّثة لمجموعة canals الموحَّدة) ──
+        const map = L.map("zimam-map", { zoomControl: true }).setView([30.02, 31.11], 10);
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            attribution: "&copy; OpenStreetMap contributors",
+            maxZoom: 19,
+        }).addTo(map);
+
+        function markerIcon(color) {
+            return L.divIcon({
+                className: "",
+                html: `<div style="width:16px;height:16px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:${color};border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.35)"></div>`,
+                iconSize: [16, 16], iconAnchor: [8, 16], popupAnchor: [0, -16],
+            });
+        }
+        const ICONS = {
+            canal: markerIcon("#1c8fd9"), bridge: markerIcon("#e08a1f"),
+            well: markerIcon("#16a87a"), drain: markerIcon("#e8633f"),
+            masqa: markerIcon("#7a4fd9"), // إضافة جديدة: زمام مالهاش خريطة أصلاً قبل الدمج
+        };
+
+        async function getAll(name) {
+            return apiGet(`/${name}`);
+        }
+
+        const [canals, bridges, wells, drains, masaqi] = await Promise.all([
+            getAll("canals"), getAll("bridges"), getAll("wells"), getAll("drains"), getAll("masaqi"),
+        ]);
+        const groups = [
+            { data: canals, type: "canal", page: "canals.html", label: "ترعة" },
+            { data: bridges, type: "bridge", page: "bridges.html", label: "كوبري" },
+            { data: wells, type: "well", page: "wells.html", label: "بئر" },
+            { data: drains, type: "drain", page: "drains.html", label: "مصرف" },
+        ];
+        const bounds = [];
+        let placed = 0, total = 0;
+        groups.forEach(g => {
+            total += g.data.length;
+            g.data.forEach(r => {
+                const lat = parseFloat(r.lat), lng = parseFloat(r.lng);
+                if (Number.isNaN(lat) || Number.isNaN(lng)) return;
+                placed++;
+                const marker = L.marker([lat, lng], { icon: ICONS[g.type] }).addTo(map);
+                const name = r.name || "—";
+                marker.bindPopup(`<b>${escapeHtml(name)}</b><br>${escapeHtml(g.label)}<br><a href="${g.page}">فتح الصفحة ↗</a>`);
+                bounds.push([lat, lng]);
+            });
+        });
+        // المساقي (زمام): الإحداثيات مخزَّنة كنص واحد مدمج "lat, lng" (حقل
+        // gps)، بخلاف باقي المجموعات (lat/lng منفصلين) — تحتاج تحليلاً خاصاً.
+        total += masaqi.length;
+        masaqi.forEach(r => {
+            if (!r.gps) return;
+            const parts = r.gps.split(",").map(s => parseFloat(s.trim()));
+            if (parts.length !== 2 || parts.some(Number.isNaN)) return;
+            const [lat, lng] = parts;
+            placed++;
+            const marker = L.marker([lat, lng], { icon: ICONS.masqa }).addTo(map);
+            marker.bindPopup(`<b>${escapeHtml(r.name || "—")}</b><br>مسقى<br><a href="masaqi.html">فتح الصفحة ↗</a>`);
+            bounds.push([lat, lng]);
+        });
+        document.getElementById("map-summary").textContent = `${placed} من أصل ${total} سجل عليهم إحداثيات محفوظة`;
+        if (bounds.length) map.fitBounds(bounds, { padding: [40, 40], maxZoom: 14 });
+        else document.getElementById("map-empty-hint").style.display = "block";
+    </script>
+</body>
+</html>

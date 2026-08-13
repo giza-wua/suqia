@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <script>(function(){try{var t=localStorage.getItem('zimam_theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}})();</script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>البلاغات الميدانية — منصة زمام الجيزة</title>
+    <link rel="icon" type="image/png" href="../assets/icons/icon-192.png" />
+    <link rel="stylesheet" href="../css/01-tokens.css" />
+    <link rel="stylesheet" href="../css/02-components.css" />
+    <link rel="stylesheet" href="../css/03-app-components.css" />
+    <link rel="stylesheet" href="../css/05-responsive.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+    <div class="offline-banner" id="offline-banner"><span id="offline-icon"></span> لا يوجد اتصال بالإنترنت الآن — يمكنك المتابعة وستتم المزامنة تلقائياً عند رجوع الاتصال</div>
+    <div id="admin-shell"></div>
+    <div id="system-toast" class="toast"></div>
+    <div id="modal-overlay" class="modal-overlay">
+        <div class="modal-box"><h3 id="modal-title"></h3><p id="modal-message"></p><div class="modal-actions" id="modal-actions"></div></div>
+    </div>
+
+    <main class="admin-main">
+        <h1 id="page-title"></h1>
+        <p style="color:var(--text-muted); margin:6px 0 20px; font-size:0.85rem;">
+            البلاغات المُرسَلة من المزارعين عبر النموذج العام (بدون تسجيل دخول) في الصفحة الرئيسية.
+        </p>
+
+        <!-- ============ ملخّص سريع ============ -->
+        <div class="mini-stats-grid" style="margin-bottom:20px;">
+            <div class="stat-card" style="border-right:4px solid var(--danger);" onclick="filterTicketsByStatus('جديد')" title="اضغط لعرض البلاغات الجديدة فقط">
+                <div class="stat-info"><h4>جديد</h4><div class="val" style="color:var(--danger);" id="tickets-summary-new">-</div></div>
+                <div id="stat-icon-ticket-new"></div>
+            </div>
+            <div class="stat-card" style="border-right:4px solid var(--warning);" onclick="filterTicketsByStatus('قيد المتابعة')" title="اضغط لعرض البلاغات قيد المتابعة">
+                <div class="stat-info"><h4>قيد المتابعة</h4><div class="val" style="color:var(--warning);" id="tickets-summary-progress">-</div></div>
+                <div id="stat-icon-ticket-progress"></div>
+            </div>
+            <div class="stat-card" style="border-right:4px solid var(--success);" onclick="filterTicketsByStatus('تم الحسم')" title="اضغط لعرض البلاغات المحسومة">
+                <div class="stat-info"><h4>تم الحسم</h4><div class="val" style="color:var(--success);" id="tickets-summary-done">-</div></div>
+                <div id="stat-icon-ticket-done"></div>
+            </div>
+            <div class="stat-card" style="border-right:4px solid var(--info,#2563eb);" onclick="filterTicketsByStatus('')" title="اضغط لعرض كل البلاغات">
+                <div class="stat-info"><h4>الإجمالي</h4><div class="val" id="tickets-summary-total">-</div></div>
+                <div id="stat-icon-ticket-total"></div>
+            </div>
+        </div>
+
+        <div class="card-box">
+            <div class="filter-bar" style="margin-bottom:14px;">
+                <input type="text" id="filter-ticket-search" placeholder="بحث..." oninput="renderTicketsDebounced()" />
+                <select id="filter-ticket-directorate" onchange="renderTickets()">
+                    <option value="">كل الهندسات</option>
+                    <option>هندسة ري مزغونة</option><option>هندسة ري العياط</option><option>هندسة ري الجيزة</option>
+                    <option>هندسة ري المنصورية</option><option>هندسة ري إمبابة</option><option>هندسة ري الرياح</option>
+                </select>
+                <select id="filter-ticket-status" onchange="renderTickets()">
+                    <option value="">كل الحالات</option>
+                    <option value="جديد">جديد</option><option value="قيد المتابعة">قيد المتابعة</option><option value="تم الحسم">تم الحسم</option>
+                </select>
+                <button class="btn-icon" id="btn-export-excel" onclick="exportTableToExcel('tickets-table','البلاغات')"></button>
+                <button class="btn-icon" id="btn-export-pdf" onclick="exportTableToPDF('tickets-table','تقرير البلاغات الميدانية','تقرير_البلاغات')"></button>
+            </div>
+            <div class="table-responsive table-card-view">
+                <table id="tickets-table">
+                    <thead><tr><th>المُبلغ</th><th>الهاتف</th><th>الهندسة</th><th>المجرى</th><th>نوع الشكوى</th><th>الموقع</th><th>الحالة</th></tr></thead>
+                    <tbody id="tickets-table-body"></tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script type="module">
+        import { requireAuth } from "../js/auth.js";
+        import { initTheme, renderAdminShell } from "../js/shared.js";
+        import { debounce, updateOnlineStatus } from "../js/utils/ui-helpers.js";
+        import { exportTableToPDF } from "../js/utils/pdf-export.js";
+        import { exportTableToExcel } from "../js/utils/excel-export.js";
+        import { updateTicketStatus, renderTickets, initTicketsListener, filterTicketsByStatus } from "../js/data/tickets.js";
+        import { icon } from "../js/icons.js";
+
+        document.getElementById("page-title").innerHTML = `${icon("mail", 24)} البلاغات الميدانية`;
+        document.getElementById("stat-icon-ticket-new").innerHTML = icon("warning", 22);
+        document.getElementById("stat-icon-ticket-progress").innerHTML = icon("activity", 22);
+        document.getElementById("stat-icon-ticket-done").innerHTML = icon("check", 22);
+        document.getElementById("stat-icon-ticket-total").innerHTML = icon("mail", 22);
+        document.getElementById("btn-export-excel").innerHTML = icon("excel", 17);
+        document.getElementById("btn-export-pdf").innerHTML = icon("pdf", 17);
+
+        document.getElementById("offline-icon").innerHTML = icon("warning", 15);
+        initTheme();
+        updateOnlineStatus();
+        window._loaded = window._loaded || {};
+        window.ticketsCache = window.ticketsCache || [];
+
+        renderAdminShell("tickets"); // فوري بدون بيانات — يلغي الوميض
+        const profile = await requireAuth();
+        renderAdminShell("tickets", profile); // تحديث بالبيانات الحقيقية
+
+        Object.assign(window, {
+            updateTicketStatus, renderTickets, filterTicketsByStatus,
+            exportTableToPDF, exportTableToExcel,
+            renderTicketsDebounced: debounce(renderTickets),
+        });
+
+        initTicketsListener();
+    </script>
+</body>
+</html>
