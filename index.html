@@ -1,260 +1,158 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <script>(function(){try{var t=localStorage.getItem('zimam_theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}})();</script>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover" />
-    <title>منصة زمام الجيزة | الأمانة العامة لروابط مستخدمي المياه بالجيزة</title>
-    <link rel="icon" type="image/png" href="assets/icons/icon-192.png" />
-    <meta name="theme-color" content="#0f4c46" />
-    <link rel="manifest" href="manifest.json" />
-    <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png" />
-    <link rel="stylesheet" href="css/01-tokens.css" />
-    <link rel="stylesheet" href="css/02-components.css" />
-    <link rel="stylesheet" href="css/03-app-components.css" />
-    <link rel="stylesheet" href="css/05-responsive.css" />
-    <link rel="stylesheet" href="css/04-public-layout.css" />
+  <script>(function(){try{var t=localStorage.getItem('suqia_theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <meta name="theme-color" content="#071226"/>
+  <title>سُقيا — تسجيل الدخول</title>
+  <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg"/>
+  <link rel="manifest" href="manifest.json"/>
+  <link rel="apple-touch-icon" href="assets/icons/icon-192.png"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-title" content="سُقيا"/>
+  <link rel="stylesheet" href="css/style.css?v=1.4.1"/>
 </head>
 <body>
-    <div class="offline-banner" id="offline-banner"><span id="offline-icon"></span> لا يوجد اتصال بالإنترنت الآن — يمكنك المتابعة وستتم المزامنة تلقائياً عند رجوع الاتصال</div>
-    <nav class="navbar">
-        <div class="nav-brand">
-            <img src="assets/branding/amana-logo.png" alt="الشعار" style="width:34px;height:34px;object-fit:contain;" />
-            <div class="nav-brand-text">
-                <span id="navbar-app-name">منصة زمام</span>
-                <span class="nav-brand-subtitle">الأمانة العامة لروابط مستخدمي المياه</span>
-            </div>
-        </div>
-        <div id="nav-actions">
-            <button class="theme-fab-btn" id="navbar-theme-toggle" onclick="toggleTheme()" title="تبديل المظهر"></button>
-            <a class="nav-btn" href="admin/login.html" id="admin-login-link"></a>
-        </div>
-    </nav>
 
-    <div class="container">
-        <main id="section-farmer-view" class="view-section active">
-            <div class="hero-banner compact">
-                <h2>أهلاً بيك</h2>
-                <p>سجّل بلاغك في دقيقة، أو تابع حالة تطهير الترع والمساقي في منطقتك أول بأول.</p>
-            </div>
+<div class="login-page">
+  <div class="login-box">
 
-            <!-- ============ تبويبات الأقسام الأربعة (ديسكتوب) ============ -->
-            <div class="public-tabs" role="tablist">
-                <button class="public-tab active" data-tab="report" onclick="switchPublicTab('report')" role="tab" aria-selected="true"><span id="tab-icon-report"></span> بلاغ عن مشكلة</button>
-                <button class="public-tab" data-tab="canals" onclick="switchPublicTab('canals')" role="tab" aria-selected="false"><span id="tab-icon-canals"></span> حالة الترع</button>
-                <button class="public-tab" data-tab="masaqi" onclick="switchPublicTab('masaqi')" role="tab" aria-selected="false"><span id="tab-icon-masaqi"></span> حالة المساقي</button>
-                <button class="public-tab" data-tab="news" onclick="switchPublicTab('news')" role="tab" aria-selected="false"><span id="tab-icon-news"></span> الأخبار</button>
-            </div>
-
-            <!-- ============ تبويب: تسجيل بلاغ (الافتراضي) ============ -->
-            <div class="public-tab-content active" data-tab-content="report">
-                <div class="card-box ticket-form-card" id="ticket-form-card">
-                    <div class="ticket-form-head">
-                        <h3 id="ticket-form-title"></h3>
-                        <p>عبّئ البيانات التالية وسيُرسَل بلاغك مباشرة لغرفة العمليات</p>
-                    </div>
-
-                    <!-- حقل فخ (Honeypot) لمكافحة السبام الآلي -->
-                    <div class="hp-field" aria-hidden="true">
-                        <label for="f-hp">اتركه فارغاً</label>
-                        <input type="text" id="f-hp" name="website" tabindex="-1" autocomplete="off" />
-                    </div>
-
-                    <div class="form-section-label" id="fsl-personal"></div>
-                    <div class="form-grid">
-                        <div class="form-group"><label class="form-label"><span class="required-star">*</span>الاسم الثلاثي</label><input type="text" id="f-name" class="form-input" placeholder="الاسم بالكامل" autocomplete="name" /></div>
-                        <div class="form-group"><label class="form-label">رقم الهاتف <span style="color:var(--text-muted);font-weight:400;">(اختياري — للتواصل معاك بخصوص البلاغ)</span></label><input type="tel" id="f-phone" class="form-input" placeholder="01xxxxxxxxx" inputmode="numeric" autocomplete="tel" maxlength="11" /></div>
-                    </div>
-
-                    <div class="form-section-label" id="fsl-details"></div>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label class="form-label"><span class="required-star">*</span>هندسة الري</label>
-                            <select id="f-directorate" class="form-input" onchange="updateWatercourseDropdown('f')">
-                                <option value="">اختر الهندسة</option>
-                                <option>هندسة ري مزغونة</option><option>هندسة ري العياط</option><option>هندسة ري الجيزة</option>
-                                <option>هندسة ري المنصورية</option><option>هندسة ري إمبابة</option><option>هندسة ري الرياح</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label"><span class="required-star">*</span>المجرى المائي</label>
-                            <select id="f-watercourse" class="form-input"><option value="">اختر الهندسة أولاً</option></select>
-                        </div>
-                    </div>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label class="form-label">طبيعة الشكوى</label>
-                            <select id="f-type" class="form-input">
-                                <option value="حاجة ماسة لتطهير المسقى">انسداد المجرى وتراكم الحشائش</option>
-                                <option value="تعديات وإلقاء مخلفات">تعديات أو إلقاء مخلفات</option>
-                                <option value="مشكلة في مناوبات الري">نزاع على مناوبات الري</option>
-                                <option value="عطل ميكانيكي / بئر جوفي">عطل طلمبات الآبار</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">الموقع GPS <span style="color:var(--text-muted);font-weight:400;">(اختياري)</span></label>
-                            <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                                <input type="text" id="f-gps" class="form-input" style="flex:1;" placeholder="اضغط الزر لالتقاط الموقع" readonly />
-                                <button type="button" class="btn-gps" id="btn-gps-farmer" onclick="captureGPS('f-gps','btn-gps-farmer')"></button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">تفاصيل إضافية <span style="color:var(--text-muted);font-weight:400;">(اختياري)</span></label>
-                        <textarea id="f-desc" class="form-input" rows="3" placeholder="أي ملاحظات تساعد لجان المعاينة..."></textarea>
-                    </div>
-                    <button class="btn-submit full" id="btn-submit-ticket" onclick="submitFarmerTicket()"></button>
-
-                    <div class="ticket-alt-contact">
-                        <span>تفضّل التواصل المباشر؟ راسلنا على واتساب من الزرار العائم أسفل الشاشة.</span>
-                    </div>
-                </div>
-
-                <!-- ============ شاشة تأكيد ثابتة بعد الإرسال (منذ 0.9.6) ============ -->
-                <div class="card-box" id="ticket-success-card" style="display:none; text-align:center; padding:40px 24px;">
-                    <div style="margin-bottom:14px;" id="success-icon"></div>
-                    <h3 style="margin-bottom:10px;">تم استلام بلاغك بنجاح</h3>
-                    <p style="color:var(--text-muted); font-size:0.9rem; max-width:420px; margin:0 auto 24px;">
-                        هيتم التنسيق مع هندسة الري المختصة لمعاينة الحالة في أقرب وقت. لو محتاج متابعة عاجلة، تقدر تكلّمنا على واتساب مباشرة.
-                    </p>
-                    <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
-                        <button class="btn-submit" id="btn-reset-ticket" onclick="resetTicketForm()"></button>
-                        <a class="hotline-btn-inline" id="whatsapp-link-inline" href="https://wa.me/201288885171" target="_blank" rel="noopener"></a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ============ تبويب: حالة الترع ============ -->
-            <div class="public-tab-content" data-tab-content="canals">
-                <div class="card-box">
-                    <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:4px;" id="canal-board-today">اليوم: —</p>
-                    <p style="font-size:0.85rem;font-weight:700;margin-bottom:12px;" id="canal-board-date">⏳ جاري تحميل بيانات الترع...</p>
-                    <div class="filter-bar" style="margin-bottom:12px;">
-                        <select id="canal-board-directorate-filter" onchange="renderPublicCanalBoard()">
-                            <option value="">كل الهندسات</option>
-                            <option>هندسة ري مزغونة</option><option>هندسة ري العياط</option><option>هندسة ري الجيزة</option>
-                            <option>هندسة ري المنصورية</option><option>هندسة ري إمبابة</option><option>هندسة ري الرياح</option>
-                        </select>
-                    </div>
-                    <div class="news-cards-grid" id="canal-board-grid"><div class="news-card-empty">⏳ جاري تحميل بيانات الترع...</div></div>
-                </div>
-            </div>
-
-            <!-- ============ تبويب: حالة المساقي ============ -->
-            <div class="public-tab-content" data-tab-content="masaqi">
-                <div class="card-box">
-                    <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:4px;" id="masaqi-board-today">اليوم: —</p>
-                    <p style="font-size:0.85rem;font-weight:700;margin-bottom:12px;" id="masaqi-board-date">⏳ جاري تحميل بيانات المساقي...</p>
-                    <div class="filter-bar" style="margin-bottom:12px;">
-                        <select id="masaqi-board-directorate-filter" onchange="renderPublicMasaqiBoard()">
-                            <option value="">كل الهندسات</option>
-                            <option>هندسة ري مزغونة</option><option>هندسة ري العياط</option><option>هندسة ري الجيزة</option>
-                            <option>هندسة ري المنصورية</option><option>هندسة ري إمبابة</option><option>هندسة ري الرياح</option>
-                        </select>
-                    </div>
-                    <div class="news-cards-grid" id="masaqi-board-grid"><div class="news-card-empty">⏳ جاري تحميل بيانات المساقي...</div></div>
-                </div>
-            </div>
-
-            <!-- ============ تبويب: الأخبار ============ -->
-            <div class="public-tab-content" data-tab-content="news">
-                <div class="news-cards-grid" id="news-cards"><div class="news-card-empty">⏳ جاري تحميل الأخبار...</div></div>
-            </div>
-        </main>
+    <!-- Logo + Brand -->
+    <div class="login-brand">
+      <div class="login-logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#0c1a33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 3c3.4 4 6 7.6 6 11a6 6 0 0 1-12 0c0-3.4 2.6-7 6-11Z"/>
+          <path d="M9.2 14.2c.4 1.6 1.6 2.6 3.2 2.8"/>
+        </svg>
+      </div>
+      <h1>سُقيا</h1>
+      <div class="flow-line"></div>
+      <p class="slogan">
+        المركز الإعلامي للأمانة العامة<br>
+        لروابط مستخدمي المياه بالجيزة
+      </p>
     </div>
 
-    <footer class="site-footer">
-        <span class="footer-credit-badge">تطوير: المكتب الإعلامي للأمانة العامة بمحافظة الجيزة</span>
-    </footer>
-
-    <a href="https://wa.me/201288885171" target="_blank" rel="noopener" class="whatsapp-fab show" id="whatsapp-fab" title="راسلنا على واتساب"></a>
-
-    <!-- ============ شريط تنقّل سفلي على الموبايل (نفس نمط لوحة الإدارة تماماً) ============ -->
-    <nav class="mobile-bottom-nav" id="public-bottom-nav">
-        <a class="mbn-item active" data-tab="report" onclick="switchPublicTab('report'); return false;" href="#"><span class="mbn-item-icon" id="mbn-icon-report"></span>بلاغ</a>
-        <a class="mbn-item" data-tab="canals" onclick="switchPublicTab('canals'); return false;" href="#"><span class="mbn-item-icon" id="mbn-icon-canals"></span>الترع</a>
-        <a class="mbn-item" data-tab="masaqi" onclick="switchPublicTab('masaqi'); return false;" href="#"><span class="mbn-item-icon" id="mbn-icon-masaqi"></span>المساقي</a>
-        <a class="mbn-item" data-tab="news" onclick="switchPublicTab('news'); return false;" href="#"><span class="mbn-item-icon" id="mbn-icon-news"></span>الأخبار</a>
-    </nav>
-
-    <div id="system-toast" class="toast"></div>
-    <div id="modal-overlay" class="modal-overlay">
-        <div class="modal-box"><h3 id="modal-title"></h3><p id="modal-message"></p><div class="modal-actions" id="modal-actions"></div></div>
+    <!-- Login Form -->
+    <div class="login-form">
+      <div class="form-group">
+        <label class="form-label">اسم المستخدم</label>
+        <input class="form-input" id="inp-user" type="text"
+               placeholder="أدخل اسم المستخدم"
+               autocomplete="username" autocapitalize="none" autocorrect="off"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">كلمة المرور</label>
+        <div style="position:relative">
+          <input class="form-input" id="inp-pass" type="password"
+                 placeholder="••••••••" autocomplete="current-password"
+                 style="padding-left:42px"/>
+          <button id="btn-eye" type="button"
+                  style="position:absolute;left:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(255,255,255,.4);cursor:pointer;padding:0;display:flex"
+                  title="إظهار/إخفاء">
+            <svg id="eye-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div class="login-error" id="login-error" style="display:none"></div>
+      <button class="login-submit" id="btn-login" type="button">دخول</button>
     </div>
 
-    <script type="module">
-        import { updateWatercourseDropdown, toggleCollapse, updateOnlineStatus } from "./js/utils/ui-helpers.js";
-        import { captureGPS } from "./js/utils/gps.js";
-        import { submitFarmerTicket, resetTicketForm } from "./js/data/tickets.js";
-        import { initMasaqiListener, renderPublicMasaqiBoard } from "./js/data/masaqi.js";
-        import { initCanalsListener, renderPublicCanalBoard } from "./js/data/canals.js";
-        import { initNewsListener } from "./js/data/news.js";
-        import { APP_NAME_VERSIONED, APP_VERSION } from "./js/version.js";
-        import { icon } from "./js/icons.js";
+    <!-- Credits under form -->
+    <div style="text-align:center;margin-top:30px">
+      <img src="assets/branding/amana-logo.png" alt="شعار الأمانة العامة" style="width:92px;height:92px;display:block;margin:0 auto 12px"/>
+      <p style="font-size:13px;color:rgba(255,255,255,.6);font-weight:800;line-height:1.9">
+        الأمانة العامة لروابط مستخدمي المياه بالجيزة
+      </p>
+      <p style="font-size:10px;color:rgba(255,255,255,.25);margin-top:8px;font-weight:600;line-height:1.8">
+        تصميم وتطوير<br>
+        المكتب الإعلامي التابع للأمانة العامة
+      </p>
+    </div>
 
-        document.getElementById("tab-icon-report").innerHTML = icon("mail", 17);
-        document.getElementById("tab-icon-canals").innerHTML = icon("tractor", 17);
-        document.getElementById("tab-icon-masaqi").innerHTML = icon("droplet", 17);
-        document.getElementById("tab-icon-news").innerHTML = icon("megaphone", 17);
-        document.getElementById("mbn-icon-report").innerHTML = icon("mail", 20);
-        document.getElementById("mbn-icon-canals").innerHTML = icon("tractor", 20);
-        document.getElementById("mbn-icon-masaqi").innerHTML = icon("droplet", 20);
-        document.getElementById("mbn-icon-news").innerHTML = icon("megaphone", 20);
-        document.getElementById("ticket-form-title").innerHTML = `${icon("mail", 18)} تسجيل بلاغ ميداني`;
-        document.getElementById("fsl-details").innerHTML = `${icon("location", 14)} تفاصيل البلاغ`;
-        document.getElementById("btn-gps-farmer").innerHTML = `${icon("location", 15)} التقاط`;
-        document.getElementById("success-icon").innerHTML = icon("check", 48);
-        document.getElementById("btn-reset-ticket").innerHTML = `${icon("mail", 16)} تسجيل بلاغ آخر`;
-        document.getElementById("whatsapp-link-inline").innerHTML = `${icon("chat", 16)} تواصل على واتساب`;
-        document.getElementById("whatsapp-fab").innerHTML = icon("chat", 24);
-        document.getElementById("offline-icon").innerHTML = icon("warning", 15);
-        document.getElementById("navbar-theme-toggle").innerHTML = icon("moon", 17);
-        document.getElementById("admin-login-link").innerHTML = `${icon("shield", 15)} دخول الإدارة`;
-        document.getElementById("fsl-personal").innerHTML = `${icon("users", 14)} بياناتك`;
-        document.getElementById("btn-submit-ticket").innerHTML = `${icon("mail", 17)} إرسال البلاغ لغرفة العمليات`;
+  </div>
+</div>
 
-        document.getElementById("navbar-app-name").textContent = APP_NAME_VERSIONED;
-        if (!document.title.includes(APP_VERSION)) document.title = `${document.title} — ${APP_VERSION}`;
-        updateOnlineStatus();
+<script type="module">
+  // ── تسجيل Service Worker (يدعم التثبيت والعمل بدون إنترنت) ──
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("./sw.js").catch(() => {});
+    });
+  }
+  import { loginUser, saveSession, getSession, logActivity } from "./js/firebase-config.js?v=1.4.1";
 
-        window._loaded = window._loaded || {};
-        window.masaqiCache = []; window.canalsCache = []; window.newsCache = [];
+  // إذا كانت هناك جلسة قائمة بالفعل — الانتقال مباشرة إلى لوحة التحكم
+  if (getSession()) {
+    window.location.replace("pages/dashboard.html");
+  }
 
-        window.toggleTheme = function () {
-            const isDark = document.documentElement.getAttribute("data-theme") === "dark";
-            document.documentElement.setAttribute("data-theme", isDark ? "light" : "dark");
-            try { localStorage.setItem("zimam_theme", isDark ? "light" : "dark"); } catch (e) {}
-        };
+  const btnLogin = document.getElementById("btn-login");
+  const inpUser  = document.getElementById("inp-user");
+  const inpPass  = document.getElementById("inp-pass");
+  const errBox   = document.getElementById("login-error");
 
-        // ============ تبديل التبويبات (منذ 0.9.6) ============
-        // تُحدِّث حالة التبويب الفعّال في الشريط العلوي والسفلي معاً
-        // (نفس الحالة، تمثيلان بصريان مختلفان حسب حجم الشاشة).
-        window.switchPublicTab = function (tab) {
-            document.querySelectorAll(".public-tab").forEach(el => {
-                const active = el.dataset.tab === tab;
-                el.classList.toggle("active", active);
-                el.setAttribute("aria-selected", active ? "true" : "false");
-            });
-            document.querySelectorAll(".public-tab-content").forEach(el => el.classList.toggle("active", el.dataset.tabContent === tab));
-            document.querySelectorAll("#public-bottom-nav .mbn-item").forEach(el => el.classList.toggle("active", el.dataset.tab === tab));
-            window.scrollTo({ top: 0, behavior: "smooth" });
-        };
+  // إظهار / إخفاء كلمة المرور
+  document.getElementById("btn-eye").addEventListener("click", () => {
+    const isHidden = inpPass.type === "password";
+    inpPass.type = isHidden ? "text" : "password";
+    document.getElementById("eye-icon").innerHTML = isHidden
+      ? `<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+         <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+         <line x1="1" y1="1" x2="23" y2="23"/>`
+      : `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+         <circle cx="12" cy="12" r="3"/>`;
+  });
 
-        Object.assign(window, {
-            updateWatercourseDropdown, toggleCollapse, captureGPS, submitFarmerTicket, resetTicketForm,
-            renderPublicMasaqiBoard, renderPublicCanalBoard,
-        });
+  function showError(msg) {
+    errBox.textContent = "⚠️ " + msg;
+    errBox.style.display = "block";
+    errBox.animate(
+      [{ opacity: 0, transform: "translateY(-4px)" }, { opacity: 1, transform: "none" }],
+      { duration: 220 }
+    );
+  }
 
-        updateWatercourseDropdown("f");
-        initMasaqiListener();
-        initCanalsListener();
-        initNewsListener();
+  async function doLogin() {
+    const username = inpUser.value.trim();
+    const password = inpPass.value;
+    if (!username || !password) {
+      showError("يرجى إدخال اسم المستخدم وكلمة المرور");
+      return;
+    }
+    btnLogin.disabled = true;
+    btnLogin.textContent = "⏳ جاري الدخول...";
+    errBox.style.display = "none";
 
-        if ("serviceWorker" in navigator) {
-            window.addEventListener("load", () => {
-                navigator.serviceWorker.register("./sw.js").catch(() => {});
-            });
-        }
-    </script>
+    try {
+      const result = await loginUser(username, password);
+      if (result.ok) {
+        saveSession(result.user);
+        await logActivity("تسجيل دخول");
+        window.location.href = "pages/dashboard.html";
+      } else {
+        showError(result.error || "بيانات غير صحيحة");
+        btnLogin.disabled = false;
+        btnLogin.textContent = "دخول";
+        inpPass.select();
+      }
+    } catch (err) {
+      showError("خطأ غير متوقع: " + (err.code || err.name || "") + " " + (err.message || ""));
+      btnLogin.disabled = false;
+      btnLogin.textContent = "دخول";
+      console.error("Login error:", err);
+    }
+  }
+
+  btnLogin.addEventListener("click", doLogin);
+  inpPass.addEventListener("keydown", e => { if (e.key === "Enter") doLogin(); });
+  inpUser.addEventListener("keydown", e => { if (e.key === "Enter") inpPass.focus(); });
+</script>
 </body>
 </html>

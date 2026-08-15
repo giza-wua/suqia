@@ -1,77 +1,88 @@
-// =====================================================================
-// sw.js — منصة زمام الجيزة
-// يخزّن هيكل الواجهة العامة (index.html وملفاته) محلياً على الجهاز، حتى
-// تفتح شاشة البلاغات على الأقل عند انقطاع مؤقت في الاتصال بالميدان.
-// نفس مبدأ Service Worker في زمام الأصلية (منذ 1.7.0 هناك).
-//
-// عند أي رفع مستقبلي فيه تغيير حقيقي بالملفات، غيّر CACHE_NAME هنا حتى
-// يُجبَر المتصفح على تحميل النسخة الجديدة بدل الاعتماد على القديمة.
-// =====================================================================
+// ══════════════════════════════════════════
+//  سُقيا — Service Worker
+//  يُخزِّن هيكل التطبيق (HTML/CSS/JS/الخطوط) حتى يفتح ولو من دون اتصال بالإنترنت.
+//  للبيانات نفسها (الترع والكباري والآبار) نظام تخزين منفصل عبر IndexedDB
+//  (يُراجَع js/firebase-config.js) — يكمِّل كل نظام الآخر: هذا للواجهة، وذاك للبيانات.
+// ══════════════════════════════════════════
 
-const CACHE_NAME = "zimam-unified-shell-v1.2.2";
-
-const APP_SHELL_FILES = [
-    "./",
-    "./index.html",
-    "./manifest.json",
-    "./css/01-tokens.css",
-    "./css/02-components.css",
-    "./css/03-app-components.css",
-    "./css/04-public-layout.css",
-    "./css/05-responsive.css",
-    "./js/version.js",
-    "./js/icons.js",
-    "./js/services/api.js",
-    "./js/auth.js",
-    "./js/shared.js",
-    "./js/data/masaqi.js",
-    "./js/data/canals.js",
-    "./js/data/canal-names-reference.js",
-    "./js/data/tickets.js",
-    "./js/data/news.js",
-    "./js/utils/ui-helpers.js",
-    "./js/utils/gps.js",
-    "./js/utils/identity.js",
-    "./js/utils/modal.js",
-    "./js/utils/toast.js",
-    "./js/utils/notifications.js",
-    "./js/utils/week-filter.js",
-    "./js/utils/activity-log.js",
-    "./assets/branding/amana-logo.png",
-    "./assets/icons/icon-192.png",
-    "./assets/icons/icon-512.png",
-    "./assets/icons/apple-touch-icon.png",
-];
+const CACHE_NAME = "suqia-shell-v1.4.1";
+// ⚠️ مسارات نسبية إلى موضع ملف sw.js نفسه (وليس إلى جذر الدومين)، حتى يعمل التطبيق
+// بشكل صحيح سواء نُشر على جذر الدومين أو داخل مجلد فرعي (subpath).
+const SW_SCOPE = self.registration.scope; // مسار كامل لمجلد الـ scope (بينتهي بـ /)
+const APP_SHELL = [
+  "index.html",
+  "manifest.json",
+  "css/style.css",
+  "css/01-tokens.css",
+  "css/02-base.css",
+  "css/03-layout.css",
+  "css/04-components.css",
+  "css/05-pages.css",
+  "js/firebase-config.js",
+  "js/shared.js",
+  "pages/dashboard.html",
+  "pages/canals.html",
+  "pages/bridges.html",
+  "pages/wells.html",
+  "pages/drains.html",
+  "pages/map.html",
+  "pages/settings.html",
+  "assets/icons/favicon.svg",
+  "assets/icons/icon-192.png",
+  "assets/icons/icon-512.png",
+].map((p) => new URL(p, SW_SCOPE).href);
 
 self.addEventListener("install", (event) => {
-    event.waitUntil(
-        caches.open(CACHE_NAME)
-            .then((cache) => cache.addAll(APP_SHELL_FILES))
-            .then(() => self.skipWaiting())
-    );
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) =>
+      // تُخزَّن جميع الملفات قدر الإمكان، ولا يُوقَف التثبيت كله إذا فشل تخزين أحدها (كخط غير موجود مثلاً)
+      Promise.allSettled(APP_SHELL.map((url) => cache.add(url)))
+    )
+  );
+  self.skipWaiting();
 });
 
 self.addEventListener("activate", (event) => {
-    event.waitUntil(
-        caches.keys().then((names) =>
-            Promise.all(names.filter((n) => n !== CACHE_NAME).map((n) => caches.delete(n)))
-        ).then(() => self.clients.claim())
-    );
+  event.waitUntil(
+    caches.keys().then((keys) =>
+      Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)))
+    )
+  );
+  self.clients.claim();
 });
 
 self.addEventListener("fetch", (event) => {
-    const req = event.request;
-    if (req.method !== "GET") return;
-    const url = new URL(req.url);
-    if (url.origin !== self.location.origin) return;
+  const { request } = event;
+  if (request.method !== "GET") return;
 
+  const url = new URL(request.url);
+  // لا تُلمَس الطلبات الخارجية (Firebase، وشبكات توصيل المحتوى) — تُترَك لتتعامل مع الشبكة أو التخزين المؤقت الخاص بها
+  if (url.origin !== self.location.origin) return;
+
+  // ملفات HTML: تُجرَّب الشبكة أولاً (لضمان الحصول على آخر تحديث)، وإذا انعدم الاتصال تُستخدَم النسخة المخزَّنة
+  if (request.mode === "navigate" || request.headers.get("accept")?.includes("text/html")) {
     event.respondWith(
-        fetch(req)
-            .then((networkResponse) => {
-                const copy = networkResponse.clone();
-                caches.open(CACHE_NAME).then((cache) => cache.put(req, copy)).catch(() => {});
-                return networkResponse;
-            })
-            .catch(() => caches.match(req).then((cached) => cached || caches.match("./index.html")))
+      fetch(request)
+        .then((res) => {
+          const clone = res.clone();
+          caches.open(CACHE_NAME).then((c) => c.put(request, clone));
+          return res;
+        })
+        .catch(() => caches.match(request).then((r) => r || caches.match(new URL("index.html", SW_SCOPE).href)))
     );
+    return;
+  }
+
+  // باقي الملفات الثابتة (CSS/JS/خطوط/أيقونات): كاش أولاً، وحدّثه في الخلفية
+  event.respondWith(
+    caches.match(request).then((cached) => {
+      const network = fetch(request)
+        .then((res) => {
+          if (res.ok) caches.open(CACHE_NAME).then((c) => c.put(request, res.clone()));
+          return res;
+        })
+        .catch(() => cached);
+      return cached || network;
+    })
+  );
 });
